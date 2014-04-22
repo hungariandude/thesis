@@ -1,13 +1,11 @@
 package textanalyzer.logic.algorithm;
 
 import textanalyzer.logic.DrawingObject;
-import textanalyzer.logic.DrawingObject.Direction;
-import textanalyzer.logic.DrawingObject.Orientation;
-import textanalyzer.logic.DrawingObject.Shape;
 
-import java.awt.Point;
-import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -18,24 +16,37 @@ import java.util.Random;
  */
 public class GeneticAlgorithm {
 
-    private Map<Character, Chromosome> chromosomeMap = new HashMap<>();
-    private Map<Character, Integer> fitMap = new HashMap<>();
+    private List<Chromosome> population;
+    private final int populationSize;
+
     private Map<Character, Integer> charCountMap = new HashMap<>();
     private String sourceText;
 
-    private Random random = new Random();
+    private final Random random = new Random();
     private boolean running = true;
-    private int chromosomeMaxLength;
 
-    public GeneticAlgorithm(String sourceText) {
+    public GeneticAlgorithm(String sourceText, int populationSize) {
+	if (populationSize < 2 || populationSize % 2 != 0) {
+	    throw new IllegalArgumentException(
+		    "Population size must be positive and even.");
+	}
+
 	this.sourceText = sourceText;
+	this.populationSize = populationSize;
+	population = new ArrayList<>(populationSize);
 
 	countCharOccurrences();
-	generateRandomChromosomes();
+	generateRandomPopulation();
+	calculateFitnessScores();
     }
 
+    /**
+     * Kezdeti fitnesz érték számítás.
+     */
     private void calculateFitnessScores() {
-
+	for (Chromosome chrom : population) {
+	    chrom.calculateFitnessScore();
+	}
     }
 
     /**
@@ -59,65 +70,91 @@ public class GeneticAlgorithm {
 	}
     }
 
-    private int fitnessFunction(Chromosome ch) {
-	return 0;
-    }
-
-    private Chromosome generateRandomChromosome(int length) {
-	Shape[] shapes = Shape.values();
-	Orientation[] orientations = Orientation.values();
-	Direction[] directions = Direction.values();
-
-	DrawingObject[] buildingElements = new DrawingObject[length];
-
-	for (int i = 0; i < length; ++i) {
-	    Shape theShape = shapes[random.nextInt(shapes.length)];
-	    Orientation theOrientation = orientations[random
-		    .nextInt(orientations.length)];
-	    Direction theDirection = directions[random
-		    .nextInt(directions.length)];
-
-	    Point2D startingPoint = i == 0 ? new Point()
-		    : (Point2D) buildingElements[i - 1].getEndingPoint()
-			    .clone();
-
-	    buildingElements[i] = new DrawingObject(startingPoint, theShape,
-		    theOrientation, theDirection);
-	}
-
-	return new Chromosome(buildingElements);
-    }
-
     /**
      * Létrehoz véletlenszerû kromoszómákat a szövegben megtalált karaktereknek.
      */
-    private void generateRandomChromosomes() {
-	// hányféleképpen lehet kirajzolni egy alakzatot
-	int numberOfObjectDrawingWays = Shape.values().length
-		* Orientation.values().length * Direction.values().length;
-
-	// az alapértelmezett kromoszómaszám a legkisebb olyan alakzatszám,
-	// amellyel minden megtalált karakter különbözõen kirajzolható
+    private void generateRandomPopulation() {
 	int numberOfFoundCharacters = charCountMap.size();
-	int defaultChromosomeLength = 1;
-	while (Math.pow(numberOfObjectDrawingWays, defaultChromosomeLength) < numberOfFoundCharacters) {
-	    ++defaultChromosomeLength;
+	// a maximum génhossz a legkisebb olyan alakzatszám, amellyel
+	// biztos, hogy minden megtalált karakter különbözõen kirajzolható
+	int maximumGeneLength = 1;
+	int differentObjects = DrawingObject.NUMBER_OF_OBJECT_DRAWING_WAYS;
+	while (differentObjects < numberOfFoundCharacters) {
+	    differentObjects += (int) Math.pow(
+		    DrawingObject.NUMBER_OF_OBJECT_DRAWING_WAYS,
+		    ++maximumGeneLength);
 	}
 
-	for (Character ch : charCountMap.keySet()) {
-	    Chromosome value = generateRandomChromosome(defaultChromosomeLength);
-	    chromosomeMap.put(ch, value);
+	for (int i = 0; i < populationSize; ++i) {
+	    population.add(new Chromosome(charCountMap.keySet(),
+		    maximumGeneLength));
 	}
     }
 
     private void run() {
+	// az új generáció populációja
+	List<Chromosome> newPopulation = new ArrayList<>(populationSize);
+	// éppen melyik generáció születik
+	int generation = 0;
+
 	while (running) {
-	    // 1. lépés: fitnesszértékek számítása
-	    calculateFitnessScores();
+	    // új generáció születik
+	    ++generation;
+	    newPopulation.clear();
 
-	    // 2. lépés: két kromoszóma keresztezése
+	    for (int i = 0; i < populationSize; i += 2) {
+		// 1. lépés: két kromószóma kiválasztás
+		Chromosome parent1 = selectMember();
+		Chromosome parent2 = selectMember();
 
-	    // 3. lépés:
+		// 2. lépés: ezek keresztezése
+		Chromosome.crossover(parent1, parent2);
+
+		// 3. lépés: ezek mutálása
+		parent1.mutate();
+		parent2.mutate();
+
+		// 4. lépés: ezek fitnesz értékeinek újraszámítása
+		parent1.calculateFitnessScore();
+		parent2.calculateFitnessScore();
+
+		// 5. lépés: ezek hozzádása az új populációhoz
+		newPopulation.add(parent1);
+		newPopulation.add(parent2);
+	    }
+
+	    // frissítjük a populációnkat
+	    population.addAll(newPopulation);
 	}
+    }
+
+    /**
+     * Szelekció. Nagyobb fitnesz érték nagyobb kiválasztási valószínûséget
+     * jelent.
+     */
+    private Chromosome selectMember() {
+	// 1. lépés: összegezzük a fitnesz értékeket
+	int totalFitness = 0;
+	for (Chromosome chrom : population) {
+	    totalFitness += chrom.getFitnessScore();
+	}
+
+	// 2. lépés: kiválasztunk egy pontot a skálán
+	float selectedPoint = totalFitness * random.nextFloat();
+
+	// 3. lépés: megkeressük, hogy melyik egyed fitnesz intervallumába
+	// találtunk bele
+	int totalFitnessSoFar = 0;
+	for (Iterator<Chromosome> it = population.iterator(); it.hasNext();) {
+	    Chromosome chrom = it.next();
+	    totalFitnessSoFar += chrom.getFitnessScore();
+	    if (totalFitnessSoFar >= selectedPoint) {
+		// megtaláltuk
+		it.remove();
+		return chrom;
+	    }
+	}
+
+	return null;
     }
 }

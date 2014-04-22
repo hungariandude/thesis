@@ -1,5 +1,7 @@
 package textanalyzer.logic;
 
+import textanalyzer.util.EnumUtils;
+
 import java.awt.geom.Point2D;
 
 /**
@@ -10,7 +12,7 @@ import java.awt.geom.Point2D;
 public class DrawingObject {
 
     public enum Direction {
-	FORWARD, REVERSE
+	FORWARD, REVERSE;
     }
 
     public enum Orientation {
@@ -21,6 +23,12 @@ public class DrawingObject {
 	LINE, CURVE_RIGHT, CURVE_LEFT
     }
 
+    /**
+     * Hányféleképpen lehet kirajzolni egy alakzatot.
+     */
+    public static final int NUMBER_OF_OBJECT_DRAWING_WAYS = Shape.values().length
+	    * Orientation.values().length * Direction.values().length;
+
     private Point2D startingPoint, endingPoint;
 
     private Shape shape;
@@ -30,7 +38,17 @@ public class DrawingObject {
     /**
      * Alapértelmezett hossz (görbék esetén a két végpont között)
      */
-    private final static int DEFAULT_LENGTH = 1;
+    private static final int DEFAULT_LENGTH = 1;
+
+    /**
+     * Az objektum alakját, orientációját és irányát véletlenszerûen határozza
+     * meg.
+     */
+    public DrawingObject(Point2D startingPoint) {
+	this(startingPoint, EnumUtils.randomValue(Shape.class), EnumUtils
+		.randomValue(Orientation.class), EnumUtils
+		.randomValue(Direction.class));
+    }
 
     /**
      * A végpontot a többi adatból határozza meg.
