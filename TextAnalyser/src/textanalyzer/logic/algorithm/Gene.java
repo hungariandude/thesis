@@ -1,10 +1,7 @@
 package textanalyzer.logic.algorithm;
 
 import textanalyzer.logic.DrawingObject;
-import textanalyzer.util.EnumUtils;
 
-import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,10 +11,6 @@ import java.util.List;
  * @author Istvánfi Zsolt
  */
 public class Gene {
-    private enum MutationType {
-	INVERT, ADD, REMOVE, TRANSSHAPE, ROTATE
-    }
-
     private List<DrawingObject> buildingElements;
 
     /**
@@ -27,11 +20,7 @@ public class Gene {
 	this.buildingElements = new ArrayList<>(length);
 
 	for (int i = 0; i < length; ++i) {
-	    Point2D startingPoint = i == 0 ? new Point()
-		    : (Point2D) buildingElements.get(i - 1).getEndingPoint()
-			    .clone();
-
-	    buildingElements.add(new DrawingObject(startingPoint));
+	    buildingElements.add(new DrawingObject());
 	}
     }
 
@@ -43,22 +32,50 @@ public class Gene {
 	this.buildingElements = buildingElements;
     }
 
-    /**
-     * A gén mutálása.
-     */
-    public void mutate() {
-	MutationType mutationType = EnumUtils.randomValue(MutationType.class);
-	switch (mutationType) {
-	case ADD:
-	    break;
-	case REMOVE:
-	    break;
-	case INVERT:
-	    break;
-	case ROTATE:
-	    break;
-	case TRANSSHAPE:
-	    break;
+    @Override
+    public boolean equals(Object obj) {
+	if (this == obj) {
+	    return true;
 	}
+	if (obj == null) {
+	    return false;
+	}
+	if (getClass() != obj.getClass()) {
+	    return false;
+	}
+	Gene other = (Gene) obj;
+	if (buildingElements == null) {
+	    if (other.buildingElements != null) {
+		return false;
+	    }
+	} else if (!buildingElements.equals(other.buildingElements)) {
+	    return false;
+	}
+	return true;
+    }
+
+    public List<DrawingObject> getBuildingElements() {
+	return buildingElements;
+    }
+
+    @Override
+    public int hashCode() {
+	final int prime = 31;
+	int result = 1;
+	result = prime
+		* result
+		+ ((buildingElements == null) ? 0 : buildingElements.hashCode());
+	return result;
+    }
+
+    /**
+     * A gén hossza (az építõelemek száma).
+     */
+    public int length() {
+	return this.buildingElements.size();
+    }
+
+    public void setBuildingElements(List<DrawingObject> buildingElements) {
+	this.buildingElements = buildingElements;
     }
 }

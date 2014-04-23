@@ -2,10 +2,8 @@ package textanalyzer.logic;
 
 import textanalyzer.util.EnumUtils;
 
-import java.awt.geom.Point2D;
-
 /**
- * Egy kirajzolható alakzat. Van formája, mérete, pozíciója, iránya.
+ * Egy kirajzolható alakzat. Van alakja, orientációja, iránya.
  * 
  * @author Istvánfi Zsolt
  */
@@ -29,74 +27,86 @@ public class DrawingObject {
     public static final int NUMBER_OF_OBJECT_DRAWING_WAYS = Shape.values().length
 	    * Orientation.values().length * Direction.values().length;
 
-    private Point2D startingPoint, endingPoint;
-
     private Shape shape;
     private Orientation orientation;
     private Direction direction;
 
     /**
-     * Alapértelmezett hossz (görbék esetén a két végpont között)
+     * Alapértelmezett hossz (görbék esetén a két végpont között, légvonalban)
      */
-    private static final int DEFAULT_LENGTH = 1;
+    public static final int DEFAULT_LENGTH = 1;
 
     /**
      * Az objektum alakját, orientációját és irányát véletlenszerûen határozza
      * meg.
      */
-    public DrawingObject(Point2D startingPoint) {
-	this(startingPoint, EnumUtils.randomValue(Shape.class), EnumUtils
+    public DrawingObject() {
+	this(EnumUtils.randomValue(Shape.class), EnumUtils
 		.randomValue(Orientation.class), EnumUtils
 		.randomValue(Direction.class));
     }
 
-    /**
-     * A végpontot a többi adatból határozza meg.
-     */
-    public DrawingObject(Point2D startingPoint, Shape shape,
-	    Orientation orientation, Direction direction) {
-	this.startingPoint = startingPoint;
+    public DrawingObject(Shape shape, Orientation orientation,
+	    Direction direction) {
 	this.shape = shape;
 	this.orientation = orientation;
 	this.direction = direction;
-
-	this.endingPoint = calculateEndingPoint(DEFAULT_LENGTH);
     }
 
-    private Point2D calculateEndingPoint(int length) {
-	double dx, dy;
+    // private Point2D calculateEndingPoint(int length) {
+    // double dx, dy;
+    //
+    // if (orientation == Orientation.OBLIQUE_RIGHT
+    // || orientation == Orientation.OBLIQUE_LEFT) {
+    // dx = dy = Math.sin(Math.toRadians(45));
+    // if (orientation == Orientation.OBLIQUE_LEFT) {
+    // // ebben az esetben a dx az negatív
+    // dx *= -1;
+    // }
+    // } else {
+    // if (orientation == Orientation.HORIZONTAL) {
+    // dx = 0;
+    // dy = 1;
+    // } else {
+    // dx = 1;
+    // dy = 0;
+    // }
+    // }
+    // if (direction == Direction.REVERSE) {
+    // dx *= -1;
+    // dy *= -1;
+    // }
+    //
+    // return new Point2D.Double(startingPoint.getX() + dx,
+    // startingPoint.getY() + dy);
+    // }
 
-	if (orientation == Orientation.OBLIQUE_RIGHT
-		|| orientation == Orientation.OBLIQUE_LEFT) {
-	    dx = dy = Math.sin(Math.toRadians(45));
-	    if (orientation == Orientation.OBLIQUE_LEFT) {
-		// ebben az esetben a dx az negatív
-		dx *= -1;
-	    }
-	} else {
-	    if (orientation == Orientation.HORIZONTAL) {
-		dx = 0;
-		dy = 1;
-	    } else {
-		dx = 1;
-		dy = 0;
-	    }
+    @Override
+    public boolean equals(Object obj) {
+	if (this == obj) {
+	    return true;
 	}
-	if (direction == Direction.REVERSE) {
-	    dx *= -1;
-	    dy *= -1;
+	if (obj == null) {
+	    return false;
 	}
-
-	return new Point2D.Double(startingPoint.getX() + dx,
-		startingPoint.getY() + dy);
+	if (getClass() != obj.getClass()) {
+	    return false;
+	}
+	DrawingObject other = (DrawingObject) obj;
+	if (direction != other.direction) {
+	    return false;
+	}
+	if (orientation != other.orientation) {
+	    return false;
+	}
+	if (shape != other.shape) {
+	    return false;
+	}
+	return true;
     }
 
     public Direction getDirection() {
 	return direction;
-    }
-
-    public Point2D getEndingPoint() {
-	return endingPoint;
     }
 
     public Orientation getOrientation() {
@@ -107,16 +117,25 @@ public class DrawingObject {
 	return shape;
     }
 
-    public Point2D getStartingPoint() {
-	return startingPoint;
+    @Override
+    public int hashCode() {
+	final int prime = 31;
+	int result = 1;
+	result = prime * result
+		+ ((direction == null) ? 0 : direction.hashCode());
+	result = prime * result
+		+ ((orientation == null) ? 0 : orientation.hashCode());
+	result = prime * result + ((shape == null) ? 0 : shape.hashCode());
+	return result;
+    }
+
+    public void invertDirection() {
+	this.direction = this.direction == Direction.FORWARD ? Direction.REVERSE
+		: Direction.FORWARD;
     }
 
     public void setDirection(Direction direction) {
 	this.direction = direction;
-    }
-
-    public void setEndingPoint(Point2D endingPoint) {
-	this.endingPoint = endingPoint;
     }
 
     public void setOrientation(Orientation orientation) {
@@ -127,7 +146,4 @@ public class DrawingObject {
 	this.shape = shape;
     }
 
-    public void setStartingPoint(Point2D startingPoint) {
-	this.startingPoint = startingPoint;
-    }
 }

@@ -1,7 +1,9 @@
 package textanalyzer.logic.algorithm;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Random;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -12,9 +14,7 @@ import java.util.TreeMap;
  * @author Istvánfi Zsolt
  */
 public class Chromosome {
-    public static final float CROSSOVER_RATE = 0.7f;
-    public static final float MUTATION_RATE = 0.001f;
-
+    private static final float CROSSOVER_RATE = 0.7f;
     private static final Random random = new Random();
 
     /**
@@ -50,7 +50,7 @@ public class Chromosome {
     }
 
     private TreeMap<Character, Gene> geneMap;
-    private int fitnessScore;
+    private double fitnessScore;
 
     /**
      * Létrehoz egy véletlenszerû kromoszómát a paraméterek alapján.
@@ -67,26 +67,25 @@ public class Chromosome {
 	this.geneMap = geneMap;
     }
 
-    public void calculateFitnessScore() {
-	fitnessScore = 0;
-    }
-
-    public int getFitnessScore() {
-	return fitnessScore;
+    /**
+     * A kromoszóma géntérképe (csak olvasható).
+     */
+    public Map<Character, Gene> geneMap() {
+	return Collections.unmodifiableMap(geneMap);
     }
 
     /**
-     * A kromoszóma mutálása, kicsi valószínûséggel.
+     * A kromoszómában szereplõ gének (csak olvasható).
      */
-    public void mutate() {
-	for (Gene gene : geneMap.values()) {
-	    if (random.nextFloat() <= MUTATION_RATE) {
-		gene.mutate();
-	    }
-	}
+    public Collection<Gene> genes() {
+	return Collections.unmodifiableCollection(geneMap.values());
     }
 
-    public void setFitnessScore(int score) {
+    public double getFitnessScore() {
+	return fitnessScore;
+    }
+
+    public void setFitnessScore(double score) {
 	fitnessScore = score;
     }
 }
