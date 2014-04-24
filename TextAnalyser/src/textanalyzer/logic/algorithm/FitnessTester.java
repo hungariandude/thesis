@@ -1,10 +1,12 @@
 package textanalyzer.logic.algorithm;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * A genetikus algoritmusban szereplõ fitnesz függvényt reprezentáló osztály.
@@ -15,6 +17,10 @@ public class FitnessTester {
 
     private String sourceText;
     private Map<Character, Integer> charCountMap = new HashMap<>();
+    private double averageCharCount;
+
+    private static final Logger LOGGER = Logger.getLogger(FitnessTester.class
+	    .getName());
 
     public FitnessTester(String sourceText) {
 	this.sourceText = sourceText;
@@ -47,24 +53,10 @@ public class FitnessTester {
 		charCountMap.put(currentChar, count);
 	    }
 	}
-    }
 
-    /**
-     * [-1;0]
-     */
-    private double scoreChromosomeUniqeness(Chromosome chrom) {
-	int count = 0;
-	HashSet<Gene> duplicationSearchSet = new HashSet<>();
-	for (Gene gene : chrom.genes()) {
-	    if (duplicationSearchSet.contains(gene)) {
-		count += 1;
-	    } else {
-		duplicationSearchSet.add(gene);
-	    }
-	}
+	averageCharCount = sourceText.length() / (double) charCountMap.size();
 
-	// negatív értéket adunk vissza
-	return -(count / (double) charCountMap.size());
+	LOGGER.info("Count of found characters: " + charCountMap.size());
     }
 
     /**
@@ -73,26 +65,70 @@ public class FitnessTester {
     public void scoreFitness(Chromosome chrom) {
 	double fitnessScore = 0.0;
 
-	for (Entry<Character, Gene> geneEntry : chrom.geneMap().entrySet()) {
+	Map<Character, Gene> geneMap = chrom.geneMap();
+	for (Entry<Character, Gene> geneEntry : geneMap.entrySet()) {
 	    fitnessScore += scoreGeneEntry(geneEntry);
 	}
-	fitnessScore += scoreChromosomeUniqeness(chrom);
+	fitnessScore = fitnessScore / geneMap.size();
 
+	// a karakterek egyediségének értékével szorozzuk a végeredményt
+	fitnessScore *= scoreGeneUniqeness(chrom.genes());
 	chrom.setFitnessScore(fitnessScore);
     }
 
+    /**
+     * (0;100]
+     */
     private double scoreGeneEntry(Entry<Character, Gene> geneEntry) {
 	Character ch = geneEntry.getKey();
 	Gene gene = geneEntry.getValue();
 
-	double lengthBaseScore = 2 / Math.pow(2, gene.length());
+	// 1. lépés: értékeljük a gén hosszát
+	double lengthScore = scoreGeneLength(ch, gene);
+	// 2. lépés: értékeljük a gén kapcsolatát a többi génnel
+
+	return lengthScore / 1.0;
+    }
+
+    /**
+     * (0;100]
+     */
+    private double scoreGeneLength(Character ch, Gene gene) {
+	double lengthBaseScore = 2.0 / Math.pow(2, gene.length()) * 100.0;
+
 	// minél többször fordul elõ a karakter a szövegben, annál elõnyösebb,
 	// ha rövidebb a génje
-	double relativeFrequencyBaseScore = charCountMap.get(ch)
-		/ (double) sourceText.length();
-	double lengthTotalScore = lengthBaseScore
-		/ (1 - relativeFrequencyBaseScore);
+	int count = charCountMap.get(ch);
+	double relativeFrequencyScore;
+	if (count >= averageCharCount) {
+	    relativeFrequencyScore = 1.0;
+	} else {
+	    relativeFrequencyScore = count / averageCharCount;
+	}
+	double lengthTotalScore = lengthBaseScore * relativeFrequencyScore;
 
-	return lengthBaseScore + lengthTotalScore;
+	return lengthTotalScore;
+    }
+
+    /**
+     * [0;1]
+     */
+    private double scoreGeneUniqeness(Collection<Gene> genes) {
+	if (genes.isEmpty()) {
+	    // üres halmaz elemei teljesen "egyediek"
+	    return 1.0;
+	}
+
+	int count = 0;
+	HashSet<Gene> duplicationSearchSet = new HashSet<>();
+	for (Gene gene : genes) {
+	    if (duplicationSearchSet.contains(gene)) {
+		count += 1;
+	    } else {
+		duplicationSearchSet.add(gene);
+	    }
+	}
+
+	return 1.0 - count / (double) charCountMap.size();
     }
 }

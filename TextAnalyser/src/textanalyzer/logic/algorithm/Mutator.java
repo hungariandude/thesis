@@ -82,13 +82,6 @@ public class Mutator {
 
 	switch (mutationType) {
 	case ADD:
-	    // Point2D startingPoint = index == 0 ? new Point() :
-	    // buildingElements.get(index -1).getEndingPoint();
-	    // DrawingObject object = new DrawingObject(startingPoint);
-	    // if(index != buildingElements.size() - 1)
-	    // {
-	    // buildingElements.get(index).sets
-	    // }
 	    DrawingObject object = new DrawingObject();
 	    buildingElements.add(index, object);
 	    break;

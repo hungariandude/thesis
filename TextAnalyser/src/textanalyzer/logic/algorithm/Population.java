@@ -9,7 +9,7 @@ import java.util.ArrayList;
  */
 public class Population extends ArrayList<Chromosome> {
 
-    private static final long serialVersionUID = 2547878875132494045L;
+    private static final long serialVersionUID = 5968120913954570795L;
 
     /**
      * Hányadik generáció.
@@ -25,4 +25,18 @@ public class Population extends ArrayList<Chromosome> {
 	return generationNumber;
     }
 
+    @Override
+    public String toString() {
+	StringBuilder sb = new StringBuilder();
+	sb.append(generationNumber).append(". generation; Size: ")
+		.append(size());
+	if (!isEmpty()) {
+	    sb.append("\nMembers:\n");
+	    for (Chromosome chrom : this) {
+		sb.append('\t').append(chrom.toString()).append("\n");
+	    }
+	}
+
+	return sb.toString();
+    }
 }

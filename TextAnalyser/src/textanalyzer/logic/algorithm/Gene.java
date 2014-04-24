@@ -11,7 +11,19 @@ import java.util.List;
  * @author Istvánfi Zsolt
  */
 public class Gene {
-    private List<DrawingObject> buildingElements;
+
+    private ArrayList<DrawingObject> buildingElements;
+
+    /**
+     * Copy constructor.
+     */
+    public Gene(Gene sample) {
+	this.buildingElements = new ArrayList<>(sample.buildingElements.size());
+
+	for (DrawingObject object : sample.buildingElements) {
+	    this.buildingElements.add(new DrawingObject(object));
+	}
+    }
 
     /**
      * Létrehoz egy paraméterben megkapott hosszúságú, véletlenszerû gént.
@@ -22,14 +34,6 @@ public class Gene {
 	for (int i = 0; i < length; ++i) {
 	    buildingElements.add(new DrawingObject());
 	}
-    }
-
-    public Gene(List<DrawingObject> buildingElements) {
-	if (buildingElements.isEmpty()) {
-	    throw new IllegalArgumentException("Parameter list is empty.");
-	}
-
-	this.buildingElements = buildingElements;
     }
 
     @Override
@@ -75,7 +79,21 @@ public class Gene {
 	return this.buildingElements.size();
     }
 
-    public void setBuildingElements(List<DrawingObject> buildingElements) {
+    public void setBuildingElements(ArrayList<DrawingObject> buildingElements) {
 	this.buildingElements = buildingElements;
+    }
+
+    @Override
+    public String toString() {
+	StringBuilder sb = new StringBuilder("[");
+	if (!buildingElements.isEmpty()) {
+	    for (DrawingObject object : buildingElements) {
+		sb.append(object.toString()).append(", ");
+	    }
+	    sb.delete(sb.length() - 2, sb.length());
+	}
+	sb.append("]");
+
+	return sb.toString();
     }
 }

@@ -2,10 +2,9 @@ package textanalyzer.logic.algorithm;
 
 import textanalyzer.logic.DrawingObject;
 
-import java.util.Iterator;
-import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * A genetikus algoritmus megvalósítása.
@@ -18,13 +17,15 @@ public class GeneticAlgorithm {
     private final int populationSize;
     private Mutator mutator = new Mutator();
     private FitnessTester fitnessTester;
-
     /**
      * Hányadik generációnál tart az evolúció.
      */
-    private int generationCounter;
+    private int generationCounter = 0;
 
     private final Random random = new Random();
+
+    private static final Logger LOGGER = Logger
+	    .getLogger(GeneticAlgorithm.class.getName());
 
     public GeneticAlgorithm(String sourceText, int populationSize) {
 	if (populationSize < 2 || populationSize % 2 != 0) {
@@ -38,6 +39,8 @@ public class GeneticAlgorithm {
 
 	generateRandomPopulation();
 	calculateFitnessScores();
+
+	LOGGER.info("Initial population:\n" + population.toString());
     }
 
     /**
@@ -52,7 +55,7 @@ public class GeneticAlgorithm {
     /**
      * Az evolúció egy lépése. Új populációt hoz létre.
      */
-    public List<Chromosome> evolvePopulation() {
+    public Population evolvePopulation() {
 	// új generáció születik
 	++generationCounter;
 	// az új generáció populációja
@@ -60,24 +63,26 @@ public class GeneticAlgorithm {
 		generationCounter);
 
 	for (int i = 0; i < populationSize; i += 2) {
-	    // 1. lépés: két kromószóma kiválasztás
+	    // 1. lépés: két szülõ kromószóma kiválasztása
 	    Chromosome parent1 = selectMember();
 	    Chromosome parent2 = selectMember();
 
-	    // 2. lépés: ezek keresztezése
-	    Chromosome.crossover(parent1, parent2);
+	    // 2. lépés: szülõk keresztezése
+	    Chromosome[] childs = parent1.crossOverWith(parent2);
+	    Chromosome child1 = childs[0];
+	    Chromosome child2 = childs[1];
 
-	    // 3. lépés: ezek mutálása
-	    mutator.mutate(parent1);
-	    mutator.mutate(parent2);
+	    // 3. lépés: gyerekek mutálása
+	    mutator.mutate(child1);
+	    mutator.mutate(child2);
 
-	    // 4. lépés: ezek fitnesz értékeinek újraszámítása
-	    fitnessTester.scoreFitness(parent1);
-	    fitnessTester.scoreFitness(parent2);
+	    // 4. lépés: gyerekek fitnesz értékeinek számítása
+	    fitnessTester.scoreFitness(child1);
+	    fitnessTester.scoreFitness(child2);
 
-	    // 5. lépés: ezek hozzádása az új populációhoz
-	    newPopulation.add(parent1);
-	    newPopulation.add(parent2);
+	    // 5. lépés: gyerekek hozzádása az új populációhoz
+	    newPopulation.add(child1);
+	    newPopulation.add(child2);
 	}
 
 	// frissítjük a populációnkat
@@ -113,6 +118,10 @@ public class GeneticAlgorithm {
      * jelent.
      */
     private Chromosome selectMember() {
+	//
+	// RULETTKERÉK ALGORITMUS
+	//
+
 	// 1. lépés: összegezzük a fitnesz értékeket
 	int totalFitness = 0;
 	for (Chromosome chrom : population) {
@@ -125,12 +134,10 @@ public class GeneticAlgorithm {
 	// 3. lépés: megkeressük, hogy melyik egyed fitnesz intervallumába
 	// találtunk bele
 	int totalFitnessSoFar = 0;
-	for (Iterator<Chromosome> it = population.iterator(); it.hasNext();) {
-	    Chromosome chrom = it.next();
+	for (Chromosome chrom : population) {
 	    totalFitnessSoFar += chrom.getFitnessScore();
 	    if (totalFitnessSoFar >= selectedPoint) {
 		// megtaláltuk
-		it.remove();
 		return chrom;
 	    }
 	}

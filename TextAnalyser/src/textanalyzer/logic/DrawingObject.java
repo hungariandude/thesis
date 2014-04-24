@@ -18,7 +18,7 @@ public class DrawingObject {
     }
 
     public enum Shape {
-	LINE, CURVE_RIGHT, CURVE_LEFT
+	LINE, SAG_CURVE, CREST_CURVE
     }
 
     /**
@@ -46,11 +46,13 @@ public class DrawingObject {
 		.randomValue(Direction.class));
     }
 
-    public DrawingObject(Shape shape, Orientation orientation,
-	    Direction direction) {
-	this.shape = shape;
-	this.orientation = orientation;
-	this.direction = direction;
+    /**
+     * Copy constructor.
+     */
+    public DrawingObject(DrawingObject sample) {
+	this.shape = sample.shape;
+	this.orientation = sample.orientation;
+	this.direction = sample.direction;
     }
 
     // private Point2D calculateEndingPoint(int length) {
@@ -80,6 +82,13 @@ public class DrawingObject {
     // return new Point2D.Double(startingPoint.getX() + dx,
     // startingPoint.getY() + dy);
     // }
+
+    public DrawingObject(Shape shape, Orientation orientation,
+	    Direction direction) {
+	this.shape = shape;
+	this.orientation = orientation;
+	this.direction = direction;
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -146,4 +155,15 @@ public class DrawingObject {
 	this.shape = shape;
     }
 
+    @Override
+    public String toString() {
+	StringBuilder sb = new StringBuilder();
+	sb.append(direction);
+	sb.append(' ');
+	sb.append(orientation);
+	sb.append(' ');
+	sb.append(shape);
+
+	return sb.toString();
+    }
 }
