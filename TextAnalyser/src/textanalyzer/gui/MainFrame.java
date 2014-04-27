@@ -111,8 +111,8 @@ public class MainFrame extends JFrame {
 	fileChooser = new JFileChooser();
 	fileChooser.setMultiSelectionEnabled(true);
 
-	JButton openButton = new JButton(new ImageIcon(ResourceLoader
-		.getInstance().loadImageFromResource("open_icon.png")));
+	JButton openButton = new JButton(new ImageIcon(
+		ResourceLoader.loadImageFromResource("open_icon.png")));
 	openButton.setToolTipText("Szöveges fájl(ok) megnyitása");
 	openButton.addActionListener(new ActionListener() {
 	    @Override

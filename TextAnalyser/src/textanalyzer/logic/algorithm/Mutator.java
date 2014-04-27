@@ -3,9 +3,11 @@ package textanalyzer.logic.algorithm;
 import textanalyzer.logic.DrawingObject;
 import textanalyzer.logic.DrawingObject.Orientation;
 import textanalyzer.logic.DrawingObject.Shape;
-import textanalyzer.util.EnumUtils;
+import textanalyzer.util.RandomUtils;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -34,20 +36,29 @@ public class Mutator {
 	/**
 	 * Egy objektum orientációjának megváltoztatása.
 	 */
-	ROTATE
+	ROTATE;
     }
 
-    private static final float DEFAULT_MUATION_RATE = 0.001f;
+    private static final float DEFAULT_MUATION_RATE = 0.01f;
+
+    private final Map<MutationType, Double> mutationWeightMap;
 
     private float mutationRate;
     private final Random random = new Random();
 
     public Mutator() {
-	mutationRate = DEFAULT_MUATION_RATE;
+	this(DEFAULT_MUATION_RATE);
     }
 
     public Mutator(float mutationRate) {
 	this.mutationRate = mutationRate;
+
+	this.mutationWeightMap = new HashMap<>();
+	this.mutationWeightMap.put(MutationType.ADD, 10.0);
+	this.mutationWeightMap.put(MutationType.REMOVE, 10.0);
+	this.mutationWeightMap.put(MutationType.INVERT, 1.0);
+	this.mutationWeightMap.put(MutationType.TRANSSHAPE, 5.0);
+	this.mutationWeightMap.put(MutationType.ROTATE, 5.0);
     }
 
     /**
@@ -74,9 +85,9 @@ public class Mutator {
 
 	// a mutáció típusa
 	// egy elemet tartalmazó génbõl nem törlünk
-	MutationType mutationType = buildingElements.size() == 1 ? EnumUtils
-		.randomValue(MutationType.class, MutationType.REMOVE)
-		: EnumUtils.randomValue(MutationType.class);
+	MutationType mutationType = buildingElements.size() == 1 ? RandomUtils
+		.randomValue(mutationWeightMap, MutationType.REMOVE)
+		: RandomUtils.randomValue(mutationWeightMap);
 	// melyik pozíción
 	int index = random.nextInt(buildingElements.size());
 
@@ -93,12 +104,12 @@ public class Mutator {
 	    break;
 	case ROTATE:
 	    object = buildingElements.get(index);
-	    object.setOrientation(EnumUtils.randomValue(Orientation.class,
+	    object.setOrientation(RandomUtils.randomValue(Orientation.values(),
 		    object.getOrientation()));
 	    break;
 	case TRANSSHAPE:
 	    object = buildingElements.get(index);
-	    object.setShape(EnumUtils.randomValue(Shape.class,
+	    object.setShape(RandomUtils.randomValue(Shape.values(),
 		    object.getShape()));
 	    break;
 	}

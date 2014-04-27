@@ -2,6 +2,7 @@ package textanalyzer.logic.algorithm;
 
 import textanalyzer.logic.DrawingObject;
 
+import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -40,7 +41,7 @@ public class GeneticAlgorithm {
 	generateRandomPopulation();
 	calculateFitnessScores();
 
-	LOGGER.info("Initial population:\n" + population.toString());
+	// LOGGER.info("Initial population:\n" + population.toString());
     }
 
     /**
@@ -59,13 +60,13 @@ public class GeneticAlgorithm {
 	// új generáció születik
 	++generationCounter;
 	// az új generáció populációja
-	Population newPopulation = new Population(populationSize,
+	Population newGeneration = new Population(populationSize,
 		generationCounter);
 
 	for (int i = 0; i < populationSize; i += 2) {
 	    // 1. lépés: két szülõ kromószóma kiválasztása
-	    Chromosome parent1 = selectMember();
-	    Chromosome parent2 = selectMember();
+	    Chromosome parent1 = selectMember(true);
+	    Chromosome parent2 = selectMember(true);
 
 	    // 2. lépés: szülõk keresztezése
 	    Chromosome[] childs = parent1.crossOverWith(parent2);
@@ -81,14 +82,16 @@ public class GeneticAlgorithm {
 	    fitnessTester.scoreFitness(child2);
 
 	    // 5. lépés: gyerekek hozzádása az új populációhoz
-	    newPopulation.add(child1);
-	    newPopulation.add(child2);
+	    newGeneration.add(child1);
+	    newGeneration.add(child2);
 	}
 
 	// frissítjük a populációnkat
-	population = newPopulation;
+	// itt az eredeti populáció már üres, mert az elõzõ generáció már
+	// "elpusztult"
+	population = newGeneration;
 
-	return newPopulation;
+	return newGeneration;
     }
 
     /**
@@ -116,28 +119,35 @@ public class GeneticAlgorithm {
     /**
      * Szelekció. Nagyobb fitnesz érték nagyobb kiválasztási valószínûséget
      * jelent.
+     * 
+     * @param remove
+     *            A kromoszóma törlése a kiválasztás után.
      */
-    private Chromosome selectMember() {
+    private Chromosome selectMember(boolean remove) {
 	//
 	// RULETTKERÉK ALGORITMUS
 	//
 
 	// 1. lépés: összegezzük a fitnesz értékeket
-	int totalFitness = 0;
+	double totalFitness = 0;
 	for (Chromosome chrom : population) {
 	    totalFitness += chrom.getFitnessScore();
 	}
 
 	// 2. lépés: kiválasztunk egy pontot a skálán
-	float selectedPoint = totalFitness * random.nextFloat();
+	double selectedPoint = totalFitness * random.nextDouble();
 
 	// 3. lépés: megkeressük, hogy melyik egyed fitnesz intervallumába
 	// találtunk bele
-	int totalFitnessSoFar = 0;
-	for (Chromosome chrom : population) {
+	double totalFitnessSoFar = 0;
+	for (Iterator<Chromosome> it = population.iterator(); it.hasNext();) {
+	    Chromosome chrom = it.next();
 	    totalFitnessSoFar += chrom.getFitnessScore();
 	    if (totalFitnessSoFar >= selectedPoint) {
 		// megtaláltuk
+		if (remove) {
+		    it.remove();
+		}
 		return chrom;
 	    }
 	}

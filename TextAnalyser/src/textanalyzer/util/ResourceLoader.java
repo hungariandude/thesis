@@ -7,45 +7,19 @@ import java.util.Scanner;
 import javax.imageio.ImageIO;
 
 /**
- * A resource-ok betöltését segítõ singleton osztály.
+ * A resource-ok betöltését segítõ statikus osztály.
  * 
  * @author Istvánfi Zsolt
  */
 public class ResourceLoader {
 
-    private static final String DEFAULT_RESOURCES_LOCATION = "textanalyzer/resources/";
+    private static final String RESOURCES_LOCATION = "textanalyzer/resources/";
 
-    private static ResourceLoader instance;
-
-    private static String resourcesLocation;
-
-    public static ResourceLoader getInstance() {
-	if (instance == null) {
-	    instance = new ResourceLoader();
-	}
-	resourcesLocation = DEFAULT_RESOURCES_LOCATION;
-
-	return instance;
-    }
-
-    public static ResourceLoader getInstance(String resourcesRootLocation) {
-	if (instance == null) {
-	    instance = new ResourceLoader();
-	}
-	resourcesLocation = resourcesRootLocation;
-
-	return instance;
-    }
-
-    private ResourceLoader() {
-	// singleton
-    }
-
-    public BufferedImage loadImageFromResource(String imageName) {
+    public static BufferedImage loadImageFromResource(String imageName) {
 	BufferedImage image = null;
 	try {
 	    image = ImageIO.read(ClassLoader
-		    .getSystemResourceAsStream(resourcesLocation + imageName));
+		    .getSystemResourceAsStream(RESOURCES_LOCATION + imageName));
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}
@@ -53,10 +27,11 @@ public class ResourceLoader {
 	return image;
     }
 
-    public String loadStringFromResource(String textFileName, String encoding) {
+    public static String loadStringFromResource(String textFileName,
+	    String encoding) {
 	String str = null;
 	try (InputStream is = ClassLoader
-		.getSystemResourceAsStream(resourcesLocation + textFileName)) {
+		.getSystemResourceAsStream(RESOURCES_LOCATION + textFileName)) {
 	    try (Scanner sc = new Scanner(is, encoding)) {
 		sc.useDelimiter("\\A");
 		str = sc.hasNext() ? sc.next() : "";
@@ -66,5 +41,9 @@ public class ResourceLoader {
 	}
 
 	return str;
+    }
+
+    private ResourceLoader() {
+	// singleton
     }
 }

@@ -73,8 +73,11 @@ public class Chromosome {
 	}
 
 	// elvégezzük a keresztezést
-	int swappingIndex = random.nextInt(this.geneMap.size());
-	int index = 0;
+	// Választunk egy pontot, amin kettéosztjuk a génállományt (a ponton
+	// lévõ elem a második részhez tartozik). A pont nem lehet a legelsõ
+	// elem, mert akkor csak szimpla génállománycsere történne az utódokban.
+	int swappingIndex = random.nextInt(this.geneMap.size() - 1) + 1;
+	int index = 1;
 	Character charAtIndex = null;
 	for (Iterator<Character> it = this.geneMap.navigableKeySet().iterator(); index <= swappingIndex
 		&& it.hasNext();) {

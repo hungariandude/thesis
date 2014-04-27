@@ -1,6 +1,6 @@
 package textanalyzer.logic;
 
-import textanalyzer.util.EnumUtils;
+import textanalyzer.util.RandomUtils;
 
 /**
  * Egy kirajzolható alakzat. Van alakja, orientációja, iránya.
@@ -14,11 +14,11 @@ public class DrawingObject {
     }
 
     public enum Orientation {
-	VERTICAL, HORIZONTAL, OBLIQUE_RIGHT, OBLIQUE_LEFT
+	VERTICAL, HORIZONTAL, OBLIQUE_RIGHT, OBLIQUE_LEFT;
     }
 
     public enum Shape {
-	LINE, SAG_CURVE, CREST_CURVE
+	LINE, SAG_CURVE, CREST_CURVE;
     }
 
     /**
@@ -41,9 +41,9 @@ public class DrawingObject {
      * meg.
      */
     public DrawingObject() {
-	this(EnumUtils.randomValue(Shape.class), EnumUtils
-		.randomValue(Orientation.class), EnumUtils
-		.randomValue(Direction.class));
+	this(RandomUtils.randomValue(Shape.values()), RandomUtils
+		.randomValue(Orientation.values()), RandomUtils
+		.randomValue(Direction.values()));
     }
 
     /**
