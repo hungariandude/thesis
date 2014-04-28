@@ -1,5 +1,6 @@
 package textanalyzer.gui;
 
+import textanalyzer.logic.Engine;
 import textanalyzer.util.ResourceLoader;
 
 import java.awt.BorderLayout;
@@ -9,6 +10,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.io.File;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
@@ -31,9 +33,9 @@ public class MainFrame extends JFrame {
 
     private static final long serialVersionUID = -9021902498585692548L;
 
-    private ContentPanel mainPanel;
-    private StatusBar statusBar;
-    private JFileChooser fileChooser;
+    private final ContentPanel contentPanel;
+    private final StatusBar statusBar;
+    private final JFileChooser fileChooser;
 
     public MainFrame() throws HeadlessException {
 	super("Szövegelemzõ");
@@ -45,21 +47,29 @@ public class MainFrame extends JFrame {
 	final int windowWidth = (int) (screenDim.width * 0.75f);
 	final int windowHeight = (int) (screenDim.height * 0.75f);
 	setSize(windowWidth, windowHeight);
-	setMinimumSize(new Dimension(400, 300));
+	setMinimumSize(new Dimension(440, 300));
 
 	// int posX = screenDim.width / 2 - windowWidth / 2;
 	// int posY = screenDim.height / 2 - windowHeight / 2;
 	// setLocation(posX, posY);
 	setLocationRelativeTo(null);
 
+	fileChooser = new JFileChooser();
+	fileChooser.setMultiSelectionEnabled(true);
+
 	setJMenuBar(createMenuBar());
 
 	add(createToolBar(), BorderLayout.NORTH);
-	mainPanel = new ContentPanel();
-	add(mainPanel, BorderLayout.CENTER);
+	contentPanel = new ContentPanel();
+	add(contentPanel, BorderLayout.CENTER);
 	statusBar = new StatusBar(20);
 	statusBar.setText("Kész.");
 	add(statusBar, BorderLayout.SOUTH);
+    }
+
+    public void addFiles(File[] files) {
+	Engine.addFiles(files);
+	contentPanel.setFileNames(Engine.getFileNames());
     }
 
     /**
@@ -72,6 +82,14 @@ public class MainFrame extends JFrame {
 
 	JMenu fileMenu = new JMenu("Fájl");
 	menuBar.add(fileMenu);
+	fileMenu.add(new JMenuItem(new AbstractAction("Beállítások") {
+	    private static final long serialVersionUID = -2355160966436405427L;
+
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		new SettingsDialog().show();
+	    }
+	}));
 	fileMenu.add(new JMenuItem(new AbstractAction("Kilépés") {
 	    private static final long serialVersionUID = -2355160966436405427L;
 
@@ -108,9 +126,6 @@ public class MainFrame extends JFrame {
 	toolBar.setFloatable(false);
 	toolBar.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
 
-	fileChooser = new JFileChooser();
-	fileChooser.setMultiSelectionEnabled(true);
-
 	JButton openButton = new JButton(new ImageIcon(
 		ResourceLoader.loadImageFromResource("open_icon.png")));
 	openButton.setToolTipText("Szöveges fájl(ok) megnyitása");
@@ -119,7 +134,7 @@ public class MainFrame extends JFrame {
 	    public void actionPerformed(ActionEvent e) {
 		int returnInt = fileChooser.showOpenDialog(rootPane);
 		if (returnInt == JFileChooser.APPROVE_OPTION) {
-		    mainPanel.addFiles(fileChooser.getSelectedFiles());
+		    addFiles(fileChooser.getSelectedFiles());
 		}
 	    }
 	});

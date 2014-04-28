@@ -34,7 +34,7 @@ public class DrawingObject {
     /**
      * Alapértelmezett hossz (görbék esetén a két végpont között, légvonalban)
      */
-    public static final int DEFAULT_LENGTH = 1;
+    // public static final int DEFAULT_LENGTH = 1;
 
     /**
      * Az objektum alakját, orientációját és irányát véletlenszerûen határozza

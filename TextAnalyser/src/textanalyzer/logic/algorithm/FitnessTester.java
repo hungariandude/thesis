@@ -1,7 +1,10 @@
 package textanalyzer.logic.algorithm;
 
 import textanalyzer.logic.DrawingObject;
+import textanalyzer.logic.DrawingObject.Direction;
+import textanalyzer.logic.DrawingObject.Orientation;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -22,6 +25,9 @@ public class FitnessTester {
     private String sourceText;
     private Map<Character, Integer> charCountMap = new HashMap<>();
     private Map<Character, Integer> recommendedLengthMap = new HashMap<>();
+
+    private static final Point2D DEFAULT_DRAWING_AREA_SIZE = new Point2D.Double(
+	    4.0, 3.0);
 
     private static final Logger LOGGER = Logger.getLogger(FitnessTester.class
 	    .getName());
@@ -90,20 +96,89 @@ public class FitnessTester {
 	}
     }
 
-    /**
-     * ]0;100]
-     */
-    private double scoreConnections(Character ch, Gene gene) {
-	// TODO Auto-generated method stub
-	return 100;
+    private Point2D measureDrawingObjectSize(DrawingObject object) {
+	double dx, dy;
+
+	if (object.getOrientation() == Orientation.OBLIQUE_RIGHT
+		|| object.getOrientation() == Orientation.OBLIQUE_LEFT) {
+	    dx = dy = Math.sin(Math.toRadians(45));
+	    if (object.getOrientation() == Orientation.OBLIQUE_LEFT) {
+		// ebben az esetben a dx negatív
+		dx *= -1;
+	    }
+	} else {
+	    if (object.getOrientation() == Orientation.HORIZONTAL) {
+		dx = 0;
+		dy = 1;
+	    } else {
+		dx = 1;
+		dy = 0;
+	    }
+	}
+	if (object.getDirection() == Direction.REVERSE) {
+	    dx *= -1;
+	    dy *= -1;
+	}
+
+	return new Point2D.Double(dx, dy);
+    }
+
+    private Point2D measureGeneDrawingSize(Gene gene) {
+	double dx = 0.0, dy = 0.0;
+
+	for (DrawingObject object : gene.getBuildingElements()) {
+	    Point2D size = measureDrawingObjectSize(object);
+	    dx += size.getX();
+	    dy += size.getY();
+	}
+
+	return new Point2D.Double(dx, dy);
     }
 
     /**
-     * [0;100]
+     * @return ]0;100]
      */
-    private double scoreDrawingSize(Character ch, Gene gene) {
+    private double scoreConnections(Character ch, Gene gene) {
 	// TODO Auto-generated method stub
-	return 100;
+	return 100.0;
+    }
+
+    /**
+     * Értékeljük azt, hogy mennyire távolodik el a kiindulóponttól a
+     * kirajzolandó alakzat végpontja.
+     * 
+     * @return [0;100]
+     */
+    private double scoreDrawingSize(Gene gene) {
+	Point2D size = measureGeneDrawingSize(gene);
+
+	double absX = Math.abs(size.getX());
+	double absY = Math.abs(size.getY());
+
+	if (absX > DEFAULT_DRAWING_AREA_SIZE.getX()
+		|| absY > DEFAULT_DRAWING_AREA_SIZE.getY()) {
+	    // biztos, kifut a rajzolási területrõl
+	    return 0.0;
+	}
+
+	if (absX <= 1 && absY <= 1) {
+	    // 1 egységen belül végzõdik az objektum
+	    return 100.0;
+	}
+
+	double xScore = 50.0;
+	double yScore = 50.0;
+
+	// ha 1 egységnél távolabb végzõdik az objektum, akkor az értékelés a
+	// fordított relatív távolság lesz
+	if (absX > 1) {
+	    xScore *= 1 - (absX - 1) / (DEFAULT_DRAWING_AREA_SIZE.getX() - 1);
+	}
+	if (absY > 1) {
+	    yScore *= 1 - (absY - 1) / (DEFAULT_DRAWING_AREA_SIZE.getY() - 1);
+	}
+
+	return xScore + yScore;
     }
 
     /**
@@ -121,7 +196,7 @@ public class FitnessTester {
 	    // 1. lépés: értékeljük a gén hosszát
 	    double lengthScore = scoreGeneLength(ch, gene);
 	    // 2. lépés: értékeljük a gén méretét
-	    double sizeScore = scoreDrawingSize(ch, gene);
+	    double sizeScore = scoreDrawingSize(gene);
 	    // 3. lépés: értékeljük a gén kapcsolatát a többi génnel
 	    double connectionScore = scoreConnections(ch, gene);
 
@@ -139,7 +214,7 @@ public class FitnessTester {
     }
 
     /**
-     * ]0;100]
+     * @return ]0;100]
      */
     private double scoreGeneLength(Character ch, Gene gene) {
 	// mennyire tér el a gén hossza a neki ajánlott hosszúságtól
@@ -152,7 +227,7 @@ public class FitnessTester {
     }
 
     /**
-     * [0;1]
+     * @return [0;1]
      */
     private double scoreGeneUniqueness(Collection<Gene> genes) {
 	if (genes.isEmpty()) {

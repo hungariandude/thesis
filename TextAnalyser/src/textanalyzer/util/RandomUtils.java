@@ -13,7 +13,7 @@ import java.util.Random;
  * 
  * @author Istvánfi Zsolt
  */
-public class RandomUtils {
+public final class RandomUtils {
     private static final Random random = new Random();
 
     /**

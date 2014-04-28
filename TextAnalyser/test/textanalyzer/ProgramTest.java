@@ -1,12 +1,9 @@
 package textanalyzer;
 
-import org.junit.Test;
-
 public class ProgramTest {
 
-    @Test
-    public void test() {
-	Program.main(new String[] {});
+    public static void main(String[] args) {
+	Program.main(new String[] { "D:/alkotmany.txt" });
     }
 
 }

@@ -11,7 +11,7 @@ import javax.imageio.ImageIO;
  * 
  * @author Istvánfi Zsolt
  */
-public class ResourceLoader {
+public final class ResourceLoader {
 
     private static final String RESOURCES_LOCATION = "textanalyzer/resources/";
 

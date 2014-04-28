@@ -2,6 +2,9 @@ package textanalyzer;
 
 import textanalyzer.gui.MainFrame;
 
+import java.io.File;
+import java.util.ArrayList;
+
 /**
  * A program belépési pontja.
  * 
@@ -11,6 +14,20 @@ public class Program {
 
     public static void main(String[] args) {
 	MainFrame mainFrame = new MainFrame();
+	if (args.length > 0) {
+	    ArrayList<File> files = new ArrayList<>();
+	    for (String path : args) {
+		File file = new File(path);
+		if (file.exists() && !file.isDirectory()) {
+		    files.add(file);
+		} else {
+		    System.err
+			    .println("Nem található fájl ezen az elérési úton: "
+				    + path);
+		}
+	    }
+	    mainFrame.addFiles(files.toArray(new File[files.size()]));
+	}
 	mainFrame.setVisible(true);
     }
 

@@ -5,7 +5,6 @@ import textanalyzer.logic.DrawingObject;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
-import java.util.logging.Logger;
 
 /**
  * A genetikus algoritmus megvalósítása.
@@ -25,8 +24,8 @@ public class GeneticAlgorithm {
 
     private final Random random = new Random();
 
-    private static final Logger LOGGER = Logger
-	    .getLogger(GeneticAlgorithm.class.getName());
+    // private static final Logger LOGGER = Logger
+    // .getLogger(GeneticAlgorithm.class.getName());
 
     public GeneticAlgorithm(String sourceText, int populationSize) {
 	if (populationSize < 2 || populationSize % 2 != 0) {
