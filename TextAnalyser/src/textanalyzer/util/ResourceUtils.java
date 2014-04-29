@@ -2,6 +2,7 @@ package textanalyzer.util;
 
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Scanner;
 
 import javax.imageio.ImageIO;
@@ -11,9 +12,13 @@ import javax.imageio.ImageIO;
  * 
  * @author Istvánfi Zsolt
  */
-public final class ResourceLoader {
+public final class ResourceUtils {
 
     private static final String RESOURCES_LOCATION = "textanalyzer/resources/";
+
+    public static URL getResourceAsURL(String resourceName) {
+	return ClassLoader.getSystemResource(RESOURCES_LOCATION + resourceName);
+    }
 
     public static BufferedImage loadImageFromResource(String imageName) {
 	BufferedImage image = null;
@@ -43,7 +48,7 @@ public final class ResourceLoader {
 	return str;
     }
 
-    private ResourceLoader() {
+    private ResourceUtils() {
 	// singleton
     }
 }

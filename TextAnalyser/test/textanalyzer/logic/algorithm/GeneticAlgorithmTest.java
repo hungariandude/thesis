@@ -3,7 +3,7 @@ package textanalyzer.logic.algorithm;
 import org.junit.Before;
 import org.junit.Test;
 
-import textanalyzer.util.ResourceLoader;
+import textanalyzer.util.ResourceUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,7 +19,7 @@ public class GeneticAlgorithmTest {
 
     @Before
     public void init() {
-	text = ResourceLoader.loadStringFromResource("alkotmany.txt", "UTF-8");
+	text = ResourceUtils.loadStringFromResource("alkotmany.txt", "UTF-8");
 	LOGGER.info("Successfully read " + text.length() + " characters.");
 	ga = new GeneticAlgorithm(text, 32);
     }

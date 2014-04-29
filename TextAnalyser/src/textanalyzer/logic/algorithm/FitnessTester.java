@@ -139,7 +139,7 @@ public class FitnessTester {
      * @return ]0;100]
      */
     private double scoreConnections(Character ch, Gene gene) {
-	// TODO Auto-generated method stub
+	// TODO Not yet implemented
 	return 100.0;
     }
 

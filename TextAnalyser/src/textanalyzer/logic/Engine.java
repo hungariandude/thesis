@@ -18,7 +18,6 @@ import java.util.TreeSet;
  */
 public final class Engine {
     private static ArrayList<File> fileList = new ArrayList<>();
-    private static TreeSet<File> fileSet = new TreeSet<>();
 
     private static GeneticAlgorithm ga;
 
@@ -28,7 +27,8 @@ public final class Engine {
 
     public static final String DEFAULT_CHARSET = "UTF-8";
 
-    public static void addFiles(File[] files) {
+    public static synchronized void addFiles(File[] files) {
+	TreeSet<File> fileSet = new TreeSet<>(fileList);
 	fileSet.addAll(Arrays.asList(files));
 	fileList.clear();
 	fileList.addAll(fileSet);
@@ -73,6 +73,20 @@ public final class Engine {
 	    return;
 	}
 	paused = true;
+    }
+
+    public static synchronized void removeFilesAtIndices(int[] indices) {
+	int[] reverse = indices.clone();
+	Arrays.sort(reverse);
+	for (int i = 0; i < reverse.length / 2; i++) {
+	    int temp = reverse[i];
+	    int latterIndex = reverse.length - i - 1;
+	    reverse[i] = reverse[latterIndex];
+	    reverse[latterIndex] = temp;
+	}
+	for (int index : reverse) {
+	    fileList.remove(index);
+	}
     }
 
     public static void resumeAlgorithm() {

@@ -1,7 +1,7 @@
 package textanalyzer.gui;
 
 import textanalyzer.logic.Engine;
-import textanalyzer.util.ResourceLoader;
+import textanalyzer.util.ResourceUtils;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -37,6 +37,9 @@ public class MainFrame extends JFrame {
     private final StatusBar statusBar;
     private final JFileChooser fileChooser;
 
+    private JButton openButton, resetButton, startButton, pauseButton,
+	    stopButton, fullStopButton;
+
     public MainFrame() throws HeadlessException {
 	super("Szövegelemzõ");
 
@@ -60,7 +63,7 @@ public class MainFrame extends JFrame {
 	setJMenuBar(createMenuBar());
 
 	add(createToolBar(), BorderLayout.NORTH);
-	contentPanel = new ContentPanel();
+	contentPanel = new ContentPanel(this);
 	add(contentPanel, BorderLayout.CENTER);
 	statusBar = new StatusBar(20);
 	statusBar.setText("Kész.");
@@ -70,6 +73,7 @@ public class MainFrame extends JFrame {
     public void addFiles(File[] files) {
 	Engine.addFiles(files);
 	contentPanel.setFileNames(Engine.getFileNames());
+	resetButton.setEnabled(true);
     }
 
     /**
@@ -126,9 +130,40 @@ public class MainFrame extends JFrame {
 	toolBar.setFloatable(false);
 	toolBar.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
 
-	JButton openButton = new JButton(new ImageIcon(
-		ResourceLoader.loadImageFromResource("open_icon.png")));
+	openButton = new JButton(new ImageIcon(
+		ResourceUtils.loadImageFromResource("open.png")));
 	openButton.setToolTipText("Szöveges fájl(ok) megnyitása");
+
+	resetButton = new JButton(new ImageIcon(
+		ResourceUtils.loadImageFromResource("population.png")));
+	resetButton.setToolTipText("Új populáció generálása");
+	resetButton.setEnabled(false);
+
+	// okButton = new JButton(new ImageIcon(
+	// ResourceLoader.loadImageFromResource("ok.png")));
+	// okButton.setToolTipText("A fájlkiválasztás befejezése");
+	// okButton.setEnabled(false);
+
+	startButton = new JButton(new ImageIcon(
+		ResourceUtils.loadImageFromResource("start.png")));
+	startButton.setToolTipText("Indítás/folytatás");
+	startButton.setEnabled(false);
+
+	pauseButton = new JButton(new ImageIcon(
+		ResourceUtils.loadImageFromResource("pause.png")));
+	pauseButton.setToolTipText("Szünet");
+	pauseButton.setEnabled(false);
+
+	stopButton = new JButton(new ImageIcon(
+		ResourceUtils.loadImageFromResource("stop.png")));
+	stopButton.setToolTipText("Leállítás");
+	stopButton.setEnabled(false);
+
+	fullStopButton = new JButton(new ImageIcon(
+		ResourceUtils.loadImageFromResource("stop_cross.png")));
+	fullStopButton.setToolTipText("Az algoritmus befejezése");
+	fullStopButton.setEnabled(false);
+
 	openButton.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
@@ -138,9 +173,81 @@ public class MainFrame extends JFrame {
 		}
 	    }
 	});
+	// okButton.addActionListener(new ActionListener() {
+	// @Override
+	// public void actionPerformed(ActionEvent e) {
+	// okButton.setEnabled(false);
+	// openButton.setEnabled(false);
+	// }
+	// });
+	resetButton.addActionListener(new ActionListener() {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		openButton.setEnabled(false);
+		resetButton.setEnabled(false);
+
+		startButton.setEnabled(true);
+		fullStopButton.setEnabled(true);
+
+		contentPanel.getFileNamesList().setEnabled(false);
+	    }
+	});
+	startButton.addActionListener(new ActionListener() {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		openButton.setEnabled(false);
+		resetButton.setEnabled(false);
+
+		startButton.setEnabled(false);
+		pauseButton.setEnabled(true);
+		stopButton.setEnabled(true);
+	    }
+	});
+	pauseButton.addActionListener(new ActionListener() {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		startButton.setEnabled(true);
+		pauseButton.setEnabled(false);
+	    }
+	});
+	stopButton.addActionListener(new ActionListener() {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		stopButton.setEnabled(false);
+		pauseButton.setEnabled(false);
+		startButton.setEnabled(true);
+	    }
+	});
+	fullStopButton.addActionListener(new ActionListener() {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		fullStopButton.setEnabled(false);
+
+		startButton.setEnabled(false);
+		pauseButton.setEnabled(false);
+		stopButton.setEnabled(false);
+
+		openButton.setEnabled(true);
+		resetButton.setEnabled(true);
+
+		contentPanel.getFileNamesList().setEnabled(true);
+	    }
+	});
 
 	toolBar.add(openButton);
+	toolBar.add(resetButton);
+	toolBar.add(startButton);
+	toolBar.add(pauseButton);
+	toolBar.add(stopButton);
+	toolBar.add(fullStopButton);
 
 	return toolBar;
+    }
+
+    public void removeFilesAtIndices(int[] indices) {
+	Engine.removeFilesAtIndices(indices);
+	if (Engine.fileList().isEmpty()) {
+	    resetButton.setEnabled(false);
+	}
     }
 }

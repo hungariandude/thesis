@@ -4,6 +4,8 @@ import textanalyzer.logic.Engine;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 
@@ -13,6 +15,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.ListSelectionModel;
 
 /**
  * A tartalmat megjelenítõ panel.
@@ -23,11 +26,14 @@ public class ContentPanel extends JPanel {
 
     private static final long serialVersionUID = -4149327819915066560L;
 
-    private DefaultListModel<String> fileNamesModel = new DefaultListModel<>();
-    private final GAPanel characterPanel = new GAPanel();
+    private final MainFrame mainFrame;
 
-    public ContentPanel() {
-	super();
+    private final GAPanel gaPanel = new GAPanel();
+    private DefaultListModel<String> fileNamesModel = new DefaultListModel<>();
+    private final JList<String> fileNamesList = new JList<>(fileNamesModel);
+
+    public ContentPanel(MainFrame mainFrame) {
+	this.mainFrame = mainFrame;
 
 	setLayout(new BorderLayout());
 
@@ -44,19 +50,32 @@ public class ContentPanel extends JPanel {
 	JPanel fileNamesPanel = new JPanel();
 	fileNamesPanel.setLayout(new BorderLayout(0, 5));
 
-	fileNamesPanel.add(new JLabel("Kiválasztott fájlok:"),
-		BorderLayout.NORTH);
+	fileNamesPanel
+		.add(new JLabel("Megnyitott fájlok:"), BorderLayout.NORTH);
 
-	final JList<String> fileNamesList = new JList<>(fileNamesModel);
-	fileNamesList.setEnabled(false);
+	fileNamesList
+		.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 	fileNamesList.addMouseMotionListener(new MouseMotionAdapter() {
 	    @Override
 	    public void mouseMoved(MouseEvent e) {
 		int index = fileNamesList.locationToIndex(e.getPoint());
 		if (index > -1) {
-
 		    fileNamesList.setToolTipText(Engine.fileList().get(index)
 			    .getPath());
+		}
+	    }
+	});
+	fileNamesList.addKeyListener(new KeyAdapter() {
+	    @Override
+	    public void keyPressed(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+		    int[] indices = fileNamesList.getSelectedIndices();
+		    if (indices.length > 0) {
+			for (int index : indices) {
+			    fileNamesModel.remove(index);
+			}
+			mainFrame.removeFilesAtIndices(indices);
+		    }
 		}
 	    }
 	});
@@ -77,12 +96,16 @@ public class ContentPanel extends JPanel {
 	textPanel.add(new JLabel("A genetikus algoritmus állapota:"),
 		BorderLayout.NORTH);
 
-	characterPanel.setMinimumSize(new Dimension(200, characterPanel
-		.getMinimumSize().height));
-	JScrollPane scrollPane = new JScrollPane(characterPanel);
+	gaPanel.setMinimumSize(new Dimension(200,
+		gaPanel.getMinimumSize().height));
+	JScrollPane scrollPane = new JScrollPane(gaPanel);
 	textPanel.add(scrollPane, BorderLayout.CENTER);
 
 	return textPanel;
+    }
+
+    public JList<String> getFileNamesList() {
+	return fileNamesList;
     }
 
     public void setFileNames(String[] fileNames) {

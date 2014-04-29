@@ -14,6 +14,9 @@ public class Program {
 
     public static void main(String[] args) {
 	MainFrame mainFrame = new MainFrame();
+
+	// ha vannak megadva parancssori argumentumok, akkor azokat fájlelérési
+	// utakként próbálja értelmezni az alkalmazás
 	if (args.length > 0) {
 	    ArrayList<File> files = new ArrayList<>();
 	    for (String path : args) {
@@ -28,6 +31,7 @@ public class Program {
 	    }
 	    mainFrame.addFiles(files.toArray(new File[files.size()]));
 	}
+
 	mainFrame.setVisible(true);
     }
 
