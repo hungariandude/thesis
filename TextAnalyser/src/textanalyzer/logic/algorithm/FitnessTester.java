@@ -3,12 +3,15 @@ package textanalyzer.logic.algorithm;
 import textanalyzer.logic.DrawingObject;
 import textanalyzer.logic.DrawingObject.Direction;
 import textanalyzer.logic.DrawingObject.Orientation;
+import textanalyzer.util.MutableInteger;
+import textanalyzer.util.Pair;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -22,8 +25,27 @@ import java.util.logging.Logger;
  */
 public class FitnessTester {
 
+    /**
+     * A forrás szöveg.
+     */
     private String sourceText;
-    private Map<Character, Integer> charCountMap = new HashMap<>();
+    /**
+     * Az egyes karakterek száma a szövegben.
+     */
+    private Map<Character, MutableInteger> charCountMap = new HashMap<>();
+    /**
+     * Az egyes karakterek bal- és jobbszomszédainak elõfordulási számát követi.
+     */
+    private Map<Character, Pair<Map<Character, MutableInteger>, Map<Character, MutableInteger>>> charNeighborCountMap = new HashMap<>();
+    /**
+     * Az egyes karakterekhez tartozó bal- és jobbszomszédok, amelyeknek az
+     * elõfordulási száma a maximummal egyenlõ.
+     */
+    private Map<Character, Pair<Entry<Integer, List<Character>>, Entry<Integer, List<Character>>>> maxCountNeighborMap = new HashMap<>();
+    /**
+     * Az egyes karakterekhez rendelt kirajzolható objektumok ajánlott
+     * elemszáma.
+     */
     private Map<Character, Integer> recommendedLengthMap = new HashMap<>();
 
     private static final Point2D DEFAULT_DRAWING_AREA_SIZE = new Point2D.Double(
@@ -49,40 +71,62 @@ public class FitnessTester {
      */
     private void countCharOccurrences() {
 	// 1. lépés: megszámoljuk a karaktereket
-	for (int beginIndex = 0; beginIndex < sourceText.length(); ++beginIndex) {
-	    char currentChar = sourceText.charAt(beginIndex);
-	    Integer value = charCountMap.get(currentChar);
+	for (int index = 0; index < sourceText.length(); ++index) {
+	    char currentChar = sourceText.charAt(index);
+
+	    MutableInteger value = charCountMap.get(currentChar);
 	    if (value == null) {
-		// még nem számoltuk meg az elõfordulásait, tehát most ezt
-		// elvégezzük
-		int count = 1;
-		for (int i = beginIndex + 1; i < sourceText.length(); ++i) {
-		    if (sourceText.charAt(i) == currentChar) {
-			++count;
-		    }
+		charCountMap.put(currentChar, value = new MutableInteger());
+	    }
+	    value.add(1);
+
+	    Pair<Map<Character, MutableInteger>, Map<Character, MutableInteger>> pairValue = charNeighborCountMap
+		    .get(currentChar);
+	    Map<Character, MutableInteger> left, right;
+	    if (pairValue == null) {
+		charNeighborCountMap.put(currentChar, pairValue = new Pair<>(
+			left = new HashMap<>(), right = new HashMap<>()));
+	    } else {
+		if (pairValue.getLeft() == null) {
+		    left = new HashMap<>();
+		} else {
+		    left = pairValue.getLeft();
 		}
-		charCountMap.put(currentChar, count);
+		if (pairValue.getRight() == null) {
+		    right = new HashMap<>();
+		} else {
+		    right = pairValue.getRight();
+		}
+
+		if (index > 1) {
+		    char previousChar = sourceText.charAt(index - 1);
+		    value = left.get(previousChar);
+		    if (value == null) {
+			left.put(previousChar, value = new MutableInteger());
+		    }
+		    value.add(1);
+		}
+		if (index < sourceText.length() - 1) {
+		    char nextChar = sourceText.charAt(index + 1);
+		    value = right.get(nextChar);
+		    if (value == null) {
+			right.put(nextChar, value = new MutableInteger());
+		    }
+		    value.add(1);
+		}
 	    }
 	}
+
 	LOGGER.info("Count of found characters: " + charCountMap.size());
 
 	// 2. lépés: meghatározzuk az ajánlott génhosszakat az egyes
 	// karakterekhez
-	TreeMap<Integer, ArrayList<Character>> orderedMap = new TreeMap<>();
-	for (Entry<Character, Integer> entry : charCountMap.entrySet()) {
-	    Character ch = entry.getKey();
-	    Integer count = entry.getValue();
-	    ArrayList<Character> value = orderedMap.get(count);
-	    if (value == null) {
-		orderedMap.put(count, value = new ArrayList<>());
-	    }
-	    value.add(ch);
-	}
+	TreeMap<Integer, List<Character>> orderedMap = sortMutableIntegerValueMap(charCountMap);
 
 	int occupiedSlotsSoFar = 0;
 	int differentObjects = DrawingObject.NUMBER_OF_OBJECT_DRAWING_WAYS;
 	int actualGeneLength = 1;
-	for (ArrayList<Character> list : orderedMap.values()) {
+	for (List<Character> list : orderedMap.values()) {
 	    if (differentObjects <= occupiedSlotsSoFar) {
 		differentObjects += (int) Math.pow(
 			DrawingObject.NUMBER_OF_OBJECT_DRAWING_WAYS,
@@ -93,6 +137,21 @@ public class FitnessTester {
 	    for (Character ch : list) {
 		recommendedLengthMap.put(ch, actualGeneLength);
 	    }
+	}
+
+	// 3. lépés: megkeressük a legnagyobb elõfordulási számú bal- és
+	// jobbszomszédokat az egyes karakterekhez
+	for (Entry<Character, Pair<Map<Character, MutableInteger>, Map<Character, MutableInteger>>> entry : charNeighborCountMap
+		.entrySet()) {
+	    Character key = entry.getKey();
+	    Pair<Map<Character, MutableInteger>, Map<Character, MutableInteger>> value = entry
+		    .getValue();
+	    TreeMap<Integer, List<Character>> leftTreeMap = sortMutableIntegerValueMap(value
+		    .getLeft());
+	    TreeMap<Integer, List<Character>> rightTreeMap = sortMutableIntegerValueMap(value
+		    .getRight());
+	    maxCountNeighborMap.put(key, new Pair<>(leftTreeMap.lastEntry(),
+		    rightTreeMap.lastEntry()));
 	}
     }
 
@@ -123,10 +182,10 @@ public class FitnessTester {
 	return new Point2D.Double(dx, dy);
     }
 
-    private Point2D measureGeneDrawingSize(Gene gene) {
+    private Point2D measureDrawingSize(List<DrawingObject> objects) {
 	double dx = 0.0, dy = 0.0;
 
-	for (DrawingObject object : gene.getBuildingElements()) {
+	for (DrawingObject object : objects) {
 	    Point2D size = measureDrawingObjectSize(object);
 	    dx += size.getX();
 	    dy += size.getY();
@@ -136,11 +195,53 @@ public class FitnessTester {
     }
 
     /**
-     * @return ]0;100]
+     * @return [0;100]
      */
-    private double scoreConnections(Character ch, Gene gene) {
-	// TODO Not yet implemented
-	return 100.0;
+    private double scoreConnections(Character key, Map<Character, Gene> map) {
+	Pair<Entry<Integer, List<Character>>, Entry<Integer, List<Character>>> entry = maxCountNeighborMap
+		.get(key);
+	List<DrawingObject> mainObjects = map.get(key).getBuildingElements();
+	List<Character> leftList = entry.getLeft() == null ? null : entry
+		.getLeft().getValue();
+	List<Character> rightList = entry.getRight() == null ? null : entry
+		.getRight().getValue();
+	double leftPoints = 0.0, rightPoints = 0.0;
+
+	if (leftList == null) {
+	    leftPoints = 50.0;
+	} else {
+	    int leftSize = leftList.size();
+	    if (leftSize > 0) {
+		for (Character ch : leftList) {
+		    ArrayList<DrawingObject> objects = new ArrayList<>(map.get(
+			    ch).getBuildingElements());
+		    objects.addAll(mainObjects);
+		    leftPoints += scoreDrawingSize(objects);
+		}
+		leftPoints = leftPoints / leftSize / 2;
+	    } else {
+		leftPoints = 50.0;
+	    }
+	}
+
+	if (rightList == null) {
+	    rightPoints = 50.0;
+	} else {
+	    int rightSize = rightList.size();
+	    if (rightSize > 0) {
+		for (Character ch : rightList) {
+		    ArrayList<DrawingObject> objects = new ArrayList<>(
+			    mainObjects);
+		    objects.addAll(map.get(ch).getBuildingElements());
+		    rightPoints += scoreDrawingSize(objects);
+		}
+		rightPoints = rightPoints / rightSize / 2;
+	    } else {
+		rightPoints = 50.0;
+	    }
+	}
+
+	return leftPoints + rightPoints;
     }
 
     /**
@@ -149,8 +250,8 @@ public class FitnessTester {
      * 
      * @return [0;100]
      */
-    private double scoreDrawingSize(Gene gene) {
-	Point2D size = measureGeneDrawingSize(gene);
+    private double scoreDrawingSize(List<DrawingObject> objects) {
+	Point2D size = measureDrawingSize(objects);
 
 	double absX = Math.abs(size.getX());
 	double absY = Math.abs(size.getY());
@@ -196,9 +297,9 @@ public class FitnessTester {
 	    // 1. lépés: értékeljük a gén hosszát
 	    double lengthScore = scoreGeneLength(ch, gene);
 	    // 2. lépés: értékeljük a gén méretét
-	    double sizeScore = scoreDrawingSize(gene);
+	    double sizeScore = scoreDrawingSize(gene.getBuildingElements());
 	    // 3. lépés: értékeljük a gén kapcsolatát a többi génnel
-	    double connectionScore = scoreConnections(ch, gene);
+	    double connectionScore = scoreConnections(ch, chrom.geneMap());
 
 	    fitnessScore += (lengthScore + sizeScore + connectionScore) / 3;
 	}
@@ -246,5 +347,24 @@ public class FitnessTester {
 	}
 
 	return 1.0 - count / (double) charCountMap.size();
+    }
+
+    /**
+     * Egy <T, MutableInteger> Map-bõl egy <Integer, List<T>> TreeMap-et készít.
+     */
+    private <T> TreeMap<Integer, List<T>> sortMutableIntegerValueMap(
+	    Map<T, MutableInteger> inputMap) {
+	TreeMap<Integer, List<T>> treeMap = new TreeMap<>();
+	for (Entry<T, MutableInteger> entry : inputMap.entrySet()) {
+	    T ch = entry.getKey();
+	    int count = entry.getValue().getValue();
+	    List<T> value = treeMap.get(count);
+	    if (value == null) {
+		treeMap.put(count, value = new ArrayList<>());
+	    }
+	    value.add(ch);
+	}
+
+	return treeMap;
     }
 }

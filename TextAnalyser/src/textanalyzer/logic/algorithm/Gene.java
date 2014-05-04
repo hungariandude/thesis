@@ -15,6 +15,13 @@ public class Gene {
     private ArrayList<DrawingObject> buildingElements;
 
     /**
+     * Üres gén.
+     */
+    public Gene() {
+	this.buildingElements = new ArrayList<>();
+    }
+
+    /**
      * Copy constructor.
      */
     public Gene(Gene sample) {

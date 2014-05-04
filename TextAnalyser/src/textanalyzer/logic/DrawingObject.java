@@ -32,11 +32,6 @@ public class DrawingObject {
     private Direction direction;
 
     /**
-     * Alapértelmezett hossz (görbék esetén a két végpont között, légvonalban)
-     */
-    // public static final int DEFAULT_LENGTH = 1;
-
-    /**
      * Az objektum alakját, orientációját és irányát véletlenszerûen határozza
      * meg.
      */
@@ -54,34 +49,6 @@ public class DrawingObject {
 	this.orientation = sample.orientation;
 	this.direction = sample.direction;
     }
-
-    // private Point2D calculateEndingPoint(int length) {
-    // double dx, dy;
-    //
-    // if (orientation == Orientation.OBLIQUE_RIGHT
-    // || orientation == Orientation.OBLIQUE_LEFT) {
-    // dx = dy = Math.sin(Math.toRadians(45));
-    // if (orientation == Orientation.OBLIQUE_LEFT) {
-    // // ebben az esetben a dx az negatív
-    // dx *= -1;
-    // }
-    // } else {
-    // if (orientation == Orientation.HORIZONTAL) {
-    // dx = 0;
-    // dy = 1;
-    // } else {
-    // dx = 1;
-    // dy = 0;
-    // }
-    // }
-    // if (direction == Direction.REVERSE) {
-    // dx *= -1;
-    // dy *= -1;
-    // }
-    //
-    // return new Point2D.Double(startingPoint.getX() + dx,
-    // startingPoint.getY() + dy);
-    // }
 
     public DrawingObject(Shape shape, Orientation orientation,
 	    Direction direction) {
