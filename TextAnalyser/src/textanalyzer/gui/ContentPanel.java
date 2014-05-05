@@ -29,7 +29,7 @@ public class ContentPanel extends JPanel {
     private final MainFrame mainFrame;
 
     private final GAPanel gaPanel = new GAPanel();
-    private DefaultListModel<String> fileNamesModel = new DefaultListModel<>();
+    private final DefaultListModel<String> fileNamesModel = new DefaultListModel<>();
     private final JList<String> fileNamesList = new JList<>(fileNamesModel);
 
     public ContentPanel(MainFrame mainFrame) {
@@ -37,8 +37,8 @@ public class ContentPanel extends JPanel {
 
 	setLayout(new BorderLayout());
 
-	JPanel leftPanel = createFileNamesPanel();
-	JPanel rightPanel = createTextPanel();
+	JPanel leftPanel = createLeftPanel();
+	JPanel rightPanel = createRightPanel();
 
 	JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 		leftPanel, rightPanel);
@@ -46,7 +46,7 @@ public class ContentPanel extends JPanel {
 	add(splitPane, BorderLayout.CENTER);
     }
 
-    private JPanel createFileNamesPanel() {
+    private JPanel createLeftPanel() {
 	JPanel fileNamesPanel = new JPanel();
 	fileNamesPanel.setLayout(new BorderLayout(0, 5));
 
@@ -74,7 +74,8 @@ public class ContentPanel extends JPanel {
 			for (int index : indices) {
 			    fileNamesModel.remove(index);
 			}
-			mainFrame.removeFilesAtIndices(indices);
+			Engine.removeFilesAtIndices(indices);
+			mainFrame.getControlToolBar().notifyFileListChanged();
 		    }
 		}
 	    }
@@ -89,23 +90,30 @@ public class ContentPanel extends JPanel {
 	return fileNamesPanel;
     }
 
-    private JPanel createTextPanel() {
-	JPanel textPanel = new JPanel();
-	textPanel.setLayout(new BorderLayout(0, 5));
+    private JPanel createRightPanel() {
+	JPanel rightPanel = new JPanel();
+	rightPanel.setLayout(new BorderLayout(0, 5));
 
-	textPanel.add(new JLabel("A genetikus algoritmus állapota:"),
+	rightPanel.add(new JLabel("A genetikus algoritmus állapota:"),
 		BorderLayout.NORTH);
 
 	gaPanel.setMinimumSize(new Dimension(200,
 		gaPanel.getMinimumSize().height));
-	JScrollPane scrollPane = new JScrollPane(gaPanel);
-	textPanel.add(scrollPane, BorderLayout.CENTER);
+	rightPanel.add(gaPanel, BorderLayout.CENTER);
 
-	return textPanel;
+	return rightPanel;
     }
 
-    public JList<String> getFileNamesList() {
-	return fileNamesList;
+    public void disableFileListEdit() {
+	fileNamesList.setEnabled(false);
+    }
+
+    public void enableFileListEdit() {
+	fileNamesList.setEnabled(true);
+    }
+
+    public GAPanel getGaPanel() {
+	return gaPanel;
     }
 
     public void setFileNames(String[] fileNames) {
@@ -114,5 +122,4 @@ public class ContentPanel extends JPanel {
 	    fileNamesModel.addElement(fileName);
 	}
     }
-
 }

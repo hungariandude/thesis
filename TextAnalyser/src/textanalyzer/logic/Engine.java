@@ -1,6 +1,9 @@
 package textanalyzer.logic;
 
 import textanalyzer.logic.algorithm.GeneticAlgorithm;
+import textanalyzer.logic.algorithm.Population;
+import textanalyzer.util.ArrayUtils;
+import textanalyzer.util.IntValueChangeListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +20,7 @@ import java.util.TreeSet;
  * @author Istvánfi Zsolt
  */
 public final class Engine {
-    private static ArrayList<File> fileList = new ArrayList<>();
+    private static final ArrayList<File> fileList = new ArrayList<>();
 
     private static GeneticAlgorithm ga;
 
@@ -34,13 +37,6 @@ public final class Engine {
 	fileList.addAll(fileSet);
     }
 
-    private static void doAlgorithmStep() {
-	if (!running || paused) {
-	    return;
-	}
-	ga.evolvePopulation();
-    }
-
     public static List<File> fileList() {
 	return Collections.unmodifiableList(fileList);
     }
@@ -54,6 +50,9 @@ public final class Engine {
 	return fileNames;
     }
 
+    /**
+     * SwingWorkerrel vagy új szállal kell használni!
+     */
     public static void initAlgorithm() {
 	StringBuilder sb = new StringBuilder();
 	for (File file : fileList) {
@@ -68,6 +67,14 @@ public final class Engine {
 	ga = new GeneticAlgorithm(sb.toString(), Settings.populationSize);
     }
 
+    public static boolean isPaused() {
+	return paused;
+    }
+
+    public static boolean isRunning() {
+	return running;
+    }
+
     public static void pauseAlgorithm() {
 	if (!running || paused) {
 	    return;
@@ -76,15 +83,10 @@ public final class Engine {
     }
 
     public static synchronized void removeFilesAtIndices(int[] indices) {
-	int[] reverse = indices.clone();
-	Arrays.sort(reverse);
-	for (int i = 0; i < reverse.length / 2; i++) {
-	    int temp = reverse[i];
-	    int latterIndex = reverse.length - i - 1;
-	    reverse[i] = reverse[latterIndex];
-	    reverse[latterIndex] = temp;
-	}
-	for (int index : reverse) {
+	int[] clone = indices.clone();
+	Arrays.sort(clone);
+	ArrayUtils.reverse(clone);
+	for (int index : clone) {
 	    fileList.remove(index);
 	}
     }
@@ -93,48 +95,52 @@ public final class Engine {
 	if (!running || !paused) {
 	    return;
 	}
-	paused = false;
-	thread.notify();
+	synchronized (thread) {
+	    paused = false;
+	    thread.notify();
+	}
     }
 
-    public static void startAlgorithm(final int stepsToDo) {
+    /**
+     * SwingWorkerrel vagy új szállal kell használni!
+     */
+    public static void startAlgorithm(final int stepsToDo,
+	    IntValueChangeListener listener) {
 	if (running) {
 	    return;
 	}
 	running = true;
+	thread = Thread.currentThread();
 
-	thread = new Thread(new Runnable() {
-	    @Override
-	    public void run() {
-		while (running) {
-		    if (stepsToDo >= 0) {
-			for (int i = 1; i <= stepsToDo; ++i) {
-			    doAlgorithmStep();
-			}
-			running = false;
-		    } else {
-			doAlgorithmStep();
-		    }
+	int stepsDone = 0;
+	while (running) {
+	    if (stepsDone == stepsToDo) {
+		running = false;
+		break;
+	    }
+	    Population population = ga.evolvePopulation();
+	    listener.valueChange(population.getGenerationNumber());
+	    ++stepsDone;
 
-		    if (Settings.sleepTime > 0) {
-			try {
-			    Thread.sleep(Settings.sleepTime);
-			} catch (InterruptedException e) {
-			    e.printStackTrace();
-			}
-		    }
-
-		    if (paused) {
-			try {
-			    this.wait();
-			} catch (InterruptedException e) {
-			    e.printStackTrace();
-			}
-		    }
+	    if (Settings.sleepTime > 0) {
+		try {
+		    Thread.sleep(Settings.sleepTime);
+		} catch (InterruptedException e) {
+		    e.printStackTrace();
 		}
 	    }
-	});
-	thread.start();
+
+	    synchronized (thread) {
+		try {
+		    if (paused) {
+			thread.wait();
+		    }
+		} catch (InterruptedException e) {
+		    e.printStackTrace();
+		}
+	    }
+	}
+	thread = null;
     }
 
     public static void stopAlgorithm() {
@@ -143,8 +149,10 @@ public final class Engine {
 	}
 	running = false;
 	if (paused) {
-	    paused = false;
-	    thread.notify();
+	    synchronized (thread) {
+		paused = false;
+		thread.notify();
+	    }
 	}
     }
 

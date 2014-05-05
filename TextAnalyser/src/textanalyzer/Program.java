@@ -29,7 +29,8 @@ public class Program {
 				    + path);
 		}
 	    }
-	    mainFrame.addFiles(files.toArray(new File[files.size()]));
+	    mainFrame.getControlToolBar().addFiles(
+		    files.toArray(new File[files.size()]));
 	}
 
 	mainFrame.setVisible(true);

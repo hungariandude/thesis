@@ -8,7 +8,7 @@ import java.util.Scanner;
 import javax.imageio.ImageIO;
 
 /**
- * A resource-ok betöltését segítõ statikus osztály.
+ * A resource-okkal kapcsolatos mûveletek elvégézését segítõ statikus osztály.
  * 
  * @author Istvánfi Zsolt
  */
