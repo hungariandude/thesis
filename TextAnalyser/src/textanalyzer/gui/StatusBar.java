@@ -10,9 +10,9 @@ import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 
 /**
- * A fel¸let alj·n megjelenı inform·ciÛs sor.
+ * A fel√ºlet alj√°n megjelen≈ë inform√°ci√≥s sor.
  * 
- * @author Istv·nfi Zsolt
+ * @author Istv√°nfi Zsolt
  */
 public class StatusBar extends JPanel {
 

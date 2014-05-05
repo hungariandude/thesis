@@ -1,24 +1,24 @@
 package textanalyzer.logic;
 
 /**
- * A beállítható paramétereket tartalmazó statikus osztály.
+ * A beÃ¡llÃ­thatÃ³ paramÃ©tereket tartalmazÃ³ statikus osztÃ¡ly.
  * 
- * @author Istvánfi Zsolt
+ * @author IstvÃ¡nfi Zsolt
  */
 public final class Settings {
 
     /**
-     * A populáció mérete. Alapértelmezett: 32
+     * A populÃ¡ciÃ³ mÃ©rete. AlapÃ©rtelmezett: 32
      */
     public static int populationSize = 32;
     /**
-     * A genetikus algoritmus lépései közötti szüneteltetési idõ
-     * ezredmásodpercben. Alapértelmezett: 0
+     * A genetikus algoritmus lÃ©pÃ©sei kÃ¶zÃ¶tti szÃ¼neteltetÃ©si idÅ‘
+     * ezredmÃ¡sodpercben. AlapÃ©rtelmezett: 0
      */
     public static long sleepTime = 0;
 
     private Settings() {
-	// statikus osztály
+	// statikus osztÃ¡ly
     }
 
 }

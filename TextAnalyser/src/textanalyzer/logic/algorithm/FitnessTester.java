@@ -19,32 +19,32 @@ import java.util.TreeMap;
 import java.util.logging.Logger;
 
 /**
- * A genetikus algoritmusban szereplõ fitnesz függvényt biztosító osztály.
+ * A genetikus algoritmusban szereplÅ‘ fitnesz fÃ¼ggvÃ©nyt biztosÃ­tÃ³ osztÃ¡ly.
  * 
- * @author Istvánfi Zsolt
+ * @author IstvÃ¡nfi Zsolt
  */
 public class FitnessTester {
 
     /**
-     * A forrás szöveg.
+     * A forrÃ¡s szÃ¶veg.
      */
     private String sourceText;
     /**
-     * Az egyes karakterek száma a szövegben.
+     * Az egyes karakterek szÃ¡ma a szÃ¶vegben.
      */
     private Map<Character, MutableInteger> charCountMap = new HashMap<>();
     /**
-     * Az egyes karakterek bal- és jobbszomszédainak elõfordulási számát követi.
+     * Az egyes karakterek bal- Ã©s jobbszomszÃ©dainak elÅ‘fordulÃ¡si szÃ¡mÃ¡t kÃ¶veti.
      */
     private Map<Character, Pair<Map<Character, MutableInteger>, Map<Character, MutableInteger>>> charNeighborCountMap = new HashMap<>();
     /**
-     * Az egyes karakterekhez tartozó bal- és jobbszomszédok, amelyeknek az
-     * elõfordulási száma a maximummal egyenlõ.
+     * Az egyes karakterekhez tartozÃ³ bal- Ã©s jobbszomszÃ©dok, amelyeknek az
+     * elÅ‘fordulÃ¡si szÃ¡ma a maximummal egyenlÅ‘.
      */
     private Map<Character, Pair<Entry<Integer, List<Character>>, Entry<Integer, List<Character>>>> maxCountNeighborMap = new HashMap<>();
     /**
-     * Az egyes karakterekhez rendelt kirajzolható objektumok ajánlott
-     * elemszáma.
+     * Az egyes karakterekhez rendelt kirajzolhatÃ³ objektumok ajÃ¡nlott
+     * elemszÃ¡ma.
      */
     private Map<Character, Integer> recommendedLengthMap = new HashMap<>();
 
@@ -60,17 +60,17 @@ public class FitnessTester {
     }
 
     /**
-     * A megtalált karakterek halmaza.
+     * A megtalÃ¡lt karakterek halmaza.
      */
     public Set<Character> characterSet() {
 	return charCountMap.keySet();
     }
 
     /**
-     * Megszámolja az egyes karakterek elõfordulását a szövegben.
+     * MegszÃ¡molja az egyes karakterek elÅ‘fordulÃ¡sÃ¡t a szÃ¶vegben.
      */
     private void countCharOccurrences() {
-	// 1. lépés: megszámoljuk a karaktereket
+	// 1. lÃ©pÃ©s: megszÃ¡moljuk a karaktereket
 	for (int index = 0; index < sourceText.length(); ++index) {
 	    char currentChar = sourceText.charAt(index);
 
@@ -119,7 +119,7 @@ public class FitnessTester {
 
 	LOGGER.info("Count of found characters: " + charCountMap.size());
 
-	// 2. lépés: meghatározzuk az ajánlott génhosszakat az egyes
+	// 2. lÃ©pÃ©s: meghatÃ¡rozzuk az ajÃ¡nlott gÃ©nhosszakat az egyes
 	// karakterekhez
 	TreeMap<Integer, List<Character>> orderedMap = sortMutableIntegerValueMap(charCountMap);
 
@@ -139,8 +139,8 @@ public class FitnessTester {
 	    }
 	}
 
-	// 3. lépés: megkeressük a legnagyobb elõfordulási számú bal- és
-	// jobbszomszédokat az egyes karakterekhez
+	// 3. lÃ©pÃ©s: megkeressÃ¼k a legnagyobb elÅ‘fordulÃ¡si szÃ¡mÃº bal- Ã©s
+	// jobbszomszÃ©dokat az egyes karakterekhez
 	for (Entry<Character, Pair<Map<Character, MutableInteger>, Map<Character, MutableInteger>>> entry : charNeighborCountMap
 		.entrySet()) {
 	    Character key = entry.getKey();
@@ -162,7 +162,7 @@ public class FitnessTester {
 		|| object.getOrientation() == Orientation.OBLIQUE_LEFT) {
 	    dx = dy = Math.sin(Math.toRadians(45));
 	    if (object.getOrientation() == Orientation.OBLIQUE_LEFT) {
-		// ebben az esetben a dx negatív
+		// ebben az esetben a dx negatÃ­v
 		dx *= -1;
 	    }
 	} else {
@@ -245,8 +245,8 @@ public class FitnessTester {
     }
 
     /**
-     * Értékeljük azt, hogy mennyire távolodik el a kiindulóponttól a
-     * kirajzolandó alakzat végpontja.
+     * Ã‰rtÃ©keljÃ¼k azt, hogy mennyire tÃ¡volodik el a kiindulÃ³ponttÃ³l a
+     * kirajzolandÃ³ alakzat vÃ©gpontja.
      * 
      * @return [0;100]
      */
@@ -258,20 +258,20 @@ public class FitnessTester {
 
 	if (absX > DEFAULT_DRAWING_AREA_SIZE.getX()
 		|| absY > DEFAULT_DRAWING_AREA_SIZE.getY()) {
-	    // biztos, kifut a rajzolási területrõl
+	    // biztos, kifut a rajzolÃ¡si terÃ¼letrÅ‘l
 	    return 0.0;
 	}
 
 	if (absX <= 1 && absY <= 1) {
-	    // 1 egységen belül végzõdik az objektum
+	    // 1 egysÃ©gen belÃ¼l vÃ©gzÅ‘dik az objektum
 	    return 100.0;
 	}
 
 	double xScore = 50.0;
 	double yScore = 50.0;
 
-	// ha 1 egységnél távolabb végzõdik az objektum, akkor az értékelés a
-	// fordított relatív távolság lesz
+	// ha 1 egysÃ©gnÃ©l tÃ¡volabb vÃ©gzÅ‘dik az objektum, akkor az Ã©rtÃ©kelÃ©s a
+	// fordÃ­tott relatÃ­v tÃ¡volsÃ¡g lesz
 	if (absX > 1) {
 	    xScore *= 1 - (absX - 1) / (DEFAULT_DRAWING_AREA_SIZE.getX() - 1);
 	}
@@ -283,8 +283,8 @@ public class FitnessTester {
     }
 
     /**
-     * Meghatározza és beállítja a kromoszóma fitnesz értékét. Az érték 0 és 100
-     * közötti valós szám.
+     * MeghatÃ¡rozza Ã©s beÃ¡llÃ­tja a kromoszÃ³ma fitnesz Ã©rtÃ©kÃ©t. Az Ã©rtÃ©k 0 Ã©s 100
+     * kÃ¶zÃ¶tti valÃ³s szÃ¡m.
      */
     public void scoreFitness(Chromosome chrom) {
 	double fitnessScore = 0.0;
@@ -294,20 +294,20 @@ public class FitnessTester {
 	    Character ch = geneEntry.getKey();
 	    Gene gene = geneEntry.getValue();
 
-	    // 1. lépés: értékeljük a gén hosszát
+	    // 1. lÃ©pÃ©s: Ã©rtÃ©keljÃ¼k a gÃ©n hosszÃ¡t
 	    double lengthScore = scoreGeneLength(ch, gene);
-	    // 2. lépés: értékeljük a gén méretét
+	    // 2. lÃ©pÃ©s: Ã©rtÃ©keljÃ¼k a gÃ©n mÃ©retÃ©t
 	    double sizeScore = scoreDrawingSize(gene.getBuildingElements());
-	    // 3. lépés: értékeljük a gén kapcsolatát a többi génnel
+	    // 3. lÃ©pÃ©s: Ã©rtÃ©keljÃ¼k a gÃ©n kapcsolatÃ¡t a tÃ¶bbi gÃ©nnel
 	    double connectionScore = scoreConnections(ch, chrom.geneMap());
 
 	    fitnessScore += (lengthScore + sizeScore + connectionScore) / 3;
 	}
 	fitnessScore = fitnessScore / geneMap.size();
 
-	// a karakterek egyediségi értékének négyzetével szorozzuk a
-	// végeredményt, ezzel büntetve a megegyezõ géneket tartalmazó
-	// kromoszómákat
+	// a karakterek egyedisÃ©gi Ã©rtÃ©kÃ©nek nÃ©gyzetÃ©vel szorozzuk a
+	// vÃ©geredmÃ©nyt, ezzel bÃ¼ntetve a megegyezÅ‘ gÃ©neket tartalmazÃ³
+	// kromoszÃ³mÃ¡kat
 	double uniquenessScore = scoreGeneUniqueness(chrom.genes());
 	fitnessScore *= uniquenessScore * uniquenessScore;
 
@@ -318,10 +318,10 @@ public class FitnessTester {
      * @return ]0;100]
      */
     private double scoreGeneLength(Character ch, Gene gene) {
-	// mennyire tér el a gén hossza a neki ajánlott hosszúságtól
+	// mennyire tÃ©r el a gÃ©n hossza a neki ajÃ¡nlott hosszÃºsÃ¡gtÃ³l
 	int deviation = Math.abs(gene.length() - recommendedLengthMap.get(ch));
 
-	// másodfokú az értékcsökkentés (100, 50, 25...)
+	// mÃ¡sodfokÃº az Ã©rtÃ©kcsÃ¶kkentÃ©s (100, 50, 25...)
 	double lengthScore = 2.0 / Math.pow(2, deviation + 1) * 100.0;
 
 	return lengthScore;
@@ -332,7 +332,7 @@ public class FitnessTester {
      */
     private double scoreGeneUniqueness(Collection<Gene> genes) {
 	if (genes.isEmpty()) {
-	    // üres halmaz elemei teljesen "egyediek"
+	    // Ã¼res halmaz elemei teljesen "egyediek"
 	    return 1.0;
 	}
 
@@ -350,7 +350,7 @@ public class FitnessTester {
     }
 
     /**
-     * Egy <T, MutableInteger> Map-bõl egy <Integer, List<T>> TreeMap-et készít.
+     * Egy <T, MutableInteger> Map-bÅ‘l egy <Integer, List<T>> TreeMap-et kÃ©szÃ­t.
      */
     private <T> TreeMap<Integer, List<T>> sortMutableIntegerValueMap(
 	    Map<T, MutableInteger> inputMap) {

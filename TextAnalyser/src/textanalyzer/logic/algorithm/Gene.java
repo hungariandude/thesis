@@ -6,16 +6,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A kromoszómát felépítõ gén.
+ * A kromoszÃ³mÃ¡t felÃ©pÃ­tÅ‘ gÃ©n.
  * 
- * @author Istvánfi Zsolt
+ * @author IstvÃ¡nfi Zsolt
  */
 public class Gene {
 
     private ArrayList<DrawingObject> buildingElements;
 
     /**
-     * Üres gén.
+     * Ãœres gÃ©n.
      */
     public Gene() {
 	this.buildingElements = new ArrayList<>();
@@ -33,7 +33,7 @@ public class Gene {
     }
 
     /**
-     * Létrehoz egy paraméterben megkapott hosszúságú, véletlenszerû gént.
+     * LÃ©trehoz egy paramÃ©terben megkapott hosszÃºsÃ¡gÃº, vÃ©letlenszerÅ± gÃ©nt.
      */
     public Gene(int length) {
 	this.buildingElements = new ArrayList<>(length);
@@ -80,7 +80,7 @@ public class Gene {
     }
 
     /**
-     * A gén hossza (az építõelemek száma).
+     * A gÃ©n hossza (az Ã©pÃ­tÅ‘elemek szÃ¡ma).
      */
     public int length() {
 	return this.buildingElements.size();

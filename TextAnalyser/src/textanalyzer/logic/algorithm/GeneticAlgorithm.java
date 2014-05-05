@@ -7,9 +7,9 @@ import java.util.Random;
 import java.util.Set;
 
 /**
- * A genetikus algoritmus megvalósítása.
+ * A genetikus algoritmus megvalÃ³sÃ­tÃ¡sa.
  * 
- * @author Istvánfi Zsolt
+ * @author IstvÃ¡nfi Zsolt
  */
 public class GeneticAlgorithm {
 
@@ -18,7 +18,7 @@ public class GeneticAlgorithm {
     private Mutator mutator = new Mutator();
     private FitnessTester fitnessTester;
     /**
-     * Hányadik generációnál tart az evolúció.
+     * HÃ¡nyadik generÃ¡ciÃ³nÃ¡l tart az evolÃºciÃ³.
      */
     private int generationCounter = 0;
 
@@ -44,7 +44,7 @@ public class GeneticAlgorithm {
     }
 
     /**
-     * Kezdeti fitnesz érték számítás.
+     * Kezdeti fitnesz Ã©rtÃ©k szÃ¡mÃ­tÃ¡s.
      */
     private void calculateFitnessScores() {
 	for (Chromosome chrom : population) {
@@ -53,40 +53,40 @@ public class GeneticAlgorithm {
     }
 
     /**
-     * Az evolúció egy lépése. Új populációt hoz létre.
+     * Az evolÃºciÃ³ egy lÃ©pÃ©se. Ãšj populÃ¡ciÃ³t hoz lÃ©tre.
      */
     public Population evolvePopulation() {
-	// új generáció születik
+	// Ãºj generÃ¡ciÃ³ szÃ¼letik
 	++generationCounter;
-	// az új generáció populációja
+	// az Ãºj generÃ¡ciÃ³ populÃ¡ciÃ³ja
 	Population newGeneration = new Population(populationSize,
 		generationCounter);
 
 	for (int i = 0; i < populationSize; i += 2) {
-	    // 1. lépés: két szülõ kromószóma kiválasztása
+	    // 1. lÃ©pÃ©s: kÃ©t szÃ¼lÅ‘ kromÃ³szÃ³ma kivÃ¡lasztÃ¡sa
 	    Chromosome parent1 = selectMember(true);
 	    Chromosome parent2 = selectMember(true);
 
-	    // 2. lépés: szülõk keresztezése
+	    // 2. lÃ©pÃ©s: szÃ¼lÅ‘k keresztezÃ©se
 	    Chromosome[] childs = parent1.crossOverWith(parent2);
 	    Chromosome child1 = childs[0];
 	    Chromosome child2 = childs[1];
 
-	    // 3. lépés: gyerekek mutálása
+	    // 3. lÃ©pÃ©s: gyerekek mutÃ¡lÃ¡sa
 	    mutator.mutate(child1);
 	    mutator.mutate(child2);
 
-	    // 4. lépés: gyerekek fitnesz értékeinek számítása
+	    // 4. lÃ©pÃ©s: gyerekek fitnesz Ã©rtÃ©keinek szÃ¡mÃ­tÃ¡sa
 	    fitnessTester.scoreFitness(child1);
 	    fitnessTester.scoreFitness(child2);
 
-	    // 5. lépés: gyerekek hozzádása az új populációhoz
+	    // 5. lÃ©pÃ©s: gyerekek hozzÃ¡dÃ¡sa az Ãºj populÃ¡ciÃ³hoz
 	    newGeneration.add(child1);
 	    newGeneration.add(child2);
 	}
 
-	// frissítjük a populációnkat
-	// itt az eredeti populáció már üres, mert az elõzõ generáció már
+	// frissÃ­tjÃ¼k a populÃ¡ciÃ³nkat
+	// itt az eredeti populÃ¡ciÃ³ mÃ¡r Ã¼res, mert az elÅ‘zÅ‘ generÃ¡ciÃ³ mÃ¡r
 	// "elpusztult"
 	population = newGeneration;
 
@@ -94,14 +94,14 @@ public class GeneticAlgorithm {
     }
 
     /**
-     * Létrehoz véletlenszerû kromoszómákat a szövegben megtalált karaktereknek.
+     * LÃ©trehoz vÃ©letlenszerÅ± kromoszÃ³mÃ¡kat a szÃ¶vegben megtalÃ¡lt karaktereknek.
      */
     private void generateRandomPopulation() {
-	// lekérjük a fitneszkiértékelõtõl a megtalált karaktereket
+	// lekÃ©rjÃ¼k a fitneszkiÃ©rtÃ©kelÅ‘tÅ‘l a megtalÃ¡lt karaktereket
 	Set<Character> characterSet = fitnessTester.characterSet();
 	int numberOfFoundCharacters = characterSet.size();
-	// a maximum génhossz a legkisebb olyan alakzatszám, amellyel
-	// biztos, hogy minden megtalált karakter különbözõen kirajzolható
+	// a maximum gÃ©nhossz a legkisebb olyan alakzatszÃ¡m, amellyel
+	// biztos, hogy minden megtalÃ¡lt karakter kÃ¼lÃ¶nbÃ¶zÅ‘en kirajzolhatÃ³
 	int maximumGeneLength = 1;
 	int differentObjects = DrawingObject.NUMBER_OF_OBJECT_DRAWING_WAYS;
 	while (differentObjects < numberOfFoundCharacters) {
@@ -116,34 +116,34 @@ public class GeneticAlgorithm {
     }
 
     /**
-     * Szelekció. Nagyobb fitnesz érték nagyobb kiválasztási valószínûséget
+     * SzelekciÃ³. Nagyobb fitnesz Ã©rtÃ©k nagyobb kivÃ¡lasztÃ¡si valÃ³szÃ­nÅ±sÃ©get
      * jelent.
      * 
      * @param remove
-     *            A kromoszóma törlése a kiválasztás után.
+     *            A kromoszÃ³ma tÃ¶rlÃ©se a kivÃ¡lasztÃ¡s utÃ¡n.
      */
     private Chromosome selectMember(boolean remove) {
 	//
-	// RULETTKERÉK ALGORITMUS
+	// RULETTKERÃ‰K ALGORITMUS
 	//
 
-	// 1. lépés: összegezzük a fitnesz értékeket
+	// 1. lÃ©pÃ©s: Ã¶sszegezzÃ¼k a fitnesz Ã©rtÃ©keket
 	double totalFitness = 0;
 	for (Chromosome chrom : population) {
 	    totalFitness += chrom.getFitnessScore();
 	}
 
-	// 2. lépés: kiválasztunk egy pontot a skálán
+	// 2. lÃ©pÃ©s: kivÃ¡lasztunk egy pontot a skÃ¡lÃ¡n
 	double selectedPoint = totalFitness * random.nextDouble();
 
-	// 3. lépés: megkeressük, hogy melyik egyed fitnesz intervallumába
-	// találtunk bele
+	// 3. lÃ©pÃ©s: megkeressÃ¼k, hogy melyik egyed fitnesz intervallumÃ¡ba
+	// talÃ¡ltunk bele
 	double totalFitnessSoFar = 0;
 	for (Iterator<Chromosome> it = population.iterator(); it.hasNext();) {
 	    Chromosome chrom = it.next();
 	    totalFitnessSoFar += chrom.getFitnessScore();
 	    if (totalFitnessSoFar >= selectedPoint) {
-		// megtaláltuk
+		// megtalÃ¡ltuk
 		if (remove) {
 		    it.remove();
 		}

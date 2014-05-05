@@ -18,16 +18,16 @@ import javax.swing.SwingWorker;
 import javax.swing.border.EtchedBorder;
 
 /**
- * A men¸sor alatt megjelenı eszkˆzt·r, ami a genetikus algoritmus vezÈrlÈsÈt
- * lehetıvÈ tevı gombokat tartalmazza.
+ * A men√ºsor alatt megjelen≈ë eszk√∂zt√°r, ami a genetikus algoritmus vez√©rl√©s√©t
+ * lehet≈ëv√© tev≈ë gombokat tartalmazza.
  * 
- * @author Istv·nfi Zsolt
+ * @author Istv√°nfi Zsolt
  */
 public class ControlToolBar extends JToolBar {
     /**
-     * A genetikus algoritmust elindÌtÛ SwingWorker.
+     * A genetikus algoritmust elind√≠t√≥ SwingWorker.
      * 
-     * @author Istv·nfi Zsolt
+     * @author Istv√°nfi Zsolt
      */
     private class GAWorker extends SwingWorker<Void, Integer> implements
 	    IntValueChangeListener {
@@ -50,7 +50,7 @@ public class ControlToolBar extends JToolBar {
 	    stepSelector.setEnabled(true);
 	    stopButton.setEnabled(false);
 	    mainFrame.getStatusBar().setText(
-		    "A genetikus algoritmus fut·sa befejezıdˆtt.");
+		    "A genetikus algoritmus fut√°sa befejez≈ëd√∂tt.");
 	}
 
 	@Override
@@ -97,7 +97,7 @@ public class ControlToolBar extends JToolBar {
 		    .disableFileListEdit();
 
 	    mainFrame.getStatusBar().setText(
-		    "A genetikus algoritmus inicializ·l·sa...");
+		    "A genetikus algoritmus inicializ√°l√°sa...");
 
 	    SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 		@Override
@@ -109,7 +109,7 @@ public class ControlToolBar extends JToolBar {
 		@Override
 		protected void done() {
 		    mainFrame.getStatusBar().setText(
-			    "A genetikus algoritmus inicializ·l·sa elkÈsz¸lt.");
+			    "A genetikus algoritmus inicializ√°l√°sa elk√©sz√ºlt.");
 		    startButton.setEnabled(true);
 		    stepSelector.setEnabled(true);
 		    fullStopButton.setEnabled(true);
@@ -155,7 +155,7 @@ public class ControlToolBar extends JToolBar {
 	public void actionPerformed(ActionEvent e) {
 	    Engine.pauseAlgorithm();
 	    mainFrame.getStatusBar().setText(
-		    "A genetikus algoritmus sz¸neteltetve.");
+		    "A genetikus algoritmus sz√ºneteltetve.");
 	    startButton.setEnabled(true);
 	    pauseButton.setEnabled(false);
 	}
@@ -205,34 +205,34 @@ public class ControlToolBar extends JToolBar {
 
 	openButton = new JButton(new ImageIcon(
 		ResourceUtils.loadImageFromResource("open.png")));
-	openButton.setToolTipText("Szˆveges f·jl(ok) megnyit·sa");
+	openButton.setToolTipText("Sz√∂veges f√°jl(ok) megnyit√°sa");
 
 	resetButton = new JButton(new ImageIcon(
 		ResourceUtils.loadImageFromResource("population.png")));
-	resetButton.setToolTipText("⁄j popul·ciÛ gener·l·sa");
+	resetButton.setToolTipText("√öj popul√°ci√≥ gener√°l√°sa");
 	resetButton.setEnabled(false);
 
 	startButton = new JButton(new ImageIcon(
 		ResourceUtils.loadImageFromResource("start.png")));
-	startButton.setToolTipText("IndÌt·s/folytat·s");
+	startButton.setToolTipText("Ind√≠t√°s/folytat√°s");
 	startButton.setEnabled(false);
 	stepSelector = new RadioPanel(new String[] { "1", "10", "100", "1000",
-		"vÈgtelen" }, true);
+		"v√©gtelen" }, true);
 	stepSelector.setEnabled(false);
 
 	pauseButton = new JButton(new ImageIcon(
 		ResourceUtils.loadImageFromResource("pause.png")));
-	pauseButton.setToolTipText("Sz¸net");
+	pauseButton.setToolTipText("Sz√ºnet");
 	pauseButton.setEnabled(false);
 
 	stopButton = new JButton(new ImageIcon(
 		ResourceUtils.loadImageFromResource("stop.png")));
-	stopButton.setToolTipText("Le·llÌt·s");
+	stopButton.setToolTipText("Le√°ll√≠t√°s");
 	stopButton.setEnabled(false);
 
 	fullStopButton = new JButton(new ImageIcon(
 		ResourceUtils.loadImageFromResource("stop_cross.png")));
-	fullStopButton.setToolTipText("Az algoritmus befejezÈse");
+	fullStopButton.setToolTipText("Az algoritmus befejez√©se");
 	fullStopButton.setEnabled(false);
 
 	openButton.addActionListener(openAction);

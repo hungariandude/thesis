@@ -1,9 +1,9 @@
 package textanalyzer.util;
 
 /**
- * Interfész integer értékváltozások figyelésére.
+ * InterfÃ©sz integer Ã©rtÃ©kvÃ¡ltozÃ¡sok figyelÃ©sÃ©re.
  * 
- * @author Istvánfi Zsolt
+ * @author IstvÃ¡nfi Zsolt
  */
 public interface IntValueChangeListener {
 

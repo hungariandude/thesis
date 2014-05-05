@@ -13,9 +13,9 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
- * A genetikus algoritmusban szereplõ kromoszóma.
+ * A genetikus algoritmusban szereplÅ‘ kromoszÃ³ma.
  * 
- * @author Istvánfi Zsolt
+ * @author IstvÃ¡nfi Zsolt
  */
 public class Chromosome {
     private static final float CROSSOVER_RATE = 0.7f;
@@ -33,20 +33,20 @@ public class Chromosome {
     }
 
     /**
-     * Létrehoz egy véletlenszerû kromoszómát a paraméterek alapján.
+     * LÃ©trehoz egy vÃ©letlenszerÅ± kromoszÃ³mÃ¡t a paramÃ©terek alapjÃ¡n.
      */
     public Chromosome(Collection<Character> chars, int maxGeneLength) {
 	this.geneMap = new TreeMap<>();
 	for (Character ch : chars) {
-	    // 0 hosszúságú gént nem szeretnénk
+	    // 0 hosszÃºsÃ¡gÃº gÃ©nt nem szeretnÃ©nk
 	    Gene gene = new Gene(random.nextInt(maxGeneLength) + 1);
 	    geneMap.put(ch, gene);
 	}
     }
 
     /**
-     * A paraméterként megkapott géntérképminta alapján létrehoz egy
-     * kromoszómát.
+     * A paramÃ©terkÃ©nt megkapott gÃ©ntÃ©rkÃ©pminta alapjÃ¡n lÃ©trehoz egy
+     * kromoszÃ³mÃ¡t.
      */
     public Chromosome(Map<Character, Gene> sampleGeneMap) {
 	this.geneMap = new TreeMap<>();
@@ -57,8 +57,8 @@ public class Chromosome {
     }
 
     /**
-     * A kromoszóma keresztezése egy másikkal, aminek az eredménye két gyermek
-     * kromoszóma.
+     * A kromoszÃ³ma keresztezÃ©se egy mÃ¡sikkal, aminek az eredmÃ©nye kÃ©t gyermek
+     * kromoszÃ³ma.
      */
     public Chromosome[] crossOverWith(Chromosome other) {
 	// kell?
@@ -67,15 +67,15 @@ public class Chromosome {
 		    new Chromosome(other) };
 	}
 
-	// kromoszómaméretek ellenõrzése
+	// kromoszÃ³mamÃ©retek ellenÅ‘rzÃ©se
 	if (this.geneMap.size() != other.geneMap.size()) {
 	    throw new IllegalArgumentException("Chromosome sizes do not match.");
 	}
 
-	// elvégezzük a keresztezést
-	// Választunk egy pontot, amin kettéosztjuk a génállományt (a ponton
-	// lévõ elem a második részhez tartozik). A pont nem lehet a legelsõ
-	// elem, mert akkor csak szimpla génállománycsere történne az utódokban.
+	// elvÃ©gezzÃ¼k a keresztezÃ©st
+	// VÃ¡lasztunk egy pontot, amin kettÃ©osztjuk a gÃ©nÃ¡llomÃ¡nyt (a ponton
+	// lÃ©vÅ‘ elem a mÃ¡sodik rÃ©szhez tartozik). A pont nem lehet a legelsÅ‘
+	// elem, mert akkor csak szimpla gÃ©nÃ¡llomÃ¡nycsere tÃ¶rtÃ©nne az utÃ³dokban.
 	int swappingIndex = random.nextInt(this.geneMap.size() - 1) + 1;
 	int index = 1;
 	Character charAtIndex = null;
@@ -100,14 +100,14 @@ public class Chromosome {
     }
 
     /**
-     * A kromoszóma géntérképe (csak olvasható).
+     * A kromoszÃ³ma gÃ©ntÃ©rkÃ©pe (csak olvashatÃ³).
      */
     public Map<Character, Gene> geneMap() {
 	return Collections.unmodifiableMap(geneMap);
     }
 
     /**
-     * A kromoszómában szereplõ gének (csak olvasható).
+     * A kromoszÃ³mÃ¡ban szereplÅ‘ gÃ©nek (csak olvashatÃ³).
      */
     public Collection<Gene> genes() {
 	return Collections.unmodifiableCollection(geneMap.values());

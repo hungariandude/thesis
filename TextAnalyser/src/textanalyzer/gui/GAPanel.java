@@ -11,16 +11,16 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 
 /**
- * A genetikus algoritmus ·llapot·t megjelenÌtı panel.
+ * A genetikus algoritmus √°llapot√°t megjelen√≠t≈ë panel.
  * 
- * @author Istv·nfi Zsolt
+ * @author Istv√°nfi Zsolt
  */
 public class GAPanel extends JPanel {
 
     class GenerationNumberLabel extends JLabel {
 	private static final long serialVersionUID = 8789472591281770364L;
 
-	private static final String placeholder = "Gener·ciÛ: %d.";
+	private static final String placeholder = "Gener√°ci√≥: %d.";
 
 	GenerationNumberLabel() {
 	    super(String.format(placeholder, 0));
@@ -49,7 +49,7 @@ public class GAPanel extends JPanel {
 
 	populationPanel = createPopulationPanel();
 	JScrollPane scrollPane = new JScrollPane(populationPanel);
-	tabbedPane.addTab("Popul·ciÛ", scrollPane);
+	tabbedPane.addTab("Popul√°ci√≥", scrollPane);
 	tabbedPane.setFocusable(false);
 
 	add(tabbedPane, BorderLayout.CENTER);

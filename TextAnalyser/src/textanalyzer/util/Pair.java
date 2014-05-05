@@ -1,9 +1,9 @@
 package textanalyzer.util;
 
 /**
- * Egy p·rt reprezent·lÛ oszt·ly.
+ * Egy p√°rt reprezent√°l√≥ oszt√°ly.
  * 
- * @author Istv·nfi Zsolt
+ * @author Istv√°nfi Zsolt
  */
 public class Pair<L, R> {
     private L left;

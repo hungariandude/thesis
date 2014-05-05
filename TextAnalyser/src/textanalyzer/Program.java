@@ -6,17 +6,17 @@ import java.io.File;
 import java.util.ArrayList;
 
 /**
- * A program belépési pontja.
+ * A program belÃ©pÃ©si pontja.
  * 
- * @author Istvánfi Zsolt
+ * @author IstvÃ¡nfi Zsolt
  */
 public class Program {
 
     public static void main(String[] args) {
 	MainFrame mainFrame = new MainFrame();
 
-	// ha vannak megadva parancssori argumentumok, akkor azokat fájlelérési
-	// utakként próbálja értelmezni az alkalmazás
+	// ha vannak megadva parancssori argumentumok, akkor azokat fÃ¡jlelÃ©rÃ©si
+	// utakkÃ©nt prÃ³bÃ¡lja Ã©rtelmezni az alkalmazÃ¡s
 	if (args.length > 0) {
 	    ArrayList<File> files = new ArrayList<>();
 	    for (String path : args) {
@@ -25,7 +25,7 @@ public class Program {
 		    files.add(file);
 		} else {
 		    System.err
-			    .println("Nem található fájl ezen az elérési úton: "
+			    .println("Nem talÃ¡lhatÃ³ fÃ¡jl ezen az elÃ©rÃ©si Ãºton: "
 				    + path);
 		}
 	    }

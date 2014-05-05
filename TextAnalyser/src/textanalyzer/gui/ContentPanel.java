@@ -18,9 +18,9 @@ import javax.swing.JSplitPane;
 import javax.swing.ListSelectionModel;
 
 /**
- * A tartalmat megjelenÌtı panel.
+ * A tartalmat megjelen√≠t≈ë panel.
  * 
- * @author Istv·nfi Zsolt
+ * @author Istv√°nfi Zsolt
  */
 public class ContentPanel extends JPanel {
 
@@ -51,7 +51,7 @@ public class ContentPanel extends JPanel {
 	fileNamesPanel.setLayout(new BorderLayout(0, 5));
 
 	fileNamesPanel
-		.add(new JLabel("Megnyitott f·jlok:"), BorderLayout.NORTH);
+		.add(new JLabel("Megnyitott f√°jlok:"), BorderLayout.NORTH);
 
 	fileNamesList
 		.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -94,7 +94,7 @@ public class ContentPanel extends JPanel {
 	JPanel rightPanel = new JPanel();
 	rightPanel.setLayout(new BorderLayout(0, 5));
 
-	rightPanel.add(new JLabel("A genetikus algoritmus ·llapota:"),
+	rightPanel.add(new JLabel("A genetikus algoritmus √°llapota:"),
 		BorderLayout.NORTH);
 
 	gaPanel.setMinimumSize(new Dimension(200,

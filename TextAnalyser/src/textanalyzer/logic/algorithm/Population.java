@@ -3,16 +3,16 @@ package textanalyzer.logic.algorithm;
 import java.util.ArrayList;
 
 /**
- * A genetikus algoritmusban szereplı popul·ciÛ.
+ * A genetikus algoritmusban szerepl≈ë popul√°ci√≥.
  * 
- * @author Istv·nfi Zsolt
+ * @author Istv√°nfi Zsolt
  */
 public class Population extends ArrayList<Chromosome> {
 
     private static final long serialVersionUID = 5968120913954570795L;
 
     /**
-     * H·nyadik gener·ciÛ.
+     * H√°nyadik gener√°ci√≥.
      */
     private final int generationNumber;
 

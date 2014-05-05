@@ -16,9 +16,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 /**
- * A be·llÌt·sok elıugrÛ ablaka.
+ * A be√°ll√≠t√°sok el≈ëugr√≥ ablaka.
  * 
- * @author Istv·nfi Zsolt
+ * @author Istv√°nfi Zsolt
  */
 public class SettingsDialog {
 
@@ -30,7 +30,7 @@ public class SettingsDialog {
     public SettingsDialog() {
 	panel.setPreferredSize(new Dimension(250, 50));
 
-	// hack, hogy a TextField-ek kurzorpozÌciÛja ne mindig a mezı elejÈre
+	// hack, hogy a TextField-ek kurzorpoz√≠ci√≥ja ne mindig a mez≈ë elej√©re
 	// ugorjon
 	MouseAdapter mouseAdapter = new MouseAdapter() {
 	    @Override
@@ -46,7 +46,7 @@ public class SettingsDialog {
 	    }
 	};
 
-	// Popul·ciÛ mÈrete
+	// Popul√°ci√≥ m√©rete
 	populationSizeTF = new JFormattedTextField(
 		NumberFormat.getIntegerInstance());
 	populationSizeTF.setColumns(8);
@@ -54,17 +54,17 @@ public class SettingsDialog {
 	populationSizeTF.addMouseListener(mouseAdapter);
 	JPanel populationSizePanel = new JPanel(new BorderLayout());
 	populationSizePanel.add(populationSizeTF, BorderLayout.EAST);
-	JLabel populationLabel = new JLabel("Popul·ciÛ mÈrete:");
+	JLabel populationLabel = new JLabel("Popul√°ci√≥ m√©rete:");
 	populationSizePanel.add(populationLabel, BorderLayout.WEST);
 
-	// Sz¸neteltetÈsi idı
+	// Sz√ºneteltet√©si id≈ë
 	sleepTimeTF = new JFormattedTextField(NumberFormat.getIntegerInstance());
 	sleepTimeTF.setColumns(8);
 	sleepTimeTF.setValue(Settings.sleepTime);
 	sleepTimeTF.addMouseListener(mouseAdapter);
 	JPanel sleepTimePanel = new JPanel(new BorderLayout());
 	sleepTimePanel.add(sleepTimeTF, BorderLayout.EAST);
-	JLabel sleepTimeLabel = new JLabel("Sz¸neteltetÈsi idı (ms):");
+	JLabel sleepTimeLabel = new JLabel("Sz√ºneteltet√©si id≈ë (ms):");
 	sleepTimePanel.add(sleepTimeLabel, BorderLayout.WEST);
 
 	panel.setLayout(new BorderLayout());
@@ -73,7 +73,7 @@ public class SettingsDialog {
     }
 
     public void show() {
-	int result = JOptionPane.showConfirmDialog(null, panel, "Be·llÌt·sok",
+	int result = JOptionPane.showConfirmDialog(null, panel, "Be√°ll√≠t√°sok",
 		JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 	if (result == JOptionPane.OK_OPTION) {
 	    int populationSize = ((Number) populationSizeTF.getValue())

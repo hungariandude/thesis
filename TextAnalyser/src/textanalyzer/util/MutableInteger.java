@@ -1,9 +1,9 @@
 package textanalyzer.util;
 
 /**
- * Módosítható Integer osztály.
+ * MÃ³dosÃ­thatÃ³ Integer osztÃ¡ly.
  * 
- * @author Istvánfi Zsolt
+ * @author IstvÃ¡nfi Zsolt
  */
 public class MutableInteger extends Number implements
 	Comparable<MutableInteger> {

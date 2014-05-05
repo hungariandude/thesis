@@ -6,9 +6,9 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 /**
- * Rádiógombokat vízszintesen vagy függõlegesen megjelenítõ panel.
+ * RÃ¡diÃ³gombokat vÃ­zszintesen vagy fÃ¼ggÅ‘legesen megjelenÃ­tÅ‘ panel.
  * 
- * @author Istvánfi Zsolt
+ * @author IstvÃ¡nfi Zsolt
  */
 public class RadioPanel extends JPanel {
     private static final long serialVersionUID = 7960107096632067124L;

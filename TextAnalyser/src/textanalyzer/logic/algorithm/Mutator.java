@@ -11,30 +11,30 @@ import java.util.Map;
 import java.util.Random;
 
 /**
- * A kromoszómák mutálásáért felelõs osztály.
+ * A kromoszÃ³mÃ¡k mutÃ¡lÃ¡sÃ¡Ã©rt felelÅ‘s osztÃ¡ly.
  * 
- * @author Istvánfi Zsolt
+ * @author IstvÃ¡nfi Zsolt
  */
 public class Mutator {
     private enum MutationType {
 	/**
-	 * Új objektum hozzáadása véletlenszerû pozíción.
+	 * Ãšj objektum hozzÃ¡adÃ¡sa vÃ©letlenszerÅ± pozÃ­ciÃ³n.
 	 */
 	ADD,
 	/**
-	 * Egy objektum törlése véletlenszerû pozíción.
+	 * Egy objektum tÃ¶rlÃ©se vÃ©letlenszerÅ± pozÃ­ciÃ³n.
 	 */
 	REMOVE,
 	/**
-	 * Egy objektum irányának megfordítása.
+	 * Egy objektum irÃ¡nyÃ¡nak megfordÃ­tÃ¡sa.
 	 */
 	INVERT,
 	/**
-	 * Egy objektum alakjának megváltoztatása.
+	 * Egy objektum alakjÃ¡nak megvÃ¡ltoztatÃ¡sa.
 	 */
 	TRANSSHAPE,
 	/**
-	 * Egy objektum orientációjának megváltoztatása.
+	 * Egy objektum orientÃ¡ciÃ³jÃ¡nak megvÃ¡ltoztatÃ¡sa.
 	 */
 	ROTATE;
     }
@@ -62,9 +62,9 @@ public class Mutator {
     }
 
     /**
-     * A kromoszóma mutálása.
+     * A kromoszÃ³ma mutÃ¡lÃ¡sa.
      * 
-     * @return true, ha történt mutáció, egyébként false
+     * @return true, ha tÃ¶rtÃ©nt mutÃ¡ciÃ³, egyÃ©bkÃ©nt false
      */
     public boolean mutate(Chromosome chrom) {
 	boolean wasMutation = false;
@@ -78,17 +78,17 @@ public class Mutator {
     }
 
     /**
-     * Egy gén mutálása.
+     * Egy gÃ©n mutÃ¡lÃ¡sa.
      */
     private void mutate(Gene gene) {
 	List<DrawingObject> buildingElements = gene.getBuildingElements();
 
-	// a mutáció típusa
-	// egy elemet tartalmazó génbõl nem törlünk
+	// a mutÃ¡ciÃ³ tÃ­pusa
+	// egy elemet tartalmazÃ³ gÃ©nbÅ‘l nem tÃ¶rlÃ¼nk
 	MutationType mutationType = buildingElements.size() == 1 ? RandomUtils
 		.randomValue(mutationWeightMap, MutationType.REMOVE)
 		: RandomUtils.randomValue(mutationWeightMap);
-	// melyik pozíción
+	// melyik pozÃ­ciÃ³n
 	int index = random.nextInt(buildingElements.size());
 
 	switch (mutationType) {

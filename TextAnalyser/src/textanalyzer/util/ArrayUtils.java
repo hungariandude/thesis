@@ -1,13 +1,13 @@
 package textanalyzer.util;
 
 /**
- * Tömbökkel kapcsolatos mûveletek elvégzését segítõ statikus osztály.
+ * TÃ¶mbÃ¶kkel kapcsolatos mÅ±veletek elvÃ©gzÃ©sÃ©t segÃ­tÅ‘ statikus osztÃ¡ly.
  * 
- * @author Istvánfi Zsolt
+ * @author IstvÃ¡nfi Zsolt
  */
 public class ArrayUtils {
     /**
-     * Megfordítja egy integer tömb elemeinek sorrendjét.
+     * MegfordÃ­tja egy integer tÃ¶mb elemeinek sorrendjÃ©t.
      */
     public static void reverse(int[] array) {
 	for (int i = 0; i < array.length / 2; i++) {
@@ -19,6 +19,6 @@ public class ArrayUtils {
     }
 
     private ArrayUtils() {
-	// statikus osztály
+	// statikus osztÃ¡ly
     }
 }

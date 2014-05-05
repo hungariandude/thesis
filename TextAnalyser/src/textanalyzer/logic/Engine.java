@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.TreeSet;
 
 /**
- * A logika m˚kˆdÈsÈt vezÈrlı statikus oszt·ly.
+ * A logika m≈±k√∂d√©s√©t vez√©rl≈ë statikus oszt√°ly.
  * 
- * @author Istv·nfi Zsolt
+ * @author Istv√°nfi Zsolt
  */
 public final class Engine {
     private static final ArrayList<File> fileList = new ArrayList<>();
@@ -51,7 +51,7 @@ public final class Engine {
     }
 
     /**
-     * SwingWorkerrel vagy ˙j sz·llal kell haszn·lni!
+     * SwingWorkerrel vagy √∫j sz√°llal kell haszn√°lni!
      */
     public static void initAlgorithm() {
 	StringBuilder sb = new StringBuilder();
@@ -102,7 +102,7 @@ public final class Engine {
     }
 
     /**
-     * SwingWorkerrel vagy ˙j sz·llal kell haszn·lni!
+     * SwingWorkerrel vagy √∫j sz√°llal kell haszn√°lni!
      */
     public static void startAlgorithm(final int stepsToDo,
 	    IntValueChangeListener listener) {
@@ -157,6 +157,6 @@ public final class Engine {
     }
 
     private Engine() {
-	// statikus oszt·ly
+	// statikus oszt√°ly
     }
 }

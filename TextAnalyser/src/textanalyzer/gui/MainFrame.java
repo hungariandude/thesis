@@ -15,9 +15,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 /**
- * Az alkalmaz·s fıablaka, ami a program indÌt·sakor azonnal megjelenik.
+ * Az alkalmaz√°s f≈ëablaka, ami a program ind√≠t√°sakor azonnal megjelenik.
  * 
- * @author Istv·nfi Zsolt
+ * @author Istv√°nfi Zsolt
  */
 public class MainFrame extends JFrame {
 
@@ -29,7 +29,7 @@ public class MainFrame extends JFrame {
     private final ControlToolBar controlToolBar;
 
     public MainFrame() throws HeadlessException {
-	super("Szˆvegelemzı");
+	super("Sz√∂vegelemz≈ë");
 
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	setLayout(new BorderLayout());
@@ -54,21 +54,21 @@ public class MainFrame extends JFrame {
 	add(contentPanel, BorderLayout.CENTER);
 
 	statusBar = new StatusBar(22);
-	statusBar.setText("KÈsz.");
+	statusBar.setText("K√©sz.");
 	add(statusBar, BorderLayout.SOUTH);
     }
 
     /**
-     * LÈtrehozza az ablak men¸sor·t.
+     * L√©trehozza az ablak men√ºsor√°t.
      * 
      * @return <code>JMenuBar</code>
      */
     private JMenuBar createMenuBar() {
 	JMenuBar menuBar = new JMenuBar();
 
-	JMenu fileMenu = new JMenu("F·jl");
+	JMenu fileMenu = new JMenu("F√°jl");
 	menuBar.add(fileMenu);
-	fileMenu.add(new JMenuItem(new AbstractAction("Be·llÌt·sok") {
+	fileMenu.add(new JMenuItem(new AbstractAction("Be√°ll√≠t√°sok") {
 	    private static final long serialVersionUID = -2355160966436405427L;
 
 	    @Override
@@ -76,7 +76,7 @@ public class MainFrame extends JFrame {
 		new SettingsDialog().show();
 	    }
 	}));
-	fileMenu.add(new JMenuItem(new AbstractAction("KilÈpÈs") {
+	fileMenu.add(new JMenuItem(new AbstractAction("Kil√©p√©s") {
 	    private static final long serialVersionUID = -2355160966436405427L;
 
 	    @Override
@@ -86,15 +86,15 @@ public class MainFrame extends JFrame {
 	    }
 	}));
 
-	JMenu aboutMenu = new JMenu("S˙gÛ");
+	JMenu aboutMenu = new JMenu("S√∫g√≥");
 	menuBar.add(aboutMenu);
-	aboutMenu.add(new JMenuItem(new AbstractAction("NÈvjegy") {
+	aboutMenu.add(new JMenuItem(new AbstractAction("N√©vjegy") {
 	    private static final long serialVersionUID = -3219128113154876190L;
 
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		String body = "KÈszÌtette: Istv·nfi Zsolt\n\nELTE, 2014";
-		JOptionPane.showMessageDialog(MainFrame.this, body, "NÈvjegy",
+		String body = "K√©sz√≠tette: Istv√°nfi Zsolt\n\nELTE, 2014";
+		JOptionPane.showMessageDialog(MainFrame.this, body, "N√©vjegy",
 			JOptionPane.INFORMATION_MESSAGE);
 	    }
 	}));

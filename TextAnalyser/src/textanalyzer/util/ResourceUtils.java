@@ -8,9 +8,9 @@ import java.util.Scanner;
 import javax.imageio.ImageIO;
 
 /**
- * A resource-okkal kapcsolatos mûveletek elvégézését segítõ statikus osztály.
+ * A resource-okkal kapcsolatos mÅ±veletek elvÃ©gÃ©zÃ©sÃ©t segÃ­tÅ‘ statikus osztÃ¡ly.
  * 
- * @author Istvánfi Zsolt
+ * @author IstvÃ¡nfi Zsolt
  */
 public final class ResourceUtils {
 

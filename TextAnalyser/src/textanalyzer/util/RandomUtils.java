@@ -9,16 +9,16 @@ import java.util.Map.Entry;
 import java.util.Random;
 
 /**
- * Random mûveletek elvégzését segítõ statikus osztály.
+ * Random mÅ±veletek elvÃ©gzÃ©sÃ©t segÃ­tÅ‘ statikus osztÃ¡ly.
  * 
- * @author Istvánfi Zsolt
+ * @author IstvÃ¡nfi Zsolt
  */
 public final class RandomUtils {
     private static final Random random = new Random();
 
     /**
-     * Visszaad egy véletlenszerû értéket a paraméterként megkapott
-     * kollekcióból.
+     * Visszaad egy vÃ©letlenszerÅ± Ã©rtÃ©ket a paramÃ©terkÃ©nt megkapott
+     * kollekciÃ³bÃ³l.
      */
     public static <E> E randomValue(Collection<E> collection) {
 	int randomIndex = random.nextInt(collection.size());
@@ -33,8 +33,8 @@ public final class RandomUtils {
     }
 
     /**
-     * Visszaad egy véletlenszerû értéket a paraméterként megkapott
-     * kollekcióból, amit nem tartalmaz a kivétel lista.
+     * Visszaad egy vÃ©letlenszerÅ± Ã©rtÃ©ket a paramÃ©terkÃ©nt megkapott
+     * kollekciÃ³bÃ³l, amit nem tartalmaz a kivÃ©tel lista.
      */
     public static <E> E randomValue(Collection<E> collection,
 	    Collection<E> exceptions) {
@@ -44,8 +44,8 @@ public final class RandomUtils {
     }
 
     /**
-     * Visszaad egy véletlenszerû értéket a paraméterként megkapott
-     * kollekcióból, ami nem egyenlõ a kivétellel.
+     * Visszaad egy vÃ©letlenszerÅ± Ã©rtÃ©ket a paramÃ©terkÃ©nt megkapott
+     * kollekciÃ³bÃ³l, ami nem egyenlÅ‘ a kivÃ©tellel.
      */
     public static <E> E randomValue(Collection<E> collection, E exception) {
 	ArrayList<E> list = new ArrayList<>(collection);
@@ -54,15 +54,15 @@ public final class RandomUtils {
     }
 
     /**
-     * Visszaad egy véletlenszerû értéket a paraméterként megkapott tömbbõl.
+     * Visszaad egy vÃ©letlenszerÅ± Ã©rtÃ©ket a paramÃ©terkÃ©nt megkapott tÃ¶mbbÅ‘l.
      */
     public static <E> E randomValue(E[] array) {
 	return array[random.nextInt(array.length)];
     }
 
     /**
-     * Visszaad egy véletlenszerû értéket a paraméterként megkapott tömbbõl,
-     * amit nem tartalmaz a kivétel lista.
+     * Visszaad egy vÃ©letlenszerÅ± Ã©rtÃ©ket a paramÃ©terkÃ©nt megkapott tÃ¶mbbÅ‘l,
+     * amit nem tartalmaz a kivÃ©tel lista.
      */
     public static <E> E randomValue(E[] array, Collection<E> exceptions) {
 	ArrayList<E> list = new ArrayList<>(Arrays.asList(array));
@@ -71,8 +71,8 @@ public final class RandomUtils {
     }
 
     /**
-     * Visszaad egy véletlenszerû értéket a paraméterként megkapott tömbbõl, ami
-     * nem egyenlõ a kivétellel.
+     * Visszaad egy vÃ©letlenszerÅ± Ã©rtÃ©ket a paramÃ©terkÃ©nt megkapott tÃ¶mbbÅ‘l, ami
+     * nem egyenlÅ‘ a kivÃ©tellel.
      */
     public static <E> E randomValue(E[] array, E exception) {
 	ArrayList<E> list = new ArrayList<>(Arrays.asList(array));
@@ -81,8 +81,8 @@ public final class RandomUtils {
     }
 
     /**
-     * Visszaad egy véletlenszerû értéket a paraméterként megkapott súlyozási
-     * térkép alapján.
+     * Visszaad egy vÃ©letlenszerÅ± Ã©rtÃ©ket a paramÃ©terkÃ©nt megkapott sÃºlyozÃ¡si
+     * tÃ©rkÃ©p alapjÃ¡n.
      */
     public static <E> E randomValue(Map<E, ? extends Number> weightMap) {
 	double totalWeight = 0.0;
@@ -101,8 +101,8 @@ public final class RandomUtils {
     }
 
     /**
-     * Visszaad egy véletlenszerû értéket a paraméterként megkapott súlyozási
-     * térkép alapján, amit nem tartalmaz a kivétel lista.
+     * Visszaad egy vÃ©letlenszerÅ± Ã©rtÃ©ket a paramÃ©terkÃ©nt megkapott sÃºlyozÃ¡si
+     * tÃ©rkÃ©p alapjÃ¡n, amit nem tartalmaz a kivÃ©tel lista.
      */
     public static <E> E randomValue(Map<E, ? extends Number> weightMap,
 	    Collection<E> exceptions) {
@@ -112,8 +112,8 @@ public final class RandomUtils {
     }
 
     /**
-     * Visszaad egy véletlenszerû értéket a paraméterként megkapott súlyozási
-     * térkép alapján, ami nem egyenlõ a kivétellel.
+     * Visszaad egy vÃ©letlenszerÅ± Ã©rtÃ©ket a paramÃ©terkÃ©nt megkapott sÃºlyozÃ¡si
+     * tÃ©rkÃ©p alapjÃ¡n, ami nem egyenlÅ‘ a kivÃ©tellel.
      */
     public static <E> E randomValue(Map<E, ? extends Number> weightMap,
 	    E exception) {
@@ -123,6 +123,6 @@ public final class RandomUtils {
     }
 
     private RandomUtils() {
-	// statikus osztály
+	// statikus osztÃ¡ly
     }
 }

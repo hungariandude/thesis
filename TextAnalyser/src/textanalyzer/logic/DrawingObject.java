@@ -3,9 +3,9 @@ package textanalyzer.logic;
 import textanalyzer.util.RandomUtils;
 
 /**
- * Egy kirajzolhatÛ alakzat. Van alakja, orient·ciÛja, ir·nya.
+ * Egy kirajzolhat√≥ alakzat. Van alakja, orient√°ci√≥ja, ir√°nya.
  * 
- * @author Istv·nfi Zsolt
+ * @author Istv√°nfi Zsolt
  */
 public class DrawingObject {
 
@@ -22,7 +22,7 @@ public class DrawingObject {
     }
 
     /**
-     * H·nyfÈlekÈppen lehet kirajzolni egy alakzatot.
+     * H√°nyf√©lek√©ppen lehet kirajzolni egy alakzatot.
      */
     public static final int NUMBER_OF_OBJECT_DRAWING_WAYS = Shape.values().length
 	    * Orientation.values().length * Direction.values().length;
@@ -32,7 +32,7 @@ public class DrawingObject {
     private Direction direction;
 
     /**
-     * Az objektum alakj·t, orient·ciÛj·t Ès ir·ny·t vÈletlenszer˚en hat·rozza
+     * Az objektum alakj√°t, orient√°ci√≥j√°t √©s ir√°ny√°t v√©letlenszer≈±en hat√°rozza
      * meg.
      */
     public DrawingObject() {
