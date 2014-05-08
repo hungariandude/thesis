@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Az attribútumok ebben az XML fájlban konfigurációs információkat
+szolgáltatnak a Search Manager számára. -->
+
+<input-method xmlns:android="http://schemas.android.com/apk/res/android"
+        android:settingsActivity="hu.thesis.shorthand.ime.IMESettingsActivity">
+    <subtype
+        android:label="@string/label_subtype_generic"
+        android:imeSubtypeLocale="hu_HU"
+        android:imeSubtypeMode="keyboard" />
+    
+    <!-- android:icon="@drawable/icon_hu_hu" -->
+    
+</input-method>
