@@ -45,6 +45,7 @@ public class GAPanel extends JPanel {
 	setLayout(new BorderLayout());
 	setBorder(new BevelBorder(BevelBorder.LOWERED));
 
+	generationLabel.setEnabled(false);
 	add(generationLabel, BorderLayout.NORTH);
 
 	populationPanel = createPopulationPanel();
@@ -62,6 +63,10 @@ public class GAPanel extends JPanel {
 
     public GenerationNumberLabel getGenerationLabel() {
 	return generationLabel;
+    }
+
+    public void reset() {
+	generationLabel.setGenerationNumber(0);
     }
 
 }

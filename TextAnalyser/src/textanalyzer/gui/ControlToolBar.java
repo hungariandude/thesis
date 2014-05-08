@@ -45,10 +45,12 @@ public class ControlToolBar extends JToolBar {
 
 	@Override
 	protected void done() {
-	    pauseButton.setEnabled(false);
-	    startButton.setEnabled(true);
-	    stepSelector.setEnabled(true);
-	    stopButton.setEnabled(false);
+	    if (!stopped) {
+		pauseButton.setEnabled(false);
+		startButton.setEnabled(true);
+		stepSelector.setEnabled(true);
+		stopButton.setEnabled(false);
+	    }
 	    mainFrame.getStatusBar().setText(
 		    "A genetikus algoritmus futása befejeződött.");
 	}
@@ -74,6 +76,8 @@ public class ControlToolBar extends JToolBar {
     private final MainFrame mainFrame;
 
     private final JFileChooser fileChooser;
+    private boolean stopped = true;
+
     private final AbstractAction openAction = new AbstractAction() {
 	private static final long serialVersionUID = 7849531221976556017L;
 
@@ -98,6 +102,7 @@ public class ControlToolBar extends JToolBar {
 
 	    mainFrame.getStatusBar().setText(
 		    "A genetikus algoritmus inicializálása...");
+	    mainFrame.getContentPanel().getGaPanel().reset();
 
 	    SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 		@Override
@@ -108,11 +113,14 @@ public class ControlToolBar extends JToolBar {
 
 		@Override
 		protected void done() {
-		    mainFrame.getStatusBar().setText(
-			    "A genetikus algoritmus inicializálása elkészült.");
 		    startButton.setEnabled(true);
 		    stepSelector.setEnabled(true);
 		    fullStopButton.setEnabled(true);
+		    stopped = false;
+		    mainFrame.getContentPanel().getGaPanel()
+			    .getGenerationLabel().setEnabled(true);
+		    mainFrame.getStatusBar().setText(
+			    "A genetikus algoritmus inicializálása elkészült.");
 		}
 	    };
 	    worker.execute();
@@ -180,8 +188,9 @@ public class ControlToolBar extends JToolBar {
 	public void actionPerformed(ActionEvent e) {
 	    Engine.stopAlgorithm();
 
-	    fullStopButton.setEnabled(false);
+	    stopped = true;
 
+	    fullStopButton.setEnabled(false);
 	    startButton.setEnabled(false);
 	    stepSelector.setEnabled(false);
 	    pauseButton.setEnabled(false);
@@ -190,8 +199,9 @@ public class ControlToolBar extends JToolBar {
 	    openButton.setEnabled(true);
 	    resetButton.setEnabled(true);
 
-	    ControlToolBar.this.mainFrame.getContentPanel()
-		    .enableFileListEdit();
+	    mainFrame.getContentPanel().getGaPanel().getGenerationLabel()
+		    .setEnabled(false);
+	    mainFrame.getContentPanel().enableFileListEdit();
 	}
     };
 
@@ -217,7 +227,7 @@ public class ControlToolBar extends JToolBar {
 	startButton.setToolTipText("Indítás/folytatás");
 	startButton.setEnabled(false);
 	stepSelector = new RadioPanel(new String[] { "1", "10", "100", "1000",
-		"végtelen" }, true);
+		"∞" }, true);
 	stepSelector.setEnabled(false);
 
 	pauseButton = new JButton(new ImageIcon(

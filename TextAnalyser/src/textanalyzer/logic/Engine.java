@@ -143,6 +143,9 @@ public final class Engine {
 	thread = null;
     }
 
+    /**
+     * Az algoritmus futásának leállítását kéri.
+     */
     public static void stopAlgorithm() {
 	if (!running) {
 	    return;

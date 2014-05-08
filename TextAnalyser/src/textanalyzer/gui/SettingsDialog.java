@@ -28,7 +28,7 @@ public class SettingsDialog {
     private JFormattedTextField sleepTimeTF;
 
     public SettingsDialog() {
-	panel.setPreferredSize(new Dimension(250, 50));
+	panel.setPreferredSize(new Dimension(350, 50));
 
 	// hack, hogy a TextField-ek kurzorpozíciója ne mindig a mező elejére
 	// ugorjon
@@ -64,7 +64,8 @@ public class SettingsDialog {
 	sleepTimeTF.addMouseListener(mouseAdapter);
 	JPanel sleepTimePanel = new JPanel(new BorderLayout());
 	sleepTimePanel.add(sleepTimeTF, BorderLayout.EAST);
-	JLabel sleepTimeLabel = new JLabel("Szüneteltetési idő (ms):");
+	JLabel sleepTimeLabel = new JLabel(
+		"Szüneteltetési idő a lépések között (ms):");
 	sleepTimePanel.add(sleepTimeLabel, BorderLayout.WEST);
 
 	panel.setLayout(new BorderLayout());
