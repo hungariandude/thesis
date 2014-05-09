@@ -1,5 +1,5 @@
 
-package hu.thesis.shorthand.ime.drawing;
+package hu.thesis.shorthand.ime;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -9,14 +9,14 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.View;
+import android.view.SurfaceView;
 
 /**
- * A rajzoló felület.
+ * A gyorsíró beviteli eszköz rajzoló felülete.
  * 
  * @author Istvánfi Zsolt
  */
-public class DrawingView extends View {
+public class StenoCanvas extends SurfaceView {
 
     private Bitmap mBitmap;
     private Canvas mCanvas;
@@ -24,15 +24,27 @@ public class DrawingView extends View {
     private Paint mDrawPaint, mBgPaint;
     private float mX, mY;
 
-    public DrawingView(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+    public StenoCanvas(Context context) {
+        super(context);
+        init();
     }
 
-    public DrawingView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
+    public StenoCanvas(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init();
+    }
 
+    public StenoCanvas(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        init();
+    }
+
+    private void init() {
         mPath = new Path();
+
         mBgPaint = new Paint(Paint.DITHER_FLAG);
+        mBgPaint.setColor(getResources().getColor(R.color.canvas_background));
+
         mDrawPaint = new Paint();
         mDrawPaint.setColor(Color.BLUE);
         mDrawPaint.setAntiAlias(true);
@@ -79,6 +91,11 @@ public class DrawingView extends View {
 
         invalidate();
         return true;
+    }
+
+    public void reset() {
+        mCanvas.drawPaint(mBgPaint);
+        invalidate();
     }
 
     private void touchMove(float x, float y) {

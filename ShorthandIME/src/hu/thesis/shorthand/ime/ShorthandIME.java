@@ -18,6 +18,7 @@ public class ShorthandIME extends InputMethodService {
     // private InputMethodManager mInputMethodManager;
     // private InputConnection mInputConnection;
     private LinearLayout mInputView;
+    private StenoCanvas mStenoCanvas;
     private int mLastDisplayWidth;
     private StringBuilder mComposingText = new StringBuilder();
 
@@ -53,6 +54,7 @@ public class ShorthandIME extends InputMethodService {
 
         mInputView = (LinearLayout) getLayoutInflater().inflate(
                 R.layout.input, null);
+        mStenoCanvas = (StenoCanvas) mInputView.findViewById(R.id.canvas);
 
         return mInputView;
     }
@@ -68,10 +70,10 @@ public class ShorthandIME extends InputMethodService {
 
         resetState();
 
-        // if (mInputView != null) {
-        // // Bezárjuk a rajzoló nézetet.
-        // mInputView.closing();
-        // }
+        if (mStenoCanvas != null) {
+            // Visszaállítjuk alaphelyzetbe a rajzoló felületet.
+            mStenoCanvas.reset();
+        }
     }
 
     /**

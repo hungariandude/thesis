@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="300dp"
+    android:layout_height="270dp"
     android:orientation="vertical">
 
-    <hu.thesis.shorthand.ime.ShorthandCanvas
+    <hu.thesis.shorthand.ime.StenoCanvas
         android:id="@+id/canvas"
         android:layout_width="match_parent"
         android:layout_height="270dp"
         android:background="@color/canvas_background" />
 
-    <hu.thesis.shorthand.ime.ShorthandCanvas
+    <!-- <View
         android:id="@+id/blank"
         android:layout_width="match_parent"
         android:layout_height="30dp"
-        android:background="@color/blank_background" />
+        android:background="@color/blank_background" /> -->
 
 </LinearLayout>
