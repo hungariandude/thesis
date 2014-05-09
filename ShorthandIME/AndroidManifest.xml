@@ -27,7 +27,7 @@
 
         <!-- A beviteli eszköz beállításit megjeleneítő Activity -->
         <activity
-            android:name="hu.thesis.shorthand.ime.IMESettingsActivity"
+            android:name="hu.thesis.shorthand.ime.SettingsActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

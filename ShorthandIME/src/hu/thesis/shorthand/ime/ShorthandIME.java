@@ -6,6 +6,7 @@ import android.text.InputType;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
+import android.widget.LinearLayout;
 
 /**
  * A gyorsíró beviteli eszköz implementációja.
@@ -16,7 +17,7 @@ public class ShorthandIME extends InputMethodService {
 
     // private InputMethodManager mInputMethodManager;
     // private InputConnection mInputConnection;
-    private StenotypeView mInputView;
+    private LinearLayout mInputView;
     private int mLastDisplayWidth;
     private StringBuilder mComposingText = new StringBuilder();
 
@@ -50,7 +51,7 @@ public class ShorthandIME extends InputMethodService {
     public View onCreateInputView() {
         super.onCreateInputView();
 
-        mInputView = (StenotypeView) getLayoutInflater().inflate(
+        mInputView = (LinearLayout) getLayoutInflater().inflate(
                 R.layout.input, null);
 
         return mInputView;
@@ -67,10 +68,10 @@ public class ShorthandIME extends InputMethodService {
 
         resetState();
 
-        if (mInputView != null) {
-            // Bezárjuk a rajzoló nézetet.
-            mInputView.closing();
-        }
+        // if (mInputView != null) {
+        // // Bezárjuk a rajzoló nézetet.
+        // mInputView.closing();
+        // }
     }
 
     /**

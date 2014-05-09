@@ -4,8 +4,7 @@ package hu.thesis.shorthand.ime;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
-
-import com.android.inputmethodcommon.InputMethodSettingsFragment;
+import android.preference.PreferenceFragment;
 
 /**
  * Megjeleníti az alkalmazás beállításait az Android beviteli eszközök
@@ -13,9 +12,9 @@ import com.android.inputmethodcommon.InputMethodSettingsFragment;
  * 
  * @author Istvánfi Zsolt
  */
-public class IMESettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends PreferenceActivity {
 
-    public static class Settings extends InputMethodSettingsFragment {
+    public static class Settings extends PreferenceFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
