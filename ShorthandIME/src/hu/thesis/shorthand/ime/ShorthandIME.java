@@ -2,11 +2,9 @@
 package hu.thesis.shorthand.ime;
 
 import android.inputmethodservice.InputMethodService;
-import android.text.InputType;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
-import android.widget.LinearLayout;
 
 /**
  * A gyorsíró beviteli eszköz implementációja.
@@ -15,9 +13,7 @@ import android.widget.LinearLayout;
  */
 public class ShorthandIME extends InputMethodService {
 
-    // private InputMethodManager mInputMethodManager;
-    // private InputConnection mInputConnection;
-    private LinearLayout mInputView;
+    private View mContainerView;
     private StenoCanvas mStenoCanvas;
     private int mLastDisplayWidth;
     private StringBuilder mComposingText = new StringBuilder();
@@ -28,8 +24,6 @@ public class ShorthandIME extends InputMethodService {
     @Override
     public void onCreate() {
         super.onCreate();
-        // mInputMethodManager = (InputMethodManager)
-        // getSystemService(INPUT_METHOD_SERVICE);
     }
 
     /**
@@ -52,11 +46,11 @@ public class ShorthandIME extends InputMethodService {
     public View onCreateInputView() {
         super.onCreateInputView();
 
-        mInputView = (LinearLayout) getLayoutInflater().inflate(
+        mContainerView = getLayoutInflater().inflate(
                 R.layout.input, null);
-        mStenoCanvas = (StenoCanvas) mInputView.findViewById(R.id.canvas);
+        mStenoCanvas = (StenoCanvas) mContainerView.findViewById(R.id.canvas);
 
-        return mInputView;
+        return mContainerView;
     }
 
     /**
@@ -69,11 +63,6 @@ public class ShorthandIME extends InputMethodService {
         super.onFinishInput();
 
         resetState();
-
-        if (mStenoCanvas != null) {
-            // Visszaállítjuk alaphelyzetbe a rajzoló felületet.
-            mStenoCanvas.reset();
-        }
     }
 
     /**
@@ -114,51 +103,6 @@ public class ShorthandIME extends InputMethodService {
         // Erre azért van szükség, mert az alattunk lévő beviteli mező állapota
         // megváltozhatott.
         resetState();
-
-        if (!restarting) {
-            // TODO: itt törölhetjük majd a Shift módot, ha később esetleg
-            // szükség lenne rá.
-        }
-
-        // Most beállítjuk az állapotunkat aszerint, hogy milyen típusú beviteli
-        // mezőhöz vagyunk kapcsolódva.
-        switch (attribute.inputType & InputType.TYPE_MASK_CLASS) {
-            case InputType.TYPE_CLASS_NUMBER:
-            case InputType.TYPE_CLASS_DATETIME:
-                // A számok és dátumot esetében a szimbólumkarakterhalmazra van
-                // szükségünk.
-                // mCurKeyboard = mSymbolsKeyboard;
-                break;
-
-            case InputType.TYPE_CLASS_PHONE:
-                // Phones will also default to the symbols keyboard, though
-                // often you will want to have a dedicated phone keyboard.
-                // mCurKeyboard = mSymbolsKeyboard;
-                break;
-
-            case InputType.TYPE_CLASS_TEXT:
-                // Ez a normál beviteli típus, amihez az alfabetikus
-                // karakterkészletet használjuk.
-                // mCurKeyboard = mQwertyKeyboard;
-                // mPredictionOn = true;
-
-                // We also want to look at the current state of the editor
-                // to decide whether our alphabetic keyboard should start out
-                // shifted.
-                // updateShiftKeyState(attribute);
-                break;
-
-            default:
-                // Az ismeretlen beviteli típusokhoz az alfabetikus
-                // karakterkészletet használjuk.
-                // mCurKeyboard = mQwertyKeyboard;
-                // updateShiftKeyState(attribute);
-        }
-
-        // Módosítjuk az Enter billentyűnk szövegét aszerint, hogy milyen
-        // beviteli mezőn vagyunk.
-        // TODO: mCurKeyboard.setImeOptions(getResources(),
-        // attribute.imeOptions);
     }
 
     /**
@@ -168,13 +112,6 @@ public class ShorthandIME extends InputMethodService {
     @Override
     public void onStartInputView(EditorInfo attribute, boolean restarting) {
         super.onStartInputView(attribute, restarting);
-        // Apply the selected keyboard to the input view.
-        /*
-         * mInputView.setKeyboard(mCurKeyboard); mInputView.closing(); final
-         * InputMethodSubtype subtype =
-         * mInputMethodManager.getCurrentInputMethodSubtype();
-         * mInputView.setSubtypeOnSpaceKey(subtype);
-         */
     }
 
     /**
@@ -186,7 +123,7 @@ public class ShorthandIME extends InputMethodService {
     }
 
     /**
-     * Deal with the editor reporting movement of its cursor.
+     * Ez akkor hívódik meg, amikor a szerkesztett mezőben elmozdul a kurzor.
      */
     @Override
     public void onUpdateSelection(int oldSelStart, int oldSelEnd,
@@ -213,6 +150,11 @@ public class ShorthandIME extends InputMethodService {
     private void resetState() {
         // Töröljük az éppen képzett szöveget.
         mComposingText.setLength(0);
+
+        if (mStenoCanvas != null) {
+            // Visszaállítjuk alaphelyzetbe a rajzoló felületet.
+            mStenoCanvas.reset();
+        }
     }
 
     /**

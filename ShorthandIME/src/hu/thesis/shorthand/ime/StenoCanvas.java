@@ -18,6 +18,8 @@ import android.view.SurfaceView;
  */
 public class StenoCanvas extends SurfaceView {
 
+    private static final int TOUCH_TOLERANCE = 4;
+
     private Bitmap mBitmap;
     private Canvas mCanvas;
     private Path mPath;
@@ -46,9 +48,9 @@ public class StenoCanvas extends SurfaceView {
         mBgPaint.setColor(getResources().getColor(R.color.canvas_background));
 
         mDrawPaint = new Paint();
-        mDrawPaint.setColor(Color.BLUE);
+        mDrawPaint.setColor(Color.parseColor("#00FFFF")); // light blue
         mDrawPaint.setAntiAlias(true);
-        mDrawPaint.setStrokeWidth(20);
+        mDrawPaint.setStrokeWidth(5);
         mDrawPaint.setStyle(Paint.Style.STROKE);
         mDrawPaint.setStrokeJoin(Paint.Join.ROUND);
         mDrawPaint.setStrokeCap(Paint.Cap.ROUND);
@@ -99,13 +101,13 @@ public class StenoCanvas extends SurfaceView {
     }
 
     private void touchMove(float x, float y) {
-        // float dx = Math.abs(x - mX);
-        // float dy = Math.abs(y - mY);
-        // if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
-        mPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
-        mX = x;
-        mY = y;
-        // }
+        float dx = Math.abs(x - mX);
+        float dy = Math.abs(y - mY);
+        if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
+            mPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
+            mX = x;
+            mY = y;
+        }
     }
 
     private void touchStart(float x, float y) {
