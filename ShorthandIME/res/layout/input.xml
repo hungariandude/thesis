@@ -2,13 +2,25 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@color/blank_background">
 
     <hu.thesis.shorthand.ime.StenoCanvas
         android:id="@+id/canvas"
         android:layout_width="match_parent"
-        android:layout_height="270dp"
+        android:layout_height="250dp"
         android:background="@color/canvas_background"
+
+        android:fadeDuration="500"
+        android:fadeEnabled="true"
+        android:fadeOffset="0"
+        android:gestureColor="@color/gesture"
+        android:gestureStrokeAngleThreshold="0"
+        android:gestureStrokeLengthThreshold="80"
+        android:gestureStrokeSquarenessThreshold="0"
+        android:gestureStrokeType="single"
+        android:gestureStrokeWidth="5"
+        android:uncertainGestureColor="@color/wrong_gesture"
     />
 
 </FrameLayout>

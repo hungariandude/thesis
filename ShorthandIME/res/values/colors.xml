@@ -2,4 +2,6 @@
 <resources>
     <color name="canvas_background">#000000</color> <!-- black -->
     <color name="blank_background">#545454</color> <!-- dark gray -->
+    <color name="gesture">#7FFF00</color> <!-- light green -->
+    <color name="wrong_gesture">#FF0000</color> <!-- red -->
 </resources>

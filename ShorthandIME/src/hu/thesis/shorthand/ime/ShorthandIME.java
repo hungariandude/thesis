@@ -1,22 +1,33 @@
 
 package hu.thesis.shorthand.ime;
 
+import android.gesture.Gesture;
+import android.gesture.GestureOverlayView;
+import android.gesture.GestureOverlayView.OnGesturePerformedListener;
+import android.gesture.GesturePoint;
+import android.gesture.GestureStroke;
 import android.inputmethodservice.InputMethodService;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
+
+import hu.thesis.shorthand.ime.recognizer.Recognizer;
+import hu.thesis.shorthand.ime.util.RecognizerUtils;
 
 /**
  * A gyorsíró beviteli eszköz implementációja.
  * 
  * @author Istvánfi Zsolt
  */
-public class ShorthandIME extends InputMethodService {
+public class ShorthandIME extends InputMethodService implements OnGesturePerformedListener {
+
+    public static final boolean DEBUG = true;
 
     private View mContainerView;
     private StenoCanvas mStenoCanvas;
     private int mLastDisplayWidth;
     private StringBuilder mComposingText = new StringBuilder();
+    private Recognizer mRecognizer = new Recognizer();
 
     /**
      * Itt inicializáljuk a beviteli eszközt.
@@ -46,9 +57,10 @@ public class ShorthandIME extends InputMethodService {
     public View onCreateInputView() {
         super.onCreateInputView();
 
-        mContainerView = getLayoutInflater().inflate(
-                R.layout.input, null);
+        mContainerView = getLayoutInflater().inflate(R.layout.input, null);
         mStenoCanvas = (StenoCanvas) mContainerView.findViewById(R.id.canvas);
+
+        mStenoCanvas.addOnGesturePerformedListener(this);
 
         return mContainerView;
     }
@@ -71,6 +83,26 @@ public class ShorthandIME extends InputMethodService {
     @Override
     public void onFinishInputView(boolean finishingInput) {
         super.onFinishInputView(finishingInput);
+    }
+
+    @Override
+    public void onGesturePerformed(GestureOverlayView overlay, Gesture gesture) {
+        // Log.d(ShorthandIME.class.getSimpleName(), "Strokes size: " +
+        // gesture.getStrokesCount());
+
+        InputConnection ic = getCurrentInputConnection();
+
+        for (GestureStroke stroke : gesture.getStrokes()) {
+            GesturePoint[] points = RecognizerUtils.extractGesturePointsFromStroke(stroke);
+            if (DEBUG) {
+                ((StenoCanvas) overlay).setDebugPoints(points);
+            }
+            String result = mRecognizer.recognize(points);
+            if (result != null) {
+                mComposingText.append(result);
+                ic.commitText(result, 1);
+            }
+        }
     }
 
     /**
@@ -126,11 +158,10 @@ public class ShorthandIME extends InputMethodService {
      * Ez akkor hívódik meg, amikor a szerkesztett mezőben elmozdul a kurzor.
      */
     @Override
-    public void onUpdateSelection(int oldSelStart, int oldSelEnd,
-            int newSelStart, int newSelEnd, int candidatesStart,
-            int candidatesEnd) {
-        super.onUpdateSelection(oldSelStart, oldSelEnd, newSelStart, newSelEnd,
-                candidatesStart, candidatesEnd);
+    public void onUpdateSelection(int oldSelStart, int oldSelEnd, int newSelStart, int newSelEnd,
+            int candidatesStart, int candidatesEnd) {
+        super.onUpdateSelection(oldSelStart, oldSelEnd, newSelStart, newSelEnd, candidatesStart,
+                candidatesEnd);
 
         // Ha az aktuális kijelölés változik a szöveges mezőben, akkor törölnünk
         // kell az ajánlást
@@ -154,25 +185,6 @@ public class ShorthandIME extends InputMethodService {
         if (mStenoCanvas != null) {
             // Visszaállítjuk alaphelyzetbe a rajzoló felületet.
             mStenoCanvas.reset();
-        }
-    }
-
-    /**
-     * Helper to send a character to the editor as raw key events.
-     */
-    private void sendKey(int keyCode) {
-        switch (keyCode) {
-            case '\n':
-                // keyDownUp(KeyEvent.KEYCODE_ENTER);
-                break;
-            default:
-                if (keyCode >= '0' && keyCode <= '9') {
-                    // keyDownUp(keyCode - '0' + KeyEvent.KEYCODE_0);
-                } else {
-                    getCurrentInputConnection().commitText(
-                            String.valueOf((char) keyCode), 1);
-                }
-                break;
         }
     }
 }
