@@ -28,11 +28,11 @@ public class Mutator {
 	/**
 	 * Egy objektum irányának megfordítása.
 	 */
-	INVERT,
+	REVERSE,
 	/**
 	 * Egy objektum alakjának megváltoztatása.
 	 */
-	TRANSSHAPE,
+	BEND,
 	/**
 	 * Egy objektum orientációjának megváltoztatása.
 	 */
@@ -54,11 +54,11 @@ public class Mutator {
 	this.mutationRate = mutationRate;
 
 	this.mutationWeightMap = new HashMap<>();
-	this.mutationWeightMap.put(MutationType.ADD, 10.0);
-	this.mutationWeightMap.put(MutationType.REMOVE, 10.0);
-	this.mutationWeightMap.put(MutationType.INVERT, 1.0);
-	this.mutationWeightMap.put(MutationType.TRANSSHAPE, 5.0);
-	this.mutationWeightMap.put(MutationType.ROTATE, 5.0);
+	this.mutationWeightMap.put(MutationType.ADD, 1.0);
+	this.mutationWeightMap.put(MutationType.REMOVE, 1.0);
+	this.mutationWeightMap.put(MutationType.REVERSE, 3.0);
+	this.mutationWeightMap.put(MutationType.BEND, 1.2);
+	this.mutationWeightMap.put(MutationType.ROTATE, 10.0);
     }
 
     /**
@@ -99,7 +99,7 @@ public class Mutator {
 	case REMOVE:
 	    buildingElements.remove(index);
 	    break;
-	case INVERT:
+	case REVERSE:
 	    buildingElements.get(index).invertDirection();
 	    break;
 	case ROTATE:
@@ -107,11 +107,13 @@ public class Mutator {
 	    object.setOrientation(RandomUtils.randomValue(Orientation.values(),
 		    object.getOrientation()));
 	    break;
-	case TRANSSHAPE:
+	case BEND:
 	    object = buildingElements.get(index);
 	    object.setShape(RandomUtils.randomValue(Shape.values(),
 		    object.getShape()));
 	    break;
 	}
+
+	gene.recalculateDrawingSize();
     }
 }

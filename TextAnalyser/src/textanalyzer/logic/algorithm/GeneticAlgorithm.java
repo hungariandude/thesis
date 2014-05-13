@@ -20,7 +20,7 @@ public class GeneticAlgorithm {
     /**
      * Hányadik generációnál tart az evolúció.
      */
-    private int generationCounter = 0;
+    private long generationCounter = 0L;
 
     private final Random random = new Random();
 

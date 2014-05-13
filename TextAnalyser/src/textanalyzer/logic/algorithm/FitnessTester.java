@@ -1,8 +1,6 @@
 package textanalyzer.logic.algorithm;
 
 import textanalyzer.logic.DrawingObject;
-import textanalyzer.logic.DrawingObject.Direction;
-import textanalyzer.logic.DrawingObject.Orientation;
 import textanalyzer.util.MutableInteger;
 import textanalyzer.util.Pair;
 
@@ -49,7 +47,7 @@ public class FitnessTester {
     private Map<Character, Integer> recommendedLengthMap = new HashMap<>();
 
     private static final Point2D DEFAULT_DRAWING_AREA_SIZE = new Point2D.Double(
-	    4.0, 3.0);
+	    4.0, 4.0);
 
     private static final Logger LOGGER = Logger.getLogger(FitnessTester.class
 	    .getName());
@@ -155,52 +153,13 @@ public class FitnessTester {
 	}
     }
 
-    private Point2D measureDrawingObjectSize(DrawingObject object) {
-	double dx, dy;
-
-	if (object.getOrientation() == Orientation.OBLIQUE_RIGHT
-		|| object.getOrientation() == Orientation.OBLIQUE_LEFT) {
-	    dx = dy = Math.sin(Math.toRadians(45));
-	    if (object.getOrientation() == Orientation.OBLIQUE_LEFT) {
-		// ebben az esetben a dx negatív
-		dx *= -1;
-	    }
-	} else {
-	    if (object.getOrientation() == Orientation.HORIZONTAL) {
-		dx = 0;
-		dy = 1;
-	    } else {
-		dx = 1;
-		dy = 0;
-	    }
-	}
-	if (object.getDirection() == Direction.REVERSE) {
-	    dx *= -1;
-	    dy *= -1;
-	}
-
-	return new Point2D.Double(dx, dy);
-    }
-
-    private Point2D measureDrawingSize(List<DrawingObject> objects) {
-	double dx = 0.0, dy = 0.0;
-
-	for (DrawingObject object : objects) {
-	    Point2D size = measureDrawingObjectSize(object);
-	    dx += size.getX();
-	    dy += size.getY();
-	}
-
-	return new Point2D.Double(dx, dy);
-    }
-
     /**
-     * @return [0;100]
+     * @return [0;1]
      */
     private double scoreConnections(Character key, Map<Character, Gene> map) {
 	Pair<Entry<Integer, List<Character>>, Entry<Integer, List<Character>>> entry = maxCountNeighborMap
 		.get(key);
-	List<DrawingObject> mainObjects = map.get(key).getBuildingElements();
+	Gene mainGene = map.get(key);
 	List<Character> leftList = entry.getLeft() == null ? null : entry
 		.getLeft().getValue();
 	List<Character> rightList = entry.getRight() == null ? null : entry
@@ -208,36 +167,32 @@ public class FitnessTester {
 	double leftPoints = 0.0, rightPoints = 0.0;
 
 	if (leftList == null) {
-	    leftPoints = 50.0;
+	    leftPoints = 0.5;
 	} else {
 	    int leftSize = leftList.size();
 	    if (leftSize > 0) {
 		for (Character ch : leftList) {
-		    ArrayList<DrawingObject> objects = new ArrayList<>(map.get(
-			    ch).getBuildingElements());
-		    objects.addAll(mainObjects);
-		    leftPoints += scoreDrawingSize(objects);
+		    leftPoints += scoreDrawingSize(Gene.concatenate(
+			    map.get(ch), mainGene));
 		}
 		leftPoints = leftPoints / leftSize / 2;
 	    } else {
-		leftPoints = 50.0;
+		leftPoints = 0.5;
 	    }
 	}
 
 	if (rightList == null) {
-	    rightPoints = 50.0;
+	    rightPoints = 0.5;
 	} else {
 	    int rightSize = rightList.size();
 	    if (rightSize > 0) {
 		for (Character ch : rightList) {
-		    ArrayList<DrawingObject> objects = new ArrayList<>(
-			    mainObjects);
-		    objects.addAll(map.get(ch).getBuildingElements());
-		    rightPoints += scoreDrawingSize(objects);
+		    rightPoints += scoreDrawingSize(Gene.concatenate(mainGene,
+			    map.get(ch)));
 		}
 		rightPoints = rightPoints / rightSize / 2;
 	    } else {
-		rightPoints = 50.0;
+		rightPoints = 0.5;
 	    }
 	}
 
@@ -248,10 +203,10 @@ public class FitnessTester {
      * Értékeljük azt, hogy mennyire távolodik el a kiindulóponttól a
      * kirajzolandó alakzat végpontja.
      * 
-     * @return [0;100]
+     * @return [0;1]
      */
-    private double scoreDrawingSize(List<DrawingObject> objects) {
-	Point2D size = measureDrawingSize(objects);
+    private double scoreDrawingSize(Gene gene) {
+	Point2D size = gene.getDrawingSize();
 
 	double absX = Math.abs(size.getX());
 	double absY = Math.abs(size.getY());
@@ -264,11 +219,11 @@ public class FitnessTester {
 
 	if (absX <= 1 && absY <= 1) {
 	    // 1 egységen belül végződik az objektum
-	    return 100.0;
+	    return 1.0;
 	}
 
-	double xScore = 50.0;
-	double yScore = 50.0;
+	double xScore = 0.5;
+	double yScore = 0.5;
 
 	// ha 1 egységnél távolabb végződik az objektum, akkor az értékelés a
 	// fordított relatív távolság lesz
@@ -297,13 +252,21 @@ public class FitnessTester {
 	    // 1. lépés: értékeljük a gén hosszát
 	    double lengthScore = scoreGeneLength(ch, gene);
 	    // 2. lépés: értékeljük a gén méretét
-	    double sizeScore = scoreDrawingSize(gene.getBuildingElements());
+	    double sizeScore = scoreDrawingSize(gene);
 	    // 3. lépés: értékeljük a gén kapcsolatát a többi génnel
 	    double connectionScore = scoreConnections(ch, chrom.geneMap());
 
 	    fitnessScore += (lengthScore + sizeScore + connectionScore) / 3;
 	}
-	fitnessScore = fitnessScore / geneMap.size();
+	// a fentiek 1/10-ed arányban számítanak bele a fitnesz pontszámba
+	fitnessScore = fitnessScore / geneMap.size() * 10;
+
+	// végigíratjuk a bemeneti szövegünket a kromoszómával. Az értékelés
+	// szempontja az, hogy az írás során hányszor futunk le a rajzolási
+	// képernyőről
+	double writingTestScore = scoreWritingTest(chrom);
+	// ez pedig 9/10-ed arányban számítódik bele a fitness pontszámba
+	fitnessScore += writingTestScore * 90;
 
 	// a karakterek egyediségi értékének négyzetével szorozzuk a
 	// végeredményt, ezzel büntetve a megegyező géneket tartalmazó
@@ -315,14 +278,14 @@ public class FitnessTester {
     }
 
     /**
-     * @return ]0;100]
+     * @return ]0;1]
      */
     private double scoreGeneLength(Character ch, Gene gene) {
 	// mennyire tér el a gén hossza a neki ajánlott hosszúságtól
 	int deviation = Math.abs(gene.length() - recommendedLengthMap.get(ch));
 
-	// másodfokú az értékcsökkentés (100, 50, 25...)
-	double lengthScore = 2.0 / Math.pow(2, deviation + 1) * 100.0;
+	// másodfokú az értékcsökkentés (1, 0.5, 0.25, ...)
+	double lengthScore = 2.0 / Math.pow(2, deviation + 1);
 
 	return lengthScore;
     }
@@ -347,6 +310,33 @@ public class FitnessTester {
 	}
 
 	return 1.0 - count / (double) charCountMap.size();
+    }
+
+    /**
+     * Végigmegy a forrásszövegen és megszámolja, hogy hányszor fut le az írás a
+     * rajzoló felületről és ezután ad értékelést.
+     * 
+     * return [0;1]
+     */
+    private double scoreWritingTest(Chromosome chrom) {
+	double x = 0.0, y = 0.0;
+
+	int runOutCount = 0;
+	for (int i = 0; i < sourceText.length(); ++i) {
+	    char ch = sourceText.charAt(i);
+	    Point2D size = chrom.geneMap().get(ch).getDrawingSize();
+	    x += size.getX();
+	    y += size.getY();
+	    if (Math.abs(x) > DEFAULT_DRAWING_AREA_SIZE.getX() / 2
+		    || Math.abs(y) > DEFAULT_DRAWING_AREA_SIZE.getY() / 2) {
+		// kifutottunk
+		runOutCount++;
+		// visszaugrunk középre
+		x = y = 0.0;
+	    }
+	}
+
+	return (double) runOutCount / sourceText.length();
     }
 
     /**

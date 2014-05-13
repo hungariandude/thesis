@@ -1,8 +1,13 @@
 package textanalyzer.gui;
 
+import textanalyzer.logic.algorithm.Chromosome;
+import textanalyzer.logic.algorithm.Population;
+
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Font;
 
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -17,6 +22,9 @@ import javax.swing.border.EmptyBorder;
  */
 public class GAPanel extends JPanel {
 
+    /**
+     * A generáció számát megjelenítő címke.
+     */
     class GenerationNumberLabel extends JLabel {
 	private static final long serialVersionUID = 8789472591281770364L;
 
@@ -29,7 +37,7 @@ public class GAPanel extends JPanel {
 	    setBorder(new EmptyBorder(5, 5, 5, 5));
 	}
 
-	void setGenerationNumber(int count) {
+	void setGenerationNumber(long count) {
 	    setText(String.format(placeholder, count));
 	}
     }
@@ -45,28 +53,44 @@ public class GAPanel extends JPanel {
 	setLayout(new BorderLayout());
 	setBorder(new BevelBorder(BevelBorder.LOWERED));
 
-	generationLabel.setEnabled(false);
 	add(generationLabel, BorderLayout.NORTH);
 
-	populationPanel = createPopulationPanel();
+	populationPanel = new JPanel();
+	populationPanel.setLayout(new BoxLayout(populationPanel,
+		BoxLayout.Y_AXIS));
 	JScrollPane scrollPane = new JScrollPane(populationPanel);
 	tabbedPane.addTab("Populáció", scrollPane);
 	tabbedPane.setFocusable(false);
 
 	add(tabbedPane, BorderLayout.CENTER);
-    }
 
-    private JPanel createPopulationPanel() {
-	JPanel populationPanel = new JPanel();
-	return populationPanel;
-    }
-
-    public GenerationNumberLabel getGenerationLabel() {
-	return generationLabel;
+	setEnabled(false);
     }
 
     public void reset() {
 	generationLabel.setGenerationNumber(0);
+	populationPanel.removeAll();
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+	super.setEnabled(enabled);
+
+	for (Component c : getComponents()) {
+	    c.setEnabled(enabled);
+	}
+    }
+
+    /**
+     * Megjeleníti a paraméterként kapott populációt a felületen.
+     */
+    public void setPopulation(Population population) {
+	generationLabel.setGenerationNumber(population.getGenerationNumber());
+	populationPanel.removeAll();
+
+	for (Chromosome chrom : population) {
+	    populationPanel.add(new ChromosomeRow(chrom));
+	}
     }
 
 }

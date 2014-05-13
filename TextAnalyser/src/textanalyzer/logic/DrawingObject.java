@@ -2,6 +2,8 @@ package textanalyzer.logic;
 
 import textanalyzer.util.RandomUtils;
 
+import java.awt.geom.Point2D;
+
 /**
  * Egy kirajzolható alakzat. Van alakja, orientációja, iránya.
  * 
@@ -42,7 +44,7 @@ public class DrawingObject {
     }
 
     /**
-     * Copy constructor.
+     * Deep copy constructor.
      */
     public DrawingObject(DrawingObject sample) {
 	this.shape = sample.shape;
@@ -83,6 +85,33 @@ public class DrawingObject {
 
     public Direction getDirection() {
 	return direction;
+    }
+
+    public Point2D getDrawingSize() {
+	double dx, dy;
+
+	if (orientation == Orientation.OBLIQUE_RIGHT
+		|| orientation == Orientation.OBLIQUE_LEFT) {
+	    dx = dy = Math.sin(Math.toRadians(45));
+	    if (orientation == Orientation.OBLIQUE_LEFT) {
+		// ebben az esetben a dx negatív
+		dx *= -1;
+	    }
+	} else {
+	    if (orientation == Orientation.HORIZONTAL) {
+		dx = 0;
+		dy = 1;
+	    } else {
+		dx = 1;
+		dy = 0;
+	    }
+	}
+	if (direction == Direction.REVERSE) {
+	    dx *= -1;
+	    dy *= -1;
+	}
+
+	return new Point2D.Double(dx, dy);
     }
 
     public Orientation getOrientation() {

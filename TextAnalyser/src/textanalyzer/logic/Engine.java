@@ -3,7 +3,7 @@ package textanalyzer.logic;
 import textanalyzer.logic.algorithm.GeneticAlgorithm;
 import textanalyzer.logic.algorithm.Population;
 import textanalyzer.util.ArrayUtils;
-import textanalyzer.util.IntValueChangeListener;
+import textanalyzer.util.ValueChangeListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -105,7 +105,7 @@ public final class Engine {
      * SwingWorkerrel vagy új szállal kell használni!
      */
     public static void startAlgorithm(final int stepsToDo,
-	    IntValueChangeListener listener) {
+	    ValueChangeListener<Population> listener) {
 	if (running) {
 	    return;
 	}
@@ -119,7 +119,11 @@ public final class Engine {
 		break;
 	    }
 	    Population population = ga.evolvePopulation();
-	    listener.valueChange(population.getGenerationNumber());
+
+	    Population sortedPopulation = new Population(population);
+	    Collections.sort(sortedPopulation, Collections.reverseOrder());
+	    listener.valueChange(sortedPopulation);
+
 	    ++stepsDone;
 
 	    if (Settings.sleepTime > 0) {

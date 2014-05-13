@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import textanalyzer.util.ResourceUtils;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.logging.Logger;
 
@@ -26,28 +25,23 @@ public class GeneticAlgorithmTest {
 
     @Test
     public void test() {
-	for (int i = 1; i <= 100; ++i) {
+	for (int i = 1; i <= 1000; ++i) {
 	    Population pop = ga.evolvePopulation();
+	    Collections.sort(pop, Collections.reverseOrder());
 
-	    ArrayList<Double> scores = new ArrayList<>();
-	    for (Chromosome chrom : pop) {
-		scores.add(chrom.getFitnessScore());
-	    }
-
-	    Collections.sort(scores, Collections.reverseOrder());
 	    StringBuilder sb = new StringBuilder();
-	    for (double d : scores) {
-		sb.append(Math.round(d)).append(',');
+	    for (Chromosome chrom : pop) {
+		sb.append(Math.round(chrom.getFitnessScore())).append(',');
 	    }
 	    sb.delete(sb.length() - 1, sb.length());
 
 	    System.out.println(i + ". gen: " + sb.toString());
 
-	    try {
-		Thread.sleep(50);
-	    } catch (InterruptedException e) {
-		e.printStackTrace();
-	    }
+	    // try {
+	    // Thread.sleep(50);
+	    // } catch (InterruptedException e) {
+	    // e.printStackTrace();
+	    // }
 	}
     }
 

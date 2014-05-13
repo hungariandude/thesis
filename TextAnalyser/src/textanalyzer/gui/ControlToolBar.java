@@ -1,8 +1,9 @@
 package textanalyzer.gui;
 
 import textanalyzer.logic.Engine;
-import textanalyzer.util.IntValueChangeListener;
+import textanalyzer.logic.algorithm.Population;
 import textanalyzer.util.ResourceUtils;
+import textanalyzer.util.ValueChangeListener;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -29,8 +30,8 @@ public class ControlToolBar extends JToolBar {
      * 
      * @author Istvánfi Zsolt
      */
-    private class GAWorker extends SwingWorker<Void, Integer> implements
-	    IntValueChangeListener {
+    private class GAWorker extends SwingWorker<Void, Population> implements
+	    ValueChangeListener<Population> {
 	private final int stepsToDo;
 
 	GAWorker(int stepsToDo) {
@@ -56,14 +57,13 @@ public class ControlToolBar extends JToolBar {
 	}
 
 	@Override
-	protected void process(List<Integer> chunks) {
-	    int max = Collections.max(chunks);
-	    mainFrame.getContentPanel().getGaPanel().getGenerationLabel()
-		    .setGenerationNumber(max);
+	protected void process(List<Population> chunks) {
+	    Population max = Collections.max(chunks);
+	    mainFrame.getContentPanel().getGaPanel().setPopulation(max);
 	}
 
 	@Override
-	public void valueChange(int newValue) {
+	public void valueChange(Population newValue) {
 	    publish(newValue);
 	}
     }
@@ -117,8 +117,7 @@ public class ControlToolBar extends JToolBar {
 		    stepSelector.setEnabled(true);
 		    fullStopButton.setEnabled(true);
 		    stopped = false;
-		    mainFrame.getContentPanel().getGaPanel()
-			    .getGenerationLabel().setEnabled(true);
+		    mainFrame.getContentPanel().getGaPanel().setEnabled(true);
 		    mainFrame.getStatusBar().setText(
 			    "A genetikus algoritmus inicializálása elkészült.");
 		}
@@ -199,8 +198,7 @@ public class ControlToolBar extends JToolBar {
 	    openButton.setEnabled(true);
 	    resetButton.setEnabled(true);
 
-	    mainFrame.getContentPanel().getGaPanel().getGenerationLabel()
-		    .setEnabled(false);
+	    mainFrame.getContentPanel().getGaPanel().setEnabled(false);
 	    mainFrame.getContentPanel().enableFileListEdit();
 	}
     };

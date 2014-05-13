@@ -2,6 +2,7 @@ package textanalyzer.logic.algorithm;
 
 import textanalyzer.logic.DrawingObject;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,17 +13,47 @@ import java.util.List;
  */
 public class Gene {
 
+    /**
+     * Összefűz két gént és az eredményt új génként adja vissza.
+     */
+    public static Gene concatenate(Gene firstPart, Gene secondPart) {
+	ArrayList<DrawingObject> newBuildingElements = new ArrayList<>(
+		firstPart.buildingElements.size()
+			+ secondPart.buildingElements.size());
+	newBuildingElements.addAll(firstPart.buildingElements);
+	newBuildingElements.addAll(secondPart.buildingElements);
+
+	return new Gene(newBuildingElements);
+    }
+
     private ArrayList<DrawingObject> buildingElements;
+
+    private Point2D drawingSize;
 
     /**
      * Üres gén.
      */
     public Gene() {
 	this.buildingElements = new ArrayList<>();
+
+	this.drawingSize = new Point2D.Double();
     }
 
     /**
-     * Copy constructor.
+     * A megadott építőelemek alapján létrehoz egy új gént.
+     */
+    public Gene(ArrayList<DrawingObject> buildingElements) {
+	this.buildingElements = new ArrayList<>(buildingElements.size());
+
+	for (DrawingObject object : buildingElements) {
+	    this.buildingElements.add(new DrawingObject(object));
+	}
+
+	recalculateDrawingSize();
+    }
+
+    /**
+     * Deep copy constructor.
      */
     public Gene(Gene sample) {
 	this.buildingElements = new ArrayList<>(sample.buildingElements.size());
@@ -30,6 +61,9 @@ public class Gene {
 	for (DrawingObject object : sample.buildingElements) {
 	    this.buildingElements.add(new DrawingObject(object));
 	}
+
+	this.drawingSize = new Point2D.Double(sample.drawingSize.getX(),
+		sample.drawingSize.getY());
     }
 
     /**
@@ -41,6 +75,8 @@ public class Gene {
 	for (int i = 0; i < length; ++i) {
 	    buildingElements.add(new DrawingObject());
 	}
+
+	recalculateDrawingSize();
     }
 
     @Override
@@ -69,6 +105,10 @@ public class Gene {
 	return buildingElements;
     }
 
+    public Point2D getDrawingSize() {
+	return drawingSize;
+    }
+
     @Override
     public int hashCode() {
 	final int prime = 31;
@@ -86,8 +126,25 @@ public class Gene {
 	return this.buildingElements.size();
     }
 
+    /**
+     * Újraszámolja a gép rajzolási méretét.
+     */
+    public void recalculateDrawingSize() {
+	double dx = 0.0, dy = 0.0;
+
+	for (DrawingObject object : buildingElements) {
+	    Point2D size = object.getDrawingSize();
+	    dx += size.getX();
+	    dy += size.getY();
+	}
+
+	this.drawingSize = new Point2D.Double(dx, dy);
+    }
+
     public void setBuildingElements(ArrayList<DrawingObject> buildingElements) {
 	this.buildingElements = buildingElements;
+
+	recalculateDrawingSize();
     }
 
     @Override

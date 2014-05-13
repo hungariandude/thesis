@@ -17,8 +17,9 @@ import java.util.TreeMap;
  * 
  * @author Istvánfi Zsolt
  */
-public class Chromosome {
+public class Chromosome implements Comparable<Chromosome> {
     private static final float CROSSOVER_RATE = 0.7f;
+    private static long id_counter = 0L;
 
     private static final Random random = new Random();
 
@@ -26,7 +27,13 @@ public class Chromosome {
     private double fitnessScore;
 
     /**
-     * Copy constructor.
+     * Minden kromoszómát egyedien azonosító szám. Copy constructor hívás esetén
+     * is egyedi lesz!
+     */
+    private final long uniqueID;
+
+    /**
+     * Deep copy constructor.
      */
     public Chromosome(Chromosome sample) {
 	this(sample.geneMap);
@@ -42,6 +49,10 @@ public class Chromosome {
 	    Gene gene = new Gene(random.nextInt(maxGeneLength) + 1);
 	    geneMap.put(ch, gene);
 	}
+
+	synchronized (Chromosome.class) {
+	    this.uniqueID = ++id_counter;
+	}
     }
 
     /**
@@ -54,6 +65,15 @@ public class Chromosome {
 	for (Entry<Character, Gene> entry : sampleGeneMap.entrySet()) {
 	    this.geneMap.put(entry.getKey(), new Gene(entry.getValue()));
 	}
+
+	synchronized (Chromosome.class) {
+	    this.uniqueID = ++id_counter;
+	}
+    }
+
+    @Override
+    public int compareTo(Chromosome o) {
+	return Double.compare(this.fitnessScore, o.fitnessScore);
     }
 
     /**
@@ -117,16 +137,20 @@ public class Chromosome {
 	return fitnessScore;
     }
 
+    public long getUniqueID() {
+	return uniqueID;
+    }
+
     public void setFitnessScore(double score) {
 	fitnessScore = score;
     }
 
     @Override
     public String toString() {
-	StringBuilder sb = new StringBuilder();
+	StringBuilder sb = new StringBuilder("Chromosome ").append(uniqueID);
 	DecimalFormat df = new DecimalFormat("#.0000");
 	df.setRoundingMode(RoundingMode.HALF_UP);
-	sb.append("Fitness: ").append(df.format(fitnessScore));
+	sb.append(", fitness: ").append(df.format(fitnessScore));
 	sb.append(" [");
 	if (!geneMap.isEmpty()) {
 	    for (Entry<Character, Gene> entry : geneMap.entrySet()) {
