@@ -39,7 +39,7 @@ public class StenoCanvas extends GestureOverlayView {
     private void init() {
         if (ShorthandIME.DEBUG) {
             mDebugPaint = new Paint();
-            mDebugPaint.setColor(Color.BLUE);
+            mDebugPaint.setColor(Color.CYAN);
             mDebugPaint.setAntiAlias(true);
             mDebugPaint.setStrokeWidth(5);
             mDebugPaint.setStyle(Paint.Style.STROKE);
