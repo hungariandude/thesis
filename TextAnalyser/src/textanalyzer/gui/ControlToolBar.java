@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
@@ -104,11 +105,11 @@ public class ControlToolBar extends JToolBar {
 		    "A genetikus algoritmus inicializálása...");
 	    mainFrame.getContentPanel().getGaPanel().reset();
 
-	    SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+	    SwingWorker<Population, Void> worker = new SwingWorker<Population, Void>() {
 		@Override
-		protected Void doInBackground() throws Exception {
-		    Engine.initAlgorithm();
-		    return null;
+		protected Population doInBackground() throws Exception {
+		    Population population = Engine.initAlgorithm();
+		    return population;
 		}
 
 		@Override
@@ -118,6 +119,12 @@ public class ControlToolBar extends JToolBar {
 		    fullStopButton.setEnabled(true);
 		    stopped = false;
 		    mainFrame.getContentPanel().getGaPanel().setEnabled(true);
+		    try {
+			mainFrame.getContentPanel().getGaPanel()
+				.setPopulation(get());
+		    } catch (InterruptedException | ExecutionException e) {
+			e.printStackTrace();
+		    }
 		    mainFrame.getStatusBar().setText(
 			    "A genetikus algoritmus inicializálása elkészült.");
 		}

@@ -112,7 +112,9 @@ public class FitnessTester {
 	    }
 	}
 
-	LOGGER.info("Count of found characters: " + charCountMap.size());
+	if (Parameters.debugMode) {
+	    LOGGER.info("Count of found characters: " + charCountMap.size());
+	}
 
 	// 2. lépés: meghatározzuk az ajánlott génhosszakat az egyes
 	// karakterekhez

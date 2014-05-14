@@ -1,5 +1,6 @@
 package textanalyzer.gui;
 
+import textanalyzer.logic.Parameters;
 import textanalyzer.logic.algorithm.Gene;
 import textanalyzer.logic.algorithm.Shape;
 
@@ -28,30 +29,39 @@ public class GeneCanvas extends JPanel {
     private static final Dimension DEFAULT_SIZE = new Dimension(128, 128);
     private static final Border DEFAULT_BORDER = new LineBorder(Color.BLACK, 1);
 
-    private Gene gene;
+    private Path2D path;
 
-    public GeneCanvas(Gene gene) {
-	super();
-	this.gene = gene;
-
+    public GeneCanvas() {
 	setPreferredSize(DEFAULT_SIZE);
 	setBorder(DEFAULT_BORDER);
 	setBackground(Color.WHITE);
+    }
 
-	setToolTipText(gene.toString());
+    public GeneCanvas(Gene gene) {
+	this();
+	setGene(gene);
     }
 
     @Override
     public void paintComponent(Graphics g) {
 	super.paintComponent(g);
-	Graphics2D g2d = (Graphics2D) g;
-	g2d.setColor(Color.BLACK);
 
-	Path2D fullPath = new Path2D.Double();
+	if (path != null) {
+	    Graphics2D g2d = (Graphics2D) g;
+	    g2d.setColor(Color.BLACK);
+	    g2d.draw(path);
+	}
+    }
 
+    public void setGene(Gene gene) {
+	if (Parameters.debugMode) {
+	    setToolTipText(gene.toString());
+	}
+
+	Path2D newPath = new Path2D.Double();
 	for (Shape shape : gene.getBuildingElements()) {
-	    Path2D path = shape.toPath2D();
-	    Point2D lastPoint = fullPath.getCurrentPoint();
+	    Path2D pathPart = shape.toPath2D();
+	    Point2D lastPoint = newPath.getCurrentPoint();
 	    if (lastPoint != null) {
 		AffineTransform at = new AffineTransform();
 		// at.scale(10, 10);
@@ -59,9 +69,9 @@ public class GeneCanvas extends JPanel {
 		// at = new AffineTransform();
 		at.translate(lastPoint.getX(), lastPoint.getY());
 		// at.scale(64, 64);
-		path.transform(at);
+		pathPart.transform(at);
 	    }
-	    fullPath.append(path, false);
+	    newPath.append(pathPart, false);
 	}
 
 	// Rectangle bounds = fullPath.getBounds();
@@ -79,9 +89,9 @@ public class GeneCanvas extends JPanel {
 	AffineTransform at = new AffineTransform();
 	// at.scale(scale, scale);
 	at.scale(64, -64); // tükrözünk az y tengely mentén
-	fullPath.transform(at);
+	newPath.transform(at);
 
-	Rectangle bounds = fullPath.getBounds();
+	Rectangle bounds = newPath.getBounds();
 	double dx = (DEFAULT_SIZE.width - bounds.width) / 2.0;
 	double dy = (DEFAULT_SIZE.height - bounds.height) / 2.0;
 	if (bounds.x < 0) {
@@ -92,8 +102,9 @@ public class GeneCanvas extends JPanel {
 	}
 	at = new AffineTransform();
 	at.translate(dx, dy);
-	fullPath.transform(at);
+	newPath.transform(at);
 
-	g2d.draw(fullPath);
+	this.path = newPath;
+	repaint();
     }
 }

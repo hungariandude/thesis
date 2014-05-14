@@ -24,6 +24,10 @@ public final class Parameters {
      * A rajzolási terület vertikális mérete egységekben.
      */
     public static double drawingAreaSizeY = 4.0;
+    /**
+     * Hibakereső mód.
+     */
+    public static boolean debugMode = false;
 
     private Parameters() {
 	// statikus osztály

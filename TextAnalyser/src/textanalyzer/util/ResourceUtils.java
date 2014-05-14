@@ -1,6 +1,7 @@
 package textanalyzer.util;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Scanner;
@@ -25,7 +26,7 @@ public final class ResourceUtils {
 	try {
 	    image = ImageIO.read(ClassLoader
 		    .getSystemResourceAsStream(RESOURCES_LOCATION + imageName));
-	} catch (Exception e) {
+	} catch (IOException e) {
 	    e.printStackTrace();
 	}
 

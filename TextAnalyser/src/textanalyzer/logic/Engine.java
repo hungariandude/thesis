@@ -53,7 +53,7 @@ public final class Engine {
     /**
      * SwingWorkerrel vagy új szállal kell használni!
      */
-    public static void initAlgorithm() {
+    public static Population initAlgorithm() {
 	StringBuilder sb = new StringBuilder();
 	for (File file : fileList) {
 	    try {
@@ -65,6 +65,7 @@ public final class Engine {
 	}
 
 	ga = new GeneticAlgorithm(sb.toString(), Parameters.populationSize);
+	return ga.getPopulation();
     }
 
     public static boolean isPaused() {

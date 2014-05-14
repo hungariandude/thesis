@@ -13,17 +13,14 @@ public class GeneticAlgorithm {
 
     private Population population;
     private final int populationSize;
+
     private Mutator mutator = new Mutator();
     private FitnessTester fitnessTester;
     /**
      * Hányadik generációnál tart az evolúció.
      */
     private long generationCounter = 0L;
-
     private final Random random = new Random();
-
-    // private static final Logger LOGGER = Logger
-    // .getLogger(GeneticAlgorithm.class.getName());
 
     public GeneticAlgorithm(String sourceText, int populationSize) {
 	if (populationSize < 2 || populationSize % 2 != 0) {
@@ -38,8 +35,13 @@ public class GeneticAlgorithm {
 	generateRandomPopulation();
 	calculateFitnessScores();
 
+	// if(Parameters.debugMode) {
 	// LOGGER.info("Initial population:\n" + population.toString());
+	// }
     }
+
+    // private static final Logger LOGGER = Logger
+    // .getLogger(GeneticAlgorithm.class.getName());
 
     /**
      * Kezdeti fitnesz érték számítás.
@@ -110,6 +112,10 @@ public class GeneticAlgorithm {
 	for (int i = 0; i < populationSize; ++i) {
 	    population.add(new Chromosome(characterSet, maximumGeneLength));
 	}
+    }
+
+    public Population getPopulation() {
+	return population;
     }
 
     /**

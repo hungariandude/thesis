@@ -5,6 +5,7 @@ import textanalyzer.logic.algorithm.Population;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Font;
+import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -47,8 +48,8 @@ public class GAPanel extends JPanel {
 
     private final GenerationNumberLabel generationLabel = new GenerationNumberLabel();
     private final JTabbedPane tabbedPane = new JTabbedPane();
-
-    private final JPanel populationPanel;
+    private final ArrayList<ChromosomeRow> rows = new ArrayList<>();
+    private final JPanel populationPanel = new JPanel();
 
     public GAPanel() {
 	setLayout(new BorderLayout());
@@ -56,7 +57,6 @@ public class GAPanel extends JPanel {
 
 	add(generationLabel, BorderLayout.NORTH);
 
-	populationPanel = new JPanel();
 	populationPanel.setLayout(new BoxLayout(populationPanel,
 		BoxLayout.Y_AXIS));
 	JScrollPane scrollPane = new JScrollPane(populationPanel);
@@ -71,6 +71,7 @@ public class GAPanel extends JPanel {
     public void reset() {
 	generationLabel.setGenerationNumber(0);
 	populationPanel.removeAll();
+	rows.clear();
     }
 
     @Override
@@ -87,12 +88,19 @@ public class GAPanel extends JPanel {
      */
     public void setPopulation(Population population) {
 	generationLabel.setGenerationNumber(population.getGenerationNumber());
-	populationPanel.removeAll();
 
-	for (int i = 0; i < population.size(); ++i) {
-	    populationPanel.add(new ChromosomeRow(population.get(i), i + 1));
-	    if (i != population.size() - 1) {
-		populationPanel.add(new JSeparator());
+	if (rows.isEmpty()) {
+	    for (int i = 0; i < population.size(); ++i) {
+		ChromosomeRow row = new ChromosomeRow(population.get(i), i + 1);
+		rows.add(row);
+		populationPanel.add(row);
+		if (i != population.size() - 1) {
+		    populationPanel.add(new JSeparator());
+		}
+	    }
+	} else {
+	    for (int i = 0; i < population.size(); ++i) {
+		rows.get(i).updateChromosome(population.get(i));
 	    }
 	}
     }

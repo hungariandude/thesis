@@ -8,6 +8,7 @@ import textanalyzer.util.CharacterUtils;
 import java.awt.BorderLayout;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -55,6 +56,9 @@ public class ChromosomeRow extends JPanel {
 
     private Chromosome chrom;
 
+    private final JLabel fitnessLabel;
+    private final HashMap<Character, GeneCanvas> canvasMap = new HashMap<>();
+
     static {
 	DOUBLE_FORMAT = new DecimalFormat("#.0000");
 	DOUBLE_FORMAT.setRoundingMode(RoundingMode.HALF_UP);
@@ -76,8 +80,8 @@ public class ChromosomeRow extends JPanel {
 	setBorder(DEFAULT_BORDER);
 
 	JLabel rankLabel = new JLabel("Rang: " + rowNum + '.');
-	JLabel fitnessLabel = new JLabel("Fitnesz: "
-		+ DOUBLE_FORMAT.format(this.chrom.getFitnessScore()));
+	fitnessLabel = new JLabel();
+	updateFitness();
 
 	JPanel northPanel = new JPanel();
 	northPanel.setLayout(new BorderLayout());
@@ -101,6 +105,7 @@ public class ChromosomeRow extends JPanel {
 
 	    CharacterLabel charLabel = new CharacterLabel(entry.getKey());
 	    GeneCanvas geneCanvas = new GeneCanvas(entry.getValue());
+	    canvasMap.put(entry.getKey(), geneCanvas);
 
 	    charLabel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 	    genePanel.add(charLabel);
@@ -110,5 +115,22 @@ public class ChromosomeRow extends JPanel {
 	}
 
 	return genesPanel;
+    }
+
+    public void updateChromosome(Chromosome chromosome) {
+	this.chrom = chromosome;
+	updateFitness();
+
+	for (Entry<Character, Gene> entry : this.chrom.geneMap().entrySet()) {
+	    GeneCanvas canvas = canvasMap.get(entry.getKey());
+	    if (canvas != null) {
+		canvas.setGene(entry.getValue());
+	    }
+	}
+    }
+
+    private void updateFitness() {
+	fitnessLabel.setText("Fitnesz: "
+		+ DOUBLE_FORMAT.format(this.chrom.getFitnessScore()));
     }
 }
