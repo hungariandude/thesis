@@ -1,7 +1,5 @@
 package textanalyzer.logic.algorithm;
 
-import textanalyzer.logic.DrawingObject;
-
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +15,7 @@ public class Gene {
      * Összefűz két gént és az eredményt új génként adja vissza.
      */
     public static Gene concatenate(Gene firstPart, Gene secondPart) {
-	ArrayList<DrawingObject> newBuildingElements = new ArrayList<>(
+	ArrayList<Shape> newBuildingElements = new ArrayList<>(
 		firstPart.buildingElements.size()
 			+ secondPart.buildingElements.size());
 	newBuildingElements.addAll(firstPart.buildingElements);
@@ -26,9 +24,9 @@ public class Gene {
 	return new Gene(newBuildingElements);
     }
 
-    private ArrayList<DrawingObject> buildingElements;
+    private ArrayList<Shape> buildingElements;
 
-    private Point2D drawingSize;
+    private Point2D endingPoint;
 
     /**
      * Üres gén.
@@ -36,17 +34,17 @@ public class Gene {
     public Gene() {
 	this.buildingElements = new ArrayList<>();
 
-	this.drawingSize = new Point2D.Double();
+	this.endingPoint = new Point2D.Double();
     }
 
     /**
      * A megadott építőelemek alapján létrehoz egy új gént.
      */
-    public Gene(ArrayList<DrawingObject> buildingElements) {
+    public Gene(ArrayList<Shape> buildingElements) {
 	this.buildingElements = new ArrayList<>(buildingElements.size());
 
-	for (DrawingObject object : buildingElements) {
-	    this.buildingElements.add(new DrawingObject(object));
+	for (Shape object : buildingElements) {
+	    this.buildingElements.add(new Shape(object));
 	}
 
 	recalculateDrawingSize();
@@ -58,12 +56,12 @@ public class Gene {
     public Gene(Gene sample) {
 	this.buildingElements = new ArrayList<>(sample.buildingElements.size());
 
-	for (DrawingObject object : sample.buildingElements) {
-	    this.buildingElements.add(new DrawingObject(object));
+	for (Shape object : sample.buildingElements) {
+	    this.buildingElements.add(new Shape(object));
 	}
 
-	this.drawingSize = new Point2D.Double(sample.drawingSize.getX(),
-		sample.drawingSize.getY());
+	this.endingPoint = new Point2D.Double(sample.endingPoint.getX(),
+		sample.endingPoint.getY());
     }
 
     /**
@@ -73,7 +71,7 @@ public class Gene {
 	this.buildingElements = new ArrayList<>(length);
 
 	for (int i = 0; i < length; ++i) {
-	    buildingElements.add(new DrawingObject());
+	    buildingElements.add(new Shape());
 	}
 
 	recalculateDrawingSize();
@@ -101,12 +99,12 @@ public class Gene {
 	return true;
     }
 
-    public List<DrawingObject> getBuildingElements() {
+    public List<Shape> getBuildingElements() {
 	return buildingElements;
     }
 
-    public Point2D getDrawingSize() {
-	return drawingSize;
+    public Point2D getEndingPoint() {
+	return endingPoint;
     }
 
     @Override
@@ -127,21 +125,21 @@ public class Gene {
     }
 
     /**
-     * Újraszámolja a gép rajzolási méretét.
+     * Újraszámolja a gén rajzolási méretét.
      */
     public void recalculateDrawingSize() {
 	double dx = 0.0, dy = 0.0;
 
-	for (DrawingObject object : buildingElements) {
-	    Point2D size = object.getDrawingSize();
+	for (Shape shape : buildingElements) {
+	    Point2D size = shape.getVector();
 	    dx += size.getX();
 	    dy += size.getY();
 	}
 
-	this.drawingSize = new Point2D.Double(dx, dy);
+	this.endingPoint = new Point2D.Double(dx, dy);
     }
 
-    public void setBuildingElements(ArrayList<DrawingObject> buildingElements) {
+    public void setBuildingElements(ArrayList<Shape> buildingElements) {
 	this.buildingElements = buildingElements;
 
 	recalculateDrawingSize();
@@ -151,8 +149,8 @@ public class Gene {
     public String toString() {
 	StringBuilder sb = new StringBuilder("[");
 	if (!buildingElements.isEmpty()) {
-	    for (DrawingObject object : buildingElements) {
-		sb.append(object.toString()).append(", ");
+	    for (Shape shape : buildingElements) {
+		sb.append(shape.toString()).append(", ");
 	    }
 	    sb.delete(sb.length() - 2, sb.length());
 	}

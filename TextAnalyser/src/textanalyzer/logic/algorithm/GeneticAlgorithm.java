@@ -1,7 +1,5 @@
 package textanalyzer.logic.algorithm;
 
-import textanalyzer.logic.DrawingObject;
-
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
@@ -103,11 +101,10 @@ public class GeneticAlgorithm {
 	// a maximum génhossz a legkisebb olyan alakzatszám, amellyel
 	// biztos, hogy minden megtalált karakter különbözően kirajzolható
 	int maximumGeneLength = 1;
-	int differentObjects = DrawingObject.NUMBER_OF_OBJECT_DRAWING_WAYS;
+	int differentObjects = Shape.NUMBER_OF_OBJECT_DRAWING_WAYS;
 	while (differentObjects < numberOfFoundCharacters) {
 	    differentObjects += (int) Math.pow(
-		    DrawingObject.NUMBER_OF_OBJECT_DRAWING_WAYS,
-		    ++maximumGeneLength);
+		    Shape.NUMBER_OF_OBJECT_DRAWING_WAYS, ++maximumGeneLength);
 	}
 
 	for (int i = 0; i < populationSize; ++i) {

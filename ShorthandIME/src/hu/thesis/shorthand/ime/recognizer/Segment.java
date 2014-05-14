@@ -18,9 +18,9 @@ public class Segment {
 
     /** Orientáció. */
     public enum Orientation {
-        /** Vízszintes. */
-        VERTICAL,
         /** Függőleges. */
+        VERTICAL,
+        /** Vízszintes. */
         HORIZONTAL,
         /** Jobbra dőlt. */
         OBLIQUE_RIGHT,

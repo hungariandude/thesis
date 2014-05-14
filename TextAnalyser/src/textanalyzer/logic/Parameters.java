@@ -5,7 +5,7 @@ package textanalyzer.logic;
  * 
  * @author Istvánfi Zsolt
  */
-public final class Settings {
+public final class Parameters {
 
     /**
      * A populáció mérete. Alapértelmezett: 32
@@ -16,8 +16,16 @@ public final class Settings {
      * ezredmásodpercben. Alapértelmezett: 0
      */
     public static long sleepTime = 0;
+    /**
+     * A rajzolási terület horizontális mérete egységekben.
+     */
+    public static double drawingAreaSizeX = 4.0;
+    /**
+     * A rajzolási terület vertikális mérete egységekben.
+     */
+    public static double drawingAreaSizeY = 4.0;
 
-    private Settings() {
+    private Parameters() {
 	// statikus osztály
     }
 

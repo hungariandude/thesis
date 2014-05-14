@@ -64,7 +64,7 @@ public final class Engine {
 	    }
 	}
 
-	ga = new GeneticAlgorithm(sb.toString(), Settings.populationSize);
+	ga = new GeneticAlgorithm(sb.toString(), Parameters.populationSize);
     }
 
     public static boolean isPaused() {
@@ -126,9 +126,9 @@ public final class Engine {
 
 	    ++stepsDone;
 
-	    if (Settings.sleepTime > 0) {
+	    if (Parameters.sleepTime > 0) {
 		try {
-		    Thread.sleep(Settings.sleepTime);
+		    Thread.sleep(Parameters.sleepTime);
 		} catch (InterruptedException e) {
 		    e.printStackTrace();
 		}

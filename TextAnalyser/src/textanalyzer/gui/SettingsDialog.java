@@ -1,6 +1,6 @@
 package textanalyzer.gui;
 
-import textanalyzer.logic.Settings;
+import textanalyzer.logic.Parameters;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -50,7 +50,7 @@ public class SettingsDialog {
 	populationSizeTF = new JFormattedTextField(
 		NumberFormat.getIntegerInstance());
 	populationSizeTF.setColumns(8);
-	populationSizeTF.setValue(Settings.populationSize);
+	populationSizeTF.setValue(Parameters.populationSize);
 	populationSizeTF.addMouseListener(mouseAdapter);
 	JPanel populationSizePanel = new JPanel(new BorderLayout());
 	populationSizePanel.add(populationSizeTF, BorderLayout.EAST);
@@ -60,7 +60,7 @@ public class SettingsDialog {
 	// Szüneteltetési idő
 	sleepTimeTF = new JFormattedTextField(NumberFormat.getIntegerInstance());
 	sleepTimeTF.setColumns(8);
-	sleepTimeTF.setValue(Settings.sleepTime);
+	sleepTimeTF.setValue(Parameters.sleepTime);
 	sleepTimeTF.addMouseListener(mouseAdapter);
 	JPanel sleepTimePanel = new JPanel(new BorderLayout());
 	sleepTimePanel.add(sleepTimeTF, BorderLayout.EAST);
@@ -87,8 +87,8 @@ public class SettingsDialog {
 		sleepTime = 0;
 	    }
 
-	    Settings.populationSize = populationSize;
-	    Settings.sleepTime = sleepTime;
+	    Parameters.populationSize = populationSize;
+	    Parameters.sleepTime = sleepTime;
 	}
     }
 }

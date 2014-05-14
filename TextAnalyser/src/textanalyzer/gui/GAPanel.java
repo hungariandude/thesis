@@ -1,6 +1,5 @@
 package textanalyzer.gui;
 
-import textanalyzer.logic.algorithm.Chromosome;
 import textanalyzer.logic.algorithm.Population;
 
 import java.awt.BorderLayout;
@@ -11,6 +10,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
@@ -33,7 +33,7 @@ public class GAPanel extends JPanel {
 	GenerationNumberLabel() {
 	    super(String.format(placeholder, 0));
 
-	    setFont(new Font("Arial", Font.BOLD, 20));
+	    setFont(HEADER_FONT);
 	    setBorder(new EmptyBorder(5, 5, 5, 5));
 	}
 
@@ -43,6 +43,7 @@ public class GAPanel extends JPanel {
     }
 
     private static final long serialVersionUID = 7283428682414885355L;
+    public final static Font HEADER_FONT = new Font("Arial", Font.BOLD, 20);
 
     private final GenerationNumberLabel generationLabel = new GenerationNumberLabel();
     private final JTabbedPane tabbedPane = new JTabbedPane();
@@ -88,8 +89,11 @@ public class GAPanel extends JPanel {
 	generationLabel.setGenerationNumber(population.getGenerationNumber());
 	populationPanel.removeAll();
 
-	for (Chromosome chrom : population) {
-	    populationPanel.add(new ChromosomeRow(chrom));
+	for (int i = 0; i < population.size(); ++i) {
+	    populationPanel.add(new ChromosomeRow(population.get(i), i + 1));
+	    if (i != population.size() - 1) {
+		populationPanel.add(new JSeparator());
+	    }
 	}
     }
 

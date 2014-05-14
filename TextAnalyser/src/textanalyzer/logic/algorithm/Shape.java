@@ -1,7 +1,8 @@
-package textanalyzer.logic;
+package textanalyzer.logic.algorithm;
 
 import textanalyzer.util.RandomUtils;
 
+import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 
 /**
@@ -9,27 +10,45 @@ import java.awt.geom.Point2D;
  * 
  * @author Istvánfi Zsolt
  */
-public class DrawingObject {
+public class Shape {
 
+    /** Irány. */
     public enum Direction {
-	FORWARD, REVERSE;
+	/** Előre. */
+	FORWARD,
+	/** Hátra. */
+	REVERSE;
     }
 
+    /** Forma. */
+    public enum Form {
+	/** Egyenes. */
+	LINE,
+	/** Süllyedt görbe. */
+	SAG_CURVE,
+	/** Emelkedett görbe. */
+	CREST_CURVE;
+    }
+
+    /** Orientáció. */
     public enum Orientation {
-	VERTICAL, HORIZONTAL, OBLIQUE_RIGHT, OBLIQUE_LEFT;
-    }
-
-    public enum Shape {
-	LINE, SAG_CURVE, CREST_CURVE;
+	/** Függőleges. */
+	VERTICAL,
+	/** Vízszintes. */
+	HORIZONTAL,
+	/** Jobbra dőlt. */
+	OBLIQUE_RIGHT,
+	/** Balra dőlt. */
+	OBLIQUE_LEFT;
     }
 
     /**
      * Hányféleképpen lehet kirajzolni egy alakzatot.
      */
-    public static final int NUMBER_OF_OBJECT_DRAWING_WAYS = Shape.values().length
+    public static final int NUMBER_OF_OBJECT_DRAWING_WAYS = Form.values().length
 	    * Orientation.values().length * Direction.values().length;
 
-    private Shape shape;
+    private Form form;
     private Orientation orientation;
     private Direction direction;
 
@@ -37,26 +56,25 @@ public class DrawingObject {
      * Az objektum alakját, orientációját és irányát véletlenszerűen határozza
      * meg.
      */
-    public DrawingObject() {
-	this(RandomUtils.randomValue(Shape.values()), RandomUtils
+    public Shape() {
+	this(RandomUtils.randomValue(Form.values()), RandomUtils
 		.randomValue(Orientation.values()), RandomUtils
 		.randomValue(Direction.values()));
     }
 
-    /**
-     * Deep copy constructor.
-     */
-    public DrawingObject(DrawingObject sample) {
-	this.shape = sample.shape;
-	this.orientation = sample.orientation;
-	this.direction = sample.direction;
-    }
-
-    public DrawingObject(Shape shape, Orientation orientation,
-	    Direction direction) {
-	this.shape = shape;
+    public Shape(Form form, Orientation orientation, Direction direction) {
+	this.form = form;
 	this.orientation = orientation;
 	this.direction = direction;
+    }
+
+    /**
+     * Copy constructor.
+     */
+    public Shape(Shape sample) {
+	this.form = sample.form;
+	this.orientation = sample.orientation;
+	this.direction = sample.direction;
     }
 
     @Override
@@ -70,14 +88,14 @@ public class DrawingObject {
 	if (getClass() != obj.getClass()) {
 	    return false;
 	}
-	DrawingObject other = (DrawingObject) obj;
+	Shape other = (Shape) obj;
 	if (direction != other.direction) {
 	    return false;
 	}
 	if (orientation != other.orientation) {
 	    return false;
 	}
-	if (shape != other.shape) {
+	if (form != other.form) {
 	    return false;
 	}
 	return true;
@@ -87,7 +105,18 @@ public class DrawingObject {
 	return direction;
     }
 
-    public Point2D getDrawingSize() {
+    public Form getForm() {
+	return form;
+    }
+
+    public Orientation getOrientation() {
+	return orientation;
+    }
+
+    /**
+     * Az alakzat mérete, légvonalban.
+     */
+    public Point2D getVector() {
 	double dx, dy;
 
 	if (orientation == Orientation.OBLIQUE_RIGHT
@@ -99,11 +128,11 @@ public class DrawingObject {
 	    }
 	} else {
 	    if (orientation == Orientation.HORIZONTAL) {
-		dx = 0;
-		dy = 1;
+		dx = 0.0;
+		dy = 1.0;
 	    } else {
-		dx = 1;
-		dy = 0;
+		dx = 1.0;
+		dy = 0.0;
 	    }
 	}
 	if (direction == Direction.REVERSE) {
@@ -114,14 +143,6 @@ public class DrawingObject {
 	return new Point2D.Double(dx, dy);
     }
 
-    public Orientation getOrientation() {
-	return orientation;
-    }
-
-    public Shape getShape() {
-	return shape;
-    }
-
     @Override
     public int hashCode() {
 	final int prime = 31;
@@ -130,7 +151,7 @@ public class DrawingObject {
 		+ ((direction == null) ? 0 : direction.hashCode());
 	result = prime * result
 		+ ((orientation == null) ? 0 : orientation.hashCode());
-	result = prime * result + ((shape == null) ? 0 : shape.hashCode());
+	result = prime * result + ((form == null) ? 0 : form.hashCode());
 	return result;
     }
 
@@ -143,12 +164,49 @@ public class DrawingObject {
 	this.direction = direction;
     }
 
+    public void setForm(Form form) {
+	this.form = form;
+    }
+
     public void setOrientation(Orientation orientation) {
 	this.orientation = orientation;
     }
 
-    public void setShape(Shape shape) {
-	this.shape = shape;
+    /**
+     * Visszadaja az alakzatot az origóból kiinduló útként.
+     */
+    public Path2D toPath2D() {
+	Path2D path = new Path2D.Double();
+	path.moveTo(0, 0);
+	Point2D endingPoint = getVector();
+	double x = endingPoint.getX();
+	double y = endingPoint.getY();
+	if (form != Form.LINE) {
+	    double halfX = endingPoint.getX() / 2;
+	    double halfY = endingPoint.getY() / 2;
+	    double controlX, controlY;
+	    if (direction == Direction.FORWARD) {
+		if (form == Form.CREST_CURVE) {
+		    controlX = halfX - y * 0.6;
+		    controlY = halfY + x * 0.6;
+		} else {
+		    controlX = halfX + y * 0.6;
+		    controlY = halfY - x * 0.6;
+		}
+	    } else {
+		if (form == Form.CREST_CURVE) {
+		    controlX = halfX + y * 0.6;
+		    controlY = halfY - x * 0.6;
+		} else {
+		    controlX = halfX - y * 0.6;
+		    controlY = halfY + x * 0.6;
+		}
+	    }
+	    path.quadTo(controlX, controlY, x, y);
+	} else {
+	    path.lineTo(x, y);
+	}
+	return path;
     }
 
     @Override
@@ -158,7 +216,7 @@ public class DrawingObject {
 	sb.append(' ');
 	sb.append(orientation);
 	sb.append(' ');
-	sb.append(shape);
+	sb.append(form);
 
 	return sb.toString();
     }

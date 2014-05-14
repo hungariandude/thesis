@@ -1,8 +1,7 @@
 package textanalyzer.logic.algorithm;
 
-import textanalyzer.logic.DrawingObject;
-import textanalyzer.logic.DrawingObject.Orientation;
-import textanalyzer.logic.DrawingObject.Shape;
+import textanalyzer.logic.algorithm.Shape.Form;
+import textanalyzer.logic.algorithm.Shape.Orientation;
 import textanalyzer.util.RandomUtils;
 
 import java.util.HashMap;
@@ -16,6 +15,7 @@ import java.util.Random;
  * @author Istvánfi Zsolt
  */
 public class Mutator {
+
     private enum MutationType {
 	/**
 	 * Új objektum hozzáadása véletlenszerű pozíción.
@@ -81,7 +81,7 @@ public class Mutator {
      * Egy gén mutálása.
      */
     private void mutate(Gene gene) {
-	List<DrawingObject> buildingElements = gene.getBuildingElements();
+	List<Shape> buildingElements = gene.getBuildingElements();
 
 	// a mutáció típusa
 	// egy elemet tartalmazó génből nem törlünk
@@ -93,8 +93,8 @@ public class Mutator {
 
 	switch (mutationType) {
 	case ADD:
-	    DrawingObject object = new DrawingObject();
-	    buildingElements.add(index, object);
+	    Shape shape = new Shape();
+	    buildingElements.add(index, shape);
 	    break;
 	case REMOVE:
 	    buildingElements.remove(index);
@@ -103,14 +103,14 @@ public class Mutator {
 	    buildingElements.get(index).invertDirection();
 	    break;
 	case ROTATE:
-	    object = buildingElements.get(index);
-	    object.setOrientation(RandomUtils.randomValue(Orientation.values(),
-		    object.getOrientation()));
+	    shape = buildingElements.get(index);
+	    shape.setOrientation(RandomUtils.randomValue(Orientation.values(),
+		    shape.getOrientation()));
 	    break;
 	case BEND:
-	    object = buildingElements.get(index);
-	    object.setShape(RandomUtils.randomValue(Shape.values(),
-		    object.getShape()));
+	    shape = buildingElements.get(index);
+	    shape.setForm(RandomUtils.randomValue(Form.values(),
+		    shape.getForm()));
 	    break;
 	}
 

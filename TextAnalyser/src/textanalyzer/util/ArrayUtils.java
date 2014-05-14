@@ -5,7 +5,7 @@ package textanalyzer.util;
  * 
  * @author Istvánfi Zsolt
  */
-public class ArrayUtils {
+public final class ArrayUtils {
     /**
      * Megfordítja egy integer tömb elemeinek sorrendjét.
      */

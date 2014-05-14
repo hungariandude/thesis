@@ -1,6 +1,6 @@
 package textanalyzer.logic.algorithm;
 
-import textanalyzer.logic.DrawingObject;
+import textanalyzer.logic.Parameters;
 import textanalyzer.util.MutableInteger;
 import textanalyzer.util.Pair;
 
@@ -45,9 +45,6 @@ public class FitnessTester {
      * elemszáma.
      */
     private Map<Character, Integer> recommendedLengthMap = new HashMap<>();
-
-    private static final Point2D DEFAULT_DRAWING_AREA_SIZE = new Point2D.Double(
-	    4.0, 4.0);
 
     private static final Logger LOGGER = Logger.getLogger(FitnessTester.class
 	    .getName());
@@ -122,13 +119,13 @@ public class FitnessTester {
 	TreeMap<Integer, List<Character>> orderedMap = sortMutableIntegerValueMap(charCountMap);
 
 	int occupiedSlotsSoFar = 0;
-	int differentObjects = DrawingObject.NUMBER_OF_OBJECT_DRAWING_WAYS;
+	int differentObjects = Shape.NUMBER_OF_OBJECT_DRAWING_WAYS;
 	int actualGeneLength = 1;
 	for (List<Character> list : orderedMap.values()) {
 	    if (differentObjects <= occupiedSlotsSoFar) {
-		differentObjects += (int) Math.pow(
-			DrawingObject.NUMBER_OF_OBJECT_DRAWING_WAYS,
-			++actualGeneLength);
+		differentObjects += (int) Math
+			.pow(Shape.NUMBER_OF_OBJECT_DRAWING_WAYS,
+				++actualGeneLength);
 	    }
 	    occupiedSlotsSoFar += list.size();
 
@@ -206,13 +203,13 @@ public class FitnessTester {
      * @return [0;1]
      */
     private double scoreDrawingSize(Gene gene) {
-	Point2D size = gene.getDrawingSize();
+	Point2D size = gene.getEndingPoint();
 
 	double absX = Math.abs(size.getX());
 	double absY = Math.abs(size.getY());
 
-	if (absX > DEFAULT_DRAWING_AREA_SIZE.getX()
-		|| absY > DEFAULT_DRAWING_AREA_SIZE.getY()) {
+	if (absX > Parameters.drawingAreaSizeX
+		|| absY > Parameters.drawingAreaSizeY) {
 	    // biztos, kifut a rajzolási területről
 	    return 0.0;
 	}
@@ -228,10 +225,10 @@ public class FitnessTester {
 	// ha 1 egységnél távolabb végződik az objektum, akkor az értékelés a
 	// fordított relatív távolság lesz
 	if (absX > 1) {
-	    xScore *= 1 - (absX - 1) / (DEFAULT_DRAWING_AREA_SIZE.getX() - 1);
+	    xScore *= 1 - (absX - 1) / (Parameters.drawingAreaSizeX - 1);
 	}
 	if (absY > 1) {
-	    yScore *= 1 - (absY - 1) / (DEFAULT_DRAWING_AREA_SIZE.getY() - 1);
+	    yScore *= 1 - (absY - 1) / (Parameters.drawingAreaSizeY - 1);
 	}
 
 	return xScore + yScore;
@@ -324,11 +321,11 @@ public class FitnessTester {
 	int runOutCount = 0;
 	for (int i = 0; i < sourceText.length(); ++i) {
 	    char ch = sourceText.charAt(i);
-	    Point2D size = chrom.geneMap().get(ch).getDrawingSize();
+	    Point2D size = chrom.geneMap().get(ch).getEndingPoint();
 	    x += size.getX();
 	    y += size.getY();
-	    if (Math.abs(x) > DEFAULT_DRAWING_AREA_SIZE.getX() / 2
-		    || Math.abs(y) > DEFAULT_DRAWING_AREA_SIZE.getY() / 2) {
+	    if (Math.abs(x) > Parameters.drawingAreaSizeX / 2
+		    || Math.abs(y) > Parameters.drawingAreaSizeY / 2) {
 		// kifutottunk
 		runOutCount++;
 		// visszaugrunk középre
