@@ -147,14 +147,14 @@ public class Gene {
 
     @Override
     public String toString() {
-	StringBuilder sb = new StringBuilder("[");
+	StringBuilder sb = new StringBuilder('[');
 	if (!buildingElements.isEmpty()) {
 	    for (Shape shape : buildingElements) {
 		sb.append(shape.toString()).append(", ");
 	    }
 	    sb.delete(sb.length() - 2, sb.length());
 	}
-	sb.append("]");
+	sb.append(']');
 
 	return sb.toString();
     }

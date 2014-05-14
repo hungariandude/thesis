@@ -2,6 +2,7 @@ package textanalyzer.logic.algorithm;
 
 import textanalyzer.util.RandomUtils;
 
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 
@@ -11,14 +12,6 @@ import java.awt.geom.Point2D;
  * @author Istvánfi Zsolt
  */
 public class Shape {
-
-    /** Irány. */
-    public enum Direction {
-	/** Előre. */
-	FORWARD,
-	/** Hátra. */
-	REVERSE;
-    }
 
     /** Forma. */
     public enum Form {
@@ -30,27 +23,32 @@ public class Shape {
 	CREST_CURVE;
     }
 
-    /** Orientáció. */
-    public enum Orientation {
-	/** Függőleges. */
-	VERTICAL,
-	/** Vízszintes. */
-	HORIZONTAL,
-	/** Jobbra dőlt. */
-	OBLIQUE_RIGHT,
-	/** Balra dőlt. */
-	OBLIQUE_LEFT;
+    /** Elforgatás. */
+    public enum Rotation {
+	NONE(0), DEGREE_45(45), DEGREE_90(90), DEGREE_135(135), DEGREE_180(180), DEGREE_225(
+		225), DEGREE_270(270), DEGREE_315(315);
+
+	private final int degrees;
+
+	private Rotation(int degrees) {
+	    this.degrees = degrees;
+	}
+
+	public int getDegrees() {
+	    return degrees;
+	}
     }
 
     /**
      * Hányféleképpen lehet kirajzolni egy alakzatot.
      */
     public static final int NUMBER_OF_OBJECT_DRAWING_WAYS = Form.values().length
-	    * Orientation.values().length * Direction.values().length;
+	    * Rotation.values().length;
 
     private Form form;
-    private Orientation orientation;
-    private Direction direction;
+    private Rotation rotation;
+
+    private Point2D vector;
 
     /**
      * Az objektum alakját, orientációját és irányát véletlenszerűen határozza
@@ -58,14 +56,14 @@ public class Shape {
      */
     public Shape() {
 	this(RandomUtils.randomValue(Form.values()), RandomUtils
-		.randomValue(Orientation.values()), RandomUtils
-		.randomValue(Direction.values()));
+		.randomValue(Rotation.values()));
     }
 
-    public Shape(Form form, Orientation orientation, Direction direction) {
+    public Shape(Form form, Rotation rotation) {
 	this.form = form;
-	this.orientation = orientation;
-	this.direction = direction;
+	this.rotation = rotation;
+
+	recalculateVector();
     }
 
     /**
@@ -73,8 +71,8 @@ public class Shape {
      */
     public Shape(Shape sample) {
 	this.form = sample.form;
-	this.orientation = sample.orientation;
-	this.direction = sample.direction;
+	this.rotation = sample.rotation;
+	this.vector = sample.vector;
     }
 
     @Override
@@ -89,10 +87,7 @@ public class Shape {
 	    return false;
 	}
 	Shape other = (Shape) obj;
-	if (direction != other.direction) {
-	    return false;
-	}
-	if (orientation != other.orientation) {
+	if (rotation != other.rotation) {
 	    return false;
 	}
 	if (form != other.form) {
@@ -101,46 +96,19 @@ public class Shape {
 	return true;
     }
 
-    public Direction getDirection() {
-	return direction;
-    }
-
     public Form getForm() {
 	return form;
     }
 
-    public Orientation getOrientation() {
-	return orientation;
+    public Rotation getRotation() {
+	return rotation;
     }
 
     /**
-     * Az alakzat mérete, légvonalban.
+     * Az alakzat nyomvektora, légvonalban.
      */
     public Point2D getVector() {
-	double dx, dy;
-
-	if (orientation == Orientation.OBLIQUE_RIGHT
-		|| orientation == Orientation.OBLIQUE_LEFT) {
-	    dx = dy = Math.sin(Math.toRadians(45));
-	    if (orientation == Orientation.OBLIQUE_LEFT) {
-		// ebben az esetben a dx negatív
-		dx *= -1;
-	    }
-	} else {
-	    if (orientation == Orientation.HORIZONTAL) {
-		dx = 0.0;
-		dy = 1.0;
-	    } else {
-		dx = 1.0;
-		dy = 0.0;
-	    }
-	}
-	if (direction == Direction.REVERSE) {
-	    dx *= -1;
-	    dy *= -1;
-	}
-
-	return new Point2D.Double(dx, dy);
+	return vector;
     }
 
     @Override
@@ -148,28 +116,30 @@ public class Shape {
 	final int prime = 31;
 	int result = 1;
 	result = prime * result
-		+ ((direction == null) ? 0 : direction.hashCode());
-	result = prime * result
-		+ ((orientation == null) ? 0 : orientation.hashCode());
+		+ ((rotation == null) ? 0 : rotation.hashCode());
 	result = prime * result + ((form == null) ? 0 : form.hashCode());
 	return result;
     }
 
-    public void invertDirection() {
-	this.direction = this.direction == Direction.FORWARD ? Direction.REVERSE
-		: Direction.FORWARD;
-    }
-
-    public void setDirection(Direction direction) {
-	this.direction = direction;
+    /**
+     * Az alakzat nyomvektorának újraszámolása.
+     */
+    public void recalculateVector() {
+	vector = new Point2D.Double(1.0, 0);
+	AffineTransform at;
+	at = AffineTransform
+		.getRotateInstance(Math.toRadians(rotation.degrees));
+	at.transform(vector, vector);
     }
 
     public void setForm(Form form) {
 	this.form = form;
     }
 
-    public void setOrientation(Orientation orientation) {
-	this.orientation = orientation;
+    public void setRotation(Rotation rotation) {
+	this.rotation = rotation;
+
+	recalculateVector();
     }
 
     /**
@@ -185,22 +155,12 @@ public class Shape {
 	    double halfX = endingPoint.getX() / 2;
 	    double halfY = endingPoint.getY() / 2;
 	    double controlX, controlY;
-	    if (direction == Direction.FORWARD) {
-		if (form == Form.CREST_CURVE) {
-		    controlX = halfX - y * 0.6;
-		    controlY = halfY + x * 0.6;
-		} else {
-		    controlX = halfX + y * 0.6;
-		    controlY = halfY - x * 0.6;
-		}
+	    if (form == Form.CREST_CURVE) {
+		controlX = halfX - y * 0.6;
+		controlY = halfY + x * 0.6;
 	    } else {
-		if (form == Form.CREST_CURVE) {
-		    controlX = halfX + y * 0.6;
-		    controlY = halfY - x * 0.6;
-		} else {
-		    controlX = halfX - y * 0.6;
-		    controlY = halfY + x * 0.6;
-		}
+		controlX = halfX + y * 0.6;
+		controlY = halfY - x * 0.6;
 	    }
 	    path.quadTo(controlX, controlY, x, y);
 	} else {
@@ -211,12 +171,13 @@ public class Shape {
 
     @Override
     public String toString() {
-	StringBuilder sb = new StringBuilder();
-	sb.append(direction);
-	sb.append(' ');
-	sb.append(orientation);
-	sb.append(' ');
+	StringBuilder sb = new StringBuilder("(Form: ");
 	sb.append(form);
+	sb.append("; Rotation: ");
+	sb.append(rotation.degrees);
+	// sb.append("; Vector: ");
+	// sb.append(getVector());
+	sb.append(')');
 
 	return sb.toString();
     }

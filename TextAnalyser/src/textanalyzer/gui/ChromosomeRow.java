@@ -38,6 +38,7 @@ public class ChromosomeRow extends JPanel {
 	    setBorder(DEFAULT_BORDER);
 	    setFont(GAPanel.HEADER_FONT);
 	    setText(CharacterUtils.escapeChar(ch));
+	    setToolTipText(String.format("\\u%04x", (int) ch));
 	}
     }
 

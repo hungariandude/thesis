@@ -1,7 +1,7 @@
 package textanalyzer.logic.algorithm;
 
 import textanalyzer.logic.algorithm.Shape.Form;
-import textanalyzer.logic.algorithm.Shape.Orientation;
+import textanalyzer.logic.algorithm.Shape.Rotation;
 import textanalyzer.util.RandomUtils;
 
 import java.util.HashMap;
@@ -25,10 +25,6 @@ public class Mutator {
 	 * Egy objektum törlése véletlenszerű pozíción.
 	 */
 	REMOVE,
-	/**
-	 * Egy objektum irányának megfordítása.
-	 */
-	REVERSE,
 	/**
 	 * Egy objektum alakjának megváltoztatása.
 	 */
@@ -56,9 +52,8 @@ public class Mutator {
 	this.mutationWeightMap = new HashMap<>();
 	this.mutationWeightMap.put(MutationType.ADD, 1.0);
 	this.mutationWeightMap.put(MutationType.REMOVE, 1.0);
-	this.mutationWeightMap.put(MutationType.REVERSE, 3.0);
 	this.mutationWeightMap.put(MutationType.BEND, 1.2);
-	this.mutationWeightMap.put(MutationType.ROTATE, 10.0);
+	this.mutationWeightMap.put(MutationType.ROTATE, 20.0);
     }
 
     /**
@@ -99,13 +94,10 @@ public class Mutator {
 	case REMOVE:
 	    buildingElements.remove(index);
 	    break;
-	case REVERSE:
-	    buildingElements.get(index).invertDirection();
-	    break;
 	case ROTATE:
 	    shape = buildingElements.get(index);
-	    shape.setOrientation(RandomUtils.randomValue(Orientation.values(),
-		    shape.getOrientation()));
+	    shape.setRotation(RandomUtils.randomValue(Rotation.values(),
+		    shape.getRotation()));
 	    break;
 	case BEND:
 	    shape = buildingElements.get(index);

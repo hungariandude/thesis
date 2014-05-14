@@ -16,6 +16,11 @@ import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
+/**
+ * A gént kirajzoló vászon.
+ * 
+ * @author Istvánfi Zsolt
+ */
 public class GeneCanvas extends JPanel {
 
     private static final long serialVersionUID = 1683037721853854499L;
@@ -53,25 +58,40 @@ public class GeneCanvas extends JPanel {
 		// path.transform(at);
 		// at = new AffineTransform();
 		at.translate(lastPoint.getX(), lastPoint.getY());
+		// at.scale(64, 64);
 		path.transform(at);
 	    }
 	    fullPath.append(path, false);
 	}
 
-	Rectangle bounds = fullPath.getBounds();
-	if (bounds.x < 0 || bounds.y < 0) {
-	    double transX = bounds.x < 0 ? -bounds.x : 0.0;
-	    double transY = bounds.y < 0 ? -bounds.y : 0.0;
-	    AffineTransform at = new AffineTransform();
-	    at.translate(transX, transY);
-	    fullPath.transform(at);
-	}
+	// Rectangle bounds = fullPath.getBounds();
+	// if (bounds.x < 0 || bounds.y < 0) {
+	// double transX = bounds.x < 0 ? -bounds.x : 0.0;
+	// double transY = bounds.y < 0 ? -bounds.y : 0.0;
+	// AffineTransform at = new AffineTransform();
+	// at.translate(transX, transY);
+	// fullPath.transform(at);
+	// }
 
-	double scaleX = (double) DEFAULT_SIZE.width / bounds.width;
-	double scaleY = (double) DEFAULT_SIZE.height / bounds.height;
-	double scale = Math.min(scaleX, scaleY);
+	// double scaleX = (double) DEFAULT_SIZE.width / bounds.width;
+	// double scaleY = (double) DEFAULT_SIZE.height / bounds.height;
+	// double scale = Math.min(scaleX, scaleY);
 	AffineTransform at = new AffineTransform();
-	at.scale(scale, scale);
+	// at.scale(scale, scale);
+	at.scale(64, -64); // tükrözünk az y tengely mentén
+	fullPath.transform(at);
+
+	Rectangle bounds = fullPath.getBounds();
+	double dx = (DEFAULT_SIZE.width - bounds.width) / 2.0;
+	double dy = (DEFAULT_SIZE.height - bounds.height) / 2.0;
+	if (bounds.x < 0) {
+	    dx += -bounds.x;
+	}
+	if (bounds.y < 0) {
+	    dy += -bounds.y;
+	}
+	at = new AffineTransform();
+	at.translate(dx, dy);
 	fullPath.transform(at);
 
 	g2d.draw(fullPath);
