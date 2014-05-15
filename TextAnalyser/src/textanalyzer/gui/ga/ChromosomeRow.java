@@ -171,7 +171,7 @@ public class ChromosomeRow extends JPanel implements ActionListener {
 	genesPanel.setLayout(new BoxLayout(genesPanel, BoxLayout.X_AXIS));
 
 	TreeMap<Character, Gene> treeMap = new TreeMap<>(huCollator);
-	treeMap.putAll(chromosome.geneMap());
+	treeMap.putAll(chromosome.getGeneMap());
 
 	for (Entry<Character, Gene> entry : treeMap.entrySet()) {
 	    JPanel genePanel = new JPanel();
@@ -207,7 +207,7 @@ public class ChromosomeRow extends JPanel implements ActionListener {
 	this.chromosome = chromosome;
 	updateFitness();
 
-	for (Entry<Character, Gene> entry : this.chromosome.geneMap()
+	for (Entry<Character, Gene> entry : this.chromosome.getGeneMap()
 		.entrySet()) {
 	    GeneCanvas canvas = canvasMap.get(entry.getKey());
 	    if (canvas != null) {

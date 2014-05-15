@@ -5,7 +5,6 @@ import textanalyzer.util.RandomUtils;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -21,7 +20,7 @@ import java.util.TreeMap;
 public class Chromosome implements Comparable<Chromosome> {
     private static final float CROSSOVER_RATE = 0.7f;
 
-    private TreeMap<Character, Gene> geneMap;
+    private final TreeMap<Character, Gene> geneMap;
     private double fitnessScore;
 
     /**
@@ -104,21 +103,21 @@ public class Chromosome implements Comparable<Chromosome> {
     }
 
     /**
-     * A kromoszóma géntérképe (csak olvasható).
-     */
-    public Map<Character, Gene> geneMap() {
-	return Collections.unmodifiableMap(geneMap);
-    }
-
-    /**
      * A kromoszómában szereplő gének (csak olvasható).
      */
     public Collection<Gene> genes() {
-	return Collections.unmodifiableCollection(geneMap.values());
+	return geneMap.values();
     }
 
     public double getFitnessScore() {
 	return fitnessScore;
+    }
+
+    /**
+     * A kromoszóma géntérképe.
+     */
+    public Map<Character, Gene> getGeneMap() {
+	return geneMap;
     }
 
     public void setFitnessScore(double score) {

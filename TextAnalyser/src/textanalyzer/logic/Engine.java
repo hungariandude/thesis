@@ -49,7 +49,7 @@ public final class Engine {
      * fájlba.
      */
     public static boolean exportChromosome(Chromosome chrom, File target) {
-	Map<Character, Gene> geneMap = chrom.geneMap();
+	Map<Character, Gene> geneMap = chrom.getGeneMap();
 	CharMappingSaveData[] saveData = new CharMappingSaveData[geneMap.size()];
 	int i = 0;
 	for (Entry<Character, Gene> entry : geneMap.entrySet()) {
@@ -81,7 +81,7 @@ public final class Engine {
     }
 
     public static List<File> fileList() {
-	return Collections.unmodifiableList(fileList);
+	return fileList;
     }
 
     public static String[] getFileNames() {

@@ -244,7 +244,7 @@ public class FitnessTester {
     public void scoreFitness(Chromosome chrom) {
 	double fitnessScore = 0.0;
 
-	Map<Character, Gene> geneMap = chrom.geneMap();
+	Map<Character, Gene> geneMap = chrom.getGeneMap();
 	for (Entry<Character, Gene> geneEntry : geneMap.entrySet()) {
 	    Character ch = geneEntry.getKey();
 	    Gene gene = geneEntry.getValue();
@@ -254,7 +254,7 @@ public class FitnessTester {
 	    // 2. lépés: értékeljük a gén méretét
 	    double sizeScore = scoreDrawingSize(gene);
 	    // 3. lépés: értékeljük a gén kapcsolatát a többi génnel
-	    double connectionScore = scoreConnections(ch, chrom.geneMap());
+	    double connectionScore = scoreConnections(ch, chrom.getGeneMap());
 
 	    fitnessScore += (lengthScore + sizeScore + connectionScore) / 3;
 	}
@@ -329,7 +329,7 @@ public class FitnessTester {
 	}
 	for (int i = start; i < end; ++i) {
 	    char ch = sourceText.charAt(i);
-	    Gene gene = chrom.geneMap().get(ch);
+	    Gene gene = chrom.getGeneMap().get(ch);
 	    // Rectangle2D size = gene.getBounds();
 	    // x += size.getWidth();
 	    // y += size.getHeight();
