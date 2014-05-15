@@ -1,17 +1,24 @@
 package textanalyzer.logic;
 
+import textanalyzer.logic.algorithm.Chromosome;
+import textanalyzer.logic.algorithm.Gene;
 import textanalyzer.logic.algorithm.GeneticAlgorithm;
 import textanalyzer.logic.algorithm.Population;
+import textanalyzer.logic.algorithm.Segment;
 import textanalyzer.util.ArrayUtils;
 import textanalyzer.util.ValueChangeListener;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeSet;
 
 /**
@@ -35,6 +42,42 @@ public final class Engine {
 	fileSet.addAll(Arrays.asList(files));
 	fileList.clear();
 	fileList.addAll(fileSet);
+    }
+
+    /**
+     * Exportálja a kromószámban található karekter-alakzat párosításokat egy
+     * fájlba.
+     */
+    public static boolean exportChromosome(Chromosome chrom, File target) {
+	Map<Character, Gene> geneMap = chrom.geneMap();
+	CharMappingSaveData[] saveData = new CharMappingSaveData[geneMap.size()];
+	int i = 0;
+	for (Entry<Character, Gene> entry : geneMap.entrySet()) {
+	    Character ch = entry.getKey();
+	    Gene gene = entry.getValue();
+	    List<Segment> segments = gene.getSegments();
+	    String[] forms = new String[segments.size()];
+	    int[] rotations = new int[segments.size()];
+	    saveData[i] = new CharMappingSaveData(ch, forms, rotations);
+	    for (int j = 0; j < segments.size(); ++j) {
+		Segment segment = segments.get(j);
+		forms[j] = segment.getForm().toString();
+		rotations[j] = segment.getRotation().getDegrees();
+	    }
+	}
+
+	try (FileOutputStream fos = new FileOutputStream(target)) {
+	    try (ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+		oos.writeObject(saveData);
+	    } catch (IOException e) {
+		throw e;
+	    }
+	} catch (IOException e) {
+	    e.printStackTrace();
+	    return false;
+	}
+
+	return true;
     }
 
     public static List<File> fileList() {
@@ -65,7 +108,9 @@ public final class Engine {
 	}
 
 	ga = new GeneticAlgorithm(sb.toString(), Parameters.populationSize);
-	return ga.getPopulation();
+	Population sortedPopulation = new Population(ga.getPopulation());
+	Collections.sort(sortedPopulation, Collections.reverseOrder());
+	return sortedPopulation;
     }
 
     public static boolean isPaused() {

@@ -1,5 +1,6 @@
 package textanalyzer.gui;
 
+import textanalyzer.gui.ga.GAPanel;
 import textanalyzer.logic.Engine;
 
 import java.awt.BorderLayout;

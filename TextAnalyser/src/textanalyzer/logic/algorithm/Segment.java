@@ -4,14 +4,14 @@ import textanalyzer.util.RandomUtils;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
-import java.awt.geom.Point2D;
 
 /**
- * Egy kirajzolható alakzat. Van alakja, orientációja, iránya.
+ * A gén szegmense, ami egy kirajzolható alakzat. Van alakja, orientációja,
+ * iránya.
  * 
  * @author Istvánfi Zsolt
  */
-public class Shape {
+public class Segment extends Path2D.Double {
 
     /** Forma. */
     public enum Form {
@@ -39,6 +39,8 @@ public class Shape {
 	}
     }
 
+    private static final long serialVersionUID = -8067923710886726795L;
+
     /**
      * Hányféleképpen lehet kirajzolni egy alakzatot.
      */
@@ -48,31 +50,29 @@ public class Shape {
     private Form form;
     private Rotation rotation;
 
-    private Point2D vector;
-
     /**
      * Az objektum alakját, orientációját és irányát véletlenszerűen határozza
      * meg.
      */
-    public Shape() {
+    public Segment() {
 	this(RandomUtils.randomValue(Form.values()), RandomUtils
 		.randomValue(Rotation.values()));
     }
 
-    public Shape(Form form, Rotation rotation) {
+    public Segment(Form form, Rotation rotation) {
 	this.form = form;
 	this.rotation = rotation;
 
-	recalculateVector();
+	recalculatePath();
     }
 
     /**
      * Copy constructor.
      */
-    public Shape(Shape sample) {
+    public Segment(Segment sample) {
+	super(sample);
 	this.form = sample.form;
 	this.rotation = sample.rotation;
-	this.vector = sample.vector;
     }
 
     @Override
@@ -86,7 +86,7 @@ public class Shape {
 	if (getClass() != obj.getClass()) {
 	    return false;
 	}
-	Shape other = (Shape) obj;
+	Segment other = (Segment) obj;
 	if (rotation != other.rotation) {
 	    return false;
 	}
@@ -104,13 +104,6 @@ public class Shape {
 	return rotation;
     }
 
-    /**
-     * Az alakzat nyomvektora, légvonalban.
-     */
-    public Point2D getVector() {
-	return vector;
-    }
-
     @Override
     public int hashCode() {
 	final int prime = 31;
@@ -122,38 +115,16 @@ public class Shape {
     }
 
     /**
-     * Az alakzat nyomvektorának újraszámolása.
+     * Kiszámítja az alakzat útját.
      */
-    public void recalculateVector() {
-	vector = new Point2D.Double(1.0, 0);
-	AffineTransform at;
-	at = AffineTransform
-		.getRotateInstance(Math.toRadians(rotation.degrees));
-	at.transform(vector, vector);
-    }
-
-    public void setForm(Form form) {
-	this.form = form;
-    }
-
-    public void setRotation(Rotation rotation) {
-	this.rotation = rotation;
-
-	recalculateVector();
-    }
-
-    /**
-     * Visszadaja az alakzatot az origóból kiinduló útként.
-     */
-    public Path2D toPath2D() {
-	Path2D path = new Path2D.Double();
-	path.moveTo(0, 0);
-	Point2D endingPoint = getVector();
-	double x = endingPoint.getX();
-	double y = endingPoint.getY();
+    private void recalculatePath() {
+	reset();
+	moveTo(0, 0);
+	double x = 1.0;
+	double y = 0;
 	if (form != Form.LINE) {
-	    double halfX = endingPoint.getX() / 2;
-	    double halfY = endingPoint.getY() / 2;
+	    double halfX = x / 2;
+	    double halfY = y / 2;
 	    double controlX, controlY;
 	    if (form == Form.CREST_CURVE) {
 		controlX = halfX - y * 0.6;
@@ -162,11 +133,25 @@ public class Shape {
 		controlX = halfX + y * 0.6;
 		controlY = halfY - x * 0.6;
 	    }
-	    path.quadTo(controlX, controlY, x, y);
+	    quadTo(controlX, controlY, x, y);
 	} else {
-	    path.lineTo(x, y);
+	    lineTo(x, y);
 	}
-	return path;
+
+	transform(AffineTransform.getRotateInstance(Math
+		.toRadians(rotation.degrees)));
+    }
+
+    public void setForm(Form form) {
+	this.form = form;
+
+	recalculatePath();
+    }
+
+    public void setRotation(Rotation rotation) {
+	this.rotation = rotation;
+
+	recalculatePath();
     }
 
     @Override

@@ -1,6 +1,6 @@
 package textanalyzer.logic.algorithm;
 
-import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,66 +15,64 @@ public class Gene {
      * Összefűz két gént és az eredményt új génként adja vissza.
      */
     public static Gene concatenate(Gene firstPart, Gene secondPart) {
-	ArrayList<Shape> newBuildingElements = new ArrayList<>(
-		firstPart.buildingElements.size()
-			+ secondPart.buildingElements.size());
-	newBuildingElements.addAll(firstPart.buildingElements);
-	newBuildingElements.addAll(secondPart.buildingElements);
+	ArrayList<Segment> newSegments = new ArrayList<>(
+		firstPart.segments.size() + secondPart.segments.size());
+	newSegments.addAll(firstPart.segments);
+	newSegments.addAll(secondPart.segments);
 
-	return new Gene(newBuildingElements);
+	return new Gene(newSegments);
     }
 
-    private ArrayList<Shape> buildingElements;
-
-    private Point2D endingPoint;
+    private ArrayList<Segment> segments;
+    private Rectangle2D bounds;
 
     /**
      * Üres gén.
      */
     public Gene() {
-	this.buildingElements = new ArrayList<>();
-
-	this.endingPoint = new Point2D.Double();
+	this.segments = new ArrayList<>();
+	this.bounds = new Rectangle2D.Double();
     }
 
     /**
      * A megadott építőelemek alapján létrehoz egy új gént.
      */
-    public Gene(ArrayList<Shape> buildingElements) {
-	this.buildingElements = new ArrayList<>(buildingElements.size());
+    public Gene(ArrayList<Segment> segments) {
+	this.segments = new ArrayList<>(segments.size());
 
-	for (Shape object : buildingElements) {
-	    this.buildingElements.add(new Shape(object));
+	for (Segment segment : segments) {
+	    this.segments.add(new Segment(segment));
 	}
 
-	recalculateDrawingSize();
+	recalculateBounds();
     }
 
     /**
      * Deep copy constructor.
      */
     public Gene(Gene sample) {
-	this.buildingElements = new ArrayList<>(sample.buildingElements.size());
+	this.segments = new ArrayList<>(sample.segments.size());
 
-	for (Shape object : sample.buildingElements) {
-	    this.buildingElements.add(new Shape(object));
+	for (Segment segment : sample.segments) {
+	    this.segments.add(new Segment(segment));
 	}
 
-	this.endingPoint = new Point2D.Double(sample.endingPoint.getX(),
-		sample.endingPoint.getY());
+	this.bounds = new Rectangle2D.Double(sample.bounds.getX(),
+		sample.bounds.getY(), sample.bounds.getWidth(),
+		sample.bounds.getHeight());
     }
 
     /**
      * Létrehoz egy paraméterben megkapott hosszúságú, véletlenszerű gént.
      */
     public Gene(int length) {
-	this.buildingElements = new ArrayList<>(length);
+	this.segments = new ArrayList<>(length);
 
 	for (int i = 0; i < length; ++i) {
-	    buildingElements.add(new Shape());
+	    segments.add(new Segment());
 	}
 
-	recalculateDrawingSize();
+	recalculateBounds();
     }
 
     @Override
@@ -89,31 +87,30 @@ public class Gene {
 	    return false;
 	}
 	Gene other = (Gene) obj;
-	if (buildingElements == null) {
-	    if (other.buildingElements != null) {
+	if (segments == null) {
+	    if (other.segments != null) {
 		return false;
 	    }
-	} else if (!buildingElements.equals(other.buildingElements)) {
+	} else if (!segments.equals(other.segments)) {
 	    return false;
 	}
 	return true;
     }
 
-    public List<Shape> getBuildingElements() {
-	return buildingElements;
+    public Rectangle2D getBounds() {
+	return bounds;
     }
 
-    public Point2D getEndingPoint() {
-	return endingPoint;
+    public List<Segment> getSegments() {
+	return segments;
     }
 
     @Override
     public int hashCode() {
 	final int prime = 31;
 	int result = 1;
-	result = prime
-		* result
-		+ ((buildingElements == null) ? 0 : buildingElements.hashCode());
+	result = prime * result
+		+ ((segments == null) ? 0 : segments.hashCode());
 	return result;
     }
 
@@ -121,36 +118,48 @@ public class Gene {
      * A gén hossza (az építőelemek száma).
      */
     public int length() {
-	return this.buildingElements.size();
+	return this.segments.size();
     }
 
     /**
      * Újraszámolja a gén rajzolási méretét.
      */
-    public void recalculateDrawingSize() {
-	double dx = 0.0, dy = 0.0;
+    public void recalculateBounds() {
+	double minX, minY, maxX, maxY;
+	minX = minY = maxX = maxY = 0.0;
 
-	for (Shape shape : buildingElements) {
-	    Point2D size = shape.getVector();
-	    dx += size.getX();
-	    dy += size.getY();
+	for (Segment segment : segments) {
+	    Rectangle2D segmentBounds = segment.getBounds2D();
+	    if (segmentBounds.getMinX() < minX) {
+		minX = segmentBounds.getMinX();
+	    }
+	    if (segmentBounds.getMinY() < minY) {
+		minY = segmentBounds.getMinY();
+	    }
+	    if (segmentBounds.getMaxX() < maxX) {
+		maxX = segmentBounds.getMaxX();
+	    }
+	    if (segmentBounds.getMaxY() < maxY) {
+		maxY = segmentBounds.getMaxY();
+	    }
 	}
 
-	this.endingPoint = new Point2D.Double(dx, dy);
+	this.bounds = new Rectangle2D.Double(minX, minY, maxX - minX, maxY
+		- minY);
     }
 
-    public void setBuildingElements(ArrayList<Shape> buildingElements) {
-	this.buildingElements = buildingElements;
+    public void setSegments(ArrayList<Segment> segments) {
+	this.segments = segments;
 
-	recalculateDrawingSize();
+	recalculateBounds();
     }
 
     @Override
     public String toString() {
 	StringBuilder sb = new StringBuilder('[');
-	if (!buildingElements.isEmpty()) {
-	    for (Shape shape : buildingElements) {
-		sb.append(shape.toString()).append(", ");
+	if (!segments.isEmpty()) {
+	    for (Segment segment : segments) {
+		sb.append(segment.toString()).append(", ");
 	    }
 	    sb.delete(sb.length() - 2, sb.length());
 	}

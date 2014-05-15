@@ -53,6 +53,7 @@ public class ControlToolBar extends JToolBar {
 		stepSelector.setEnabled(true);
 		stopButton.setEnabled(false);
 	    }
+	    mainFrame.getContentPanel().getGaPanel().enableExport();
 	    mainFrame.getStatusBar().setText(
 		    "A genetikus algoritmus futása befejeződött.");
 	}
@@ -141,6 +142,7 @@ public class ControlToolBar extends JToolBar {
 	    resetButton.setEnabled(false);
 	    startButton.setEnabled(false);
 	    stepSelector.setEnabled(false);
+	    mainFrame.getContentPanel().getGaPanel().disableExport();
 
 	    mainFrame.getStatusBar().setText("A genetikus algoritmus fut...");
 
@@ -172,6 +174,7 @@ public class ControlToolBar extends JToolBar {
 		    "A genetikus algoritmus szüneteltetve.");
 	    startButton.setEnabled(true);
 	    pauseButton.setEnabled(false);
+	    mainFrame.getContentPanel().getGaPanel().enableExport();
 	}
     };
     private final AbstractAction stopAction = new AbstractAction() {
@@ -232,7 +235,7 @@ public class ControlToolBar extends JToolBar {
 	startButton.setToolTipText("Indítás/folytatás");
 	startButton.setEnabled(false);
 	stepSelector = new RadioPanel(new String[] { "1", "10", "100", "1000",
-		"∞" }, true);
+		"10000", "∞" }, true);
 	stepSelector.setEnabled(false);
 
 	pauseButton = new JButton(new ImageIcon(

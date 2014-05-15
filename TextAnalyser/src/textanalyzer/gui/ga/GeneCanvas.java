@@ -1,8 +1,8 @@
-package textanalyzer.gui;
+package textanalyzer.gui.ga;
 
 import textanalyzer.logic.Parameters;
 import textanalyzer.logic.algorithm.Gene;
-import textanalyzer.logic.algorithm.Shape;
+import textanalyzer.logic.algorithm.Segment;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -59,8 +59,8 @@ public class GeneCanvas extends JPanel {
 	}
 
 	Path2D newPath = new Path2D.Double();
-	for (Shape shape : gene.getBuildingElements()) {
-	    Path2D pathPart = shape.toPath2D();
+	for (Segment segment : gene.getSegments()) {
+	    Path2D pathPart = new Path2D.Double(segment);
 	    Point2D lastPoint = newPath.getCurrentPoint();
 	    if (lastPoint != null) {
 		AffineTransform at = new AffineTransform();

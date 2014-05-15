@@ -103,10 +103,10 @@ public class GeneticAlgorithm {
 	// a maximum génhossz a legkisebb olyan alakzatszám, amellyel
 	// biztos, hogy minden megtalált karakter különbözően kirajzolható
 	int maximumGeneLength = 1;
-	int differentObjects = Shape.NUMBER_OF_OBJECT_DRAWING_WAYS;
+	int differentObjects = Segment.NUMBER_OF_OBJECT_DRAWING_WAYS;
 	while (differentObjects < numberOfFoundCharacters) {
 	    differentObjects += (int) Math.pow(
-		    Shape.NUMBER_OF_OBJECT_DRAWING_WAYS, ++maximumGeneLength);
+		    Segment.NUMBER_OF_OBJECT_DRAWING_WAYS, ++maximumGeneLength);
 	}
 
 	for (int i = 0; i < populationSize; ++i) {

@@ -1,7 +1,7 @@
 package textanalyzer.logic.algorithm;
 
-import textanalyzer.logic.algorithm.Shape.Form;
-import textanalyzer.logic.algorithm.Shape.Rotation;
+import textanalyzer.logic.algorithm.Segment.Form;
+import textanalyzer.logic.algorithm.Segment.Rotation;
 import textanalyzer.util.RandomUtils;
 
 import java.util.HashMap;
@@ -38,6 +38,7 @@ public class Mutator {
     private static final float DEFAULT_MUATION_RATE = 0.01f;
 
     private final Map<MutationType, Double> mutationWeightMap;
+    private final Map<Form, Double> bendMutatationWeightMap;
 
     private float mutationRate;
     private final Random random = new Random();
@@ -50,10 +51,15 @@ public class Mutator {
 	this.mutationRate = mutationRate;
 
 	this.mutationWeightMap = new HashMap<>();
-	this.mutationWeightMap.put(MutationType.ADD, 1.0);
+	this.mutationWeightMap.put(MutationType.ADD, 0.5);
 	this.mutationWeightMap.put(MutationType.REMOVE, 1.0);
 	this.mutationWeightMap.put(MutationType.BEND, 1.2);
 	this.mutationWeightMap.put(MutationType.ROTATE, 20.0);
+
+	this.bendMutatationWeightMap = new HashMap<>();
+	this.bendMutatationWeightMap.put(Form.CREST_CURVE, 5.0);
+	this.bendMutatationWeightMap.put(Form.LINE, 10.0);
+	this.bendMutatationWeightMap.put(Form.SAG_CURVE, 5.0);
     }
 
     /**
@@ -64,7 +70,8 @@ public class Mutator {
     public boolean mutate(Chromosome chrom) {
 	boolean wasMutation = false;
 	for (Gene gene : chrom.genes()) {
-	    if (random.nextFloat() <= mutationRate) {
+	    // minél hosszabb a gén, annál valószínűbb, hogy mutálásra kerül
+	    if (random.nextFloat() <= mutationRate * gene.length()) {
 		mutate(gene);
 		wasMutation = true;
 	    }
@@ -76,36 +83,36 @@ public class Mutator {
      * Egy gén mutálása.
      */
     private void mutate(Gene gene) {
-	List<Shape> buildingElements = gene.getBuildingElements();
+	List<Segment> segments = gene.getSegments();
 
 	// a mutáció típusa
 	// egy elemet tartalmazó génből nem törlünk
-	MutationType mutationType = buildingElements.size() == 1 ? RandomUtils
+	MutationType mutationType = segments.size() == 1 ? RandomUtils
 		.randomValue(mutationWeightMap, MutationType.REMOVE)
 		: RandomUtils.randomValue(mutationWeightMap);
 	// melyik pozíción
-	int index = random.nextInt(buildingElements.size());
+	int index = random.nextInt(segments.size());
 
 	switch (mutationType) {
 	case ADD:
-	    Shape shape = new Shape();
-	    buildingElements.add(index, shape);
+	    Segment segment = new Segment();
+	    segments.add(index, segment);
 	    break;
 	case REMOVE:
-	    buildingElements.remove(index);
+	    segments.remove(index);
 	    break;
 	case ROTATE:
-	    shape = buildingElements.get(index);
-	    shape.setRotation(RandomUtils.randomValue(Rotation.values(),
-		    shape.getRotation()));
+	    segment = segments.get(index);
+	    segment.setRotation(RandomUtils.randomValue(Rotation.values(),
+		    segment.getRotation()));
 	    break;
 	case BEND:
-	    shape = buildingElements.get(index);
-	    shape.setForm(RandomUtils.randomValue(Form.values(),
-		    shape.getForm()));
+	    segment = segments.get(index);
+	    segment.setForm(RandomUtils.randomValue(bendMutatationWeightMap,
+		    segment.getForm()));
 	    break;
 	}
 
-	gene.recalculateDrawingSize();
+	gene.recalculateBounds();
     }
 }

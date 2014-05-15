@@ -4,7 +4,7 @@ import textanalyzer.logic.Parameters;
 import textanalyzer.util.MutableInteger;
 import textanalyzer.util.Pair;
 
-import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -121,13 +121,13 @@ public class FitnessTester {
 	TreeMap<Integer, List<Character>> orderedMap = sortMutableIntegerValueMap(charCountMap);
 
 	int occupiedSlotsSoFar = 0;
-	int differentObjects = Shape.NUMBER_OF_OBJECT_DRAWING_WAYS;
+	int differentObjects = Segment.NUMBER_OF_OBJECT_DRAWING_WAYS;
 	int actualGeneLength = 1;
 	for (List<Character> list : orderedMap.values()) {
 	    if (differentObjects <= occupiedSlotsSoFar) {
-		differentObjects += (int) Math
-			.pow(Shape.NUMBER_OF_OBJECT_DRAWING_WAYS,
-				++actualGeneLength);
+		differentObjects += (int) Math.pow(
+			Segment.NUMBER_OF_OBJECT_DRAWING_WAYS,
+			++actualGeneLength);
 	    }
 	    occupiedSlotsSoFar += list.size();
 
@@ -205,18 +205,15 @@ public class FitnessTester {
      * @return [0;1]
      */
     private double scoreDrawingSize(Gene gene) {
-	Point2D size = gene.getEndingPoint();
+	Rectangle2D bounds = gene.getBounds();
 
-	double absX = Math.abs(size.getX());
-	double absY = Math.abs(size.getY());
-
-	if (absX > Parameters.drawingAreaSizeX
-		|| absY > Parameters.drawingAreaSizeY) {
+	if (bounds.getWidth() > Parameters.drawingAreaSizeX
+		|| bounds.getHeight() > Parameters.drawingAreaSizeY) {
 	    // biztos, kifut a rajzolási területről
 	    return 0.0;
 	}
 
-	if (absX <= 1 && absY <= 1) {
+	if (bounds.getWidth() <= 1 && bounds.getHeight() <= 1) {
 	    // 1 egységen belül végződik az objektum
 	    return 1.0;
 	}
@@ -226,11 +223,13 @@ public class FitnessTester {
 
 	// ha 1 egységnél távolabb végződik az objektum, akkor az értékelés a
 	// fordított relatív távolság lesz
-	if (absX > 1) {
-	    xScore *= 1 - (absX - 1) / (Parameters.drawingAreaSizeX - 1);
+	if (bounds.getWidth() > 1) {
+	    xScore *= 1 - (bounds.getWidth() - 1)
+		    / (Parameters.drawingAreaSizeX - 1);
 	}
-	if (absY > 1) {
-	    yScore *= 1 - (absY - 1) / (Parameters.drawingAreaSizeY - 1);
+	if (bounds.getHeight() > 1) {
+	    yScore *= 1 - (bounds.getHeight() - 1)
+		    / (Parameters.drawingAreaSizeY - 1);
 	}
 
 	return xScore + yScore;
@@ -258,14 +257,14 @@ public class FitnessTester {
 	    fitnessScore += (lengthScore + sizeScore + connectionScore) / 3;
 	}
 	// a fentiek 1/10-ed arányban számítanak bele a fitnesz pontszámba
-	fitnessScore = fitnessScore / geneMap.size() * 10;
+	fitnessScore = fitnessScore / geneMap.size() * 20;
 
 	// végigíratjuk a bemeneti szövegünket a kromoszómával. Az értékelés
 	// szempontja az, hogy az írás során hányszor futunk le a rajzolási
 	// képernyőről
 	double writingTestScore = scoreWritingTest(chrom);
 	// ez pedig 9/10-ed arányban számítódik bele a fitness pontszámba
-	fitnessScore += writingTestScore * 90;
+	fitnessScore += writingTestScore * 80;
 
 	// a karakterek egyediségi értékének négyzetével szorozzuk a
 	// végeredményt, ezzel büntetve a megegyező géneket tartalmazó
@@ -323,9 +322,9 @@ public class FitnessTester {
 	int runOutCount = 0;
 	for (int i = 0; i < sourceText.length(); ++i) {
 	    char ch = sourceText.charAt(i);
-	    Point2D size = chrom.geneMap().get(ch).getEndingPoint();
-	    x += size.getX();
-	    y += size.getY();
+	    Rectangle2D size = chrom.geneMap().get(ch).getBounds();
+	    x += size.getWidth();
+	    y += size.getHeight();
 	    if (Math.abs(x) > Parameters.drawingAreaSizeX / 2
 		    || Math.abs(y) > Parameters.drawingAreaSizeY / 2) {
 		// kifutottunk
@@ -335,7 +334,7 @@ public class FitnessTester {
 	    }
 	}
 
-	return (double) runOutCount / sourceText.length();
+	return 1 - (double) runOutCount / sourceText.length();
     }
 
     /**

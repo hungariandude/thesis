@@ -1,9 +1,9 @@
-package textanalyzer.gui;
+package textanalyzer.gui.ga;
 
+import textanalyzer.logic.algorithm.Chromosome;
 import textanalyzer.logic.algorithm.Population;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Font;
 import java.util.ArrayList;
 
@@ -44,12 +44,13 @@ public class GAPanel extends JPanel {
     }
 
     private static final long serialVersionUID = 7283428682414885355L;
-    public final static Font HEADER_FONT = new Font("Arial", Font.BOLD, 20);
 
+    public final static Font HEADER_FONT = new Font("Arial", Font.BOLD, 20);
     private final GenerationNumberLabel generationLabel = new GenerationNumberLabel();
     private final JTabbedPane tabbedPane = new JTabbedPane();
     private final ArrayList<ChromosomeRow> rows = new ArrayList<>();
     private final JPanel populationPanel = new JPanel();
+    private final StatPanel statPanel = new StatPanel();
 
     public GAPanel() {
 	setLayout(new BorderLayout());
@@ -61,26 +62,40 @@ public class GAPanel extends JPanel {
 		BoxLayout.Y_AXIS));
 	JScrollPane scrollPane = new JScrollPane(populationPanel);
 	tabbedPane.addTab("Populáció", scrollPane);
-	tabbedPane.setFocusable(false);
+	scrollPane = new JScrollPane(statPanel);
+	tabbedPane.addTab("Statisztika", scrollPane);
 
 	add(tabbedPane, BorderLayout.CENTER);
-
 	setEnabled(false);
+    }
+
+    public void disableExport() {
+	for (ChromosomeRow row : rows) {
+	    row.disableExport();
+	}
+    }
+
+    public void enableExport() {
+	for (ChromosomeRow row : rows) {
+	    row.enableExport();
+	}
     }
 
     public void reset() {
 	generationLabel.setGenerationNumber(0);
 	populationPanel.removeAll();
 	rows.clear();
+	statPanel.reset();
     }
 
     @Override
     public void setEnabled(boolean enabled) {
 	super.setEnabled(enabled);
 
-	for (Component c : getComponents()) {
-	    c.setEnabled(enabled);
-	}
+	this.generationLabel.setEnabled(enabled);
+	// for (Component c : getComponents()) {
+	// c.setEnabled(enabled);
+	// }
     }
 
     /**
@@ -90,17 +105,27 @@ public class GAPanel extends JPanel {
 	generationLabel.setGenerationNumber(population.getGenerationNumber());
 
 	if (rows.isEmpty()) {
+	    if (!population.isEmpty()) {
+		ChromosomeRow maxRow = new ChromosomeRow(population.get(0),
+			"Generáció: " + population.getGenerationNumber());
+		statPanel.setMaxRow(maxRow);
+	    }
 	    for (int i = 0; i < population.size(); ++i) {
 		ChromosomeRow row = new ChromosomeRow(population.get(i), i + 1);
 		rows.add(row);
 		populationPanel.add(row);
+
 		if (i != population.size() - 1) {
 		    populationPanel.add(new JSeparator());
 		}
 	    }
 	} else {
+	    if (!population.isEmpty()) {
+		Chromosome chrom = population.get(0);
+		statPanel.checkMaxRow(chrom);
+	    }
 	    for (int i = 0; i < population.size(); ++i) {
-		rows.get(i).updateChromosome(population.get(i));
+		rows.get(i).setChromosome(population.get(i));
 	    }
 	}
     }
