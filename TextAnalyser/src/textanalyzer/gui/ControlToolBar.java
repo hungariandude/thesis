@@ -1,5 +1,7 @@
 package textanalyzer.gui;
 
+import textanalyzer.gui.components.AdvancedFileChooser;
+import textanalyzer.gui.components.RadioPanel;
 import textanalyzer.logic.Engine;
 import textanalyzer.logic.algorithm.Population;
 import textanalyzer.util.ResourceUtils;
@@ -77,7 +79,7 @@ public class ControlToolBar extends JToolBar {
     private final RadioPanel stepSelector;
     private final MainFrame mainFrame;
 
-    private final JFileChooser fileChooser;
+    private final AdvancedFileChooser fileChooser;
     private boolean stopped = true;
 
     private final AbstractAction openAction = new AbstractAction() {
@@ -215,7 +217,7 @@ public class ControlToolBar extends JToolBar {
 
     public ControlToolBar(MainFrame mainFrame) {
 	this.mainFrame = mainFrame;
-	fileChooser = new JFileChooser();
+	fileChooser = new AdvancedFileChooser();
 	fileChooser.setMultiSelectionEnabled(true);
 
 	setFloatable(false);

@@ -1,5 +1,7 @@
 package textanalyzer.logic.algorithm;
 
+import textanalyzer.util.RandomUtils;
+
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.Collection;
@@ -8,7 +10,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Random;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -19,7 +20,6 @@ import java.util.TreeMap;
  */
 public class Chromosome implements Comparable<Chromosome> {
     private static final float CROSSOVER_RATE = 0.7f;
-    private static final Random random = new Random();
 
     private TreeMap<Character, Gene> geneMap;
     private double fitnessScore;
@@ -38,7 +38,7 @@ public class Chromosome implements Comparable<Chromosome> {
 	this.geneMap = new TreeMap<>();
 	for (Character ch : chars) {
 	    // 0 hosszúságú gént nem szeretnénk
-	    Gene gene = new Gene(random.nextInt(maxGeneLength) + 1);
+	    Gene gene = new Gene(RandomUtils.random.nextInt(maxGeneLength) + 1);
 	    geneMap.put(ch, gene);
 	}
     }
@@ -66,7 +66,7 @@ public class Chromosome implements Comparable<Chromosome> {
      */
     public Chromosome[] crossOverWith(Chromosome other) {
 	// kell?
-	if (random.nextFloat() > CROSSOVER_RATE) {
+	if (RandomUtils.random.nextFloat() > CROSSOVER_RATE) {
 	    return new Chromosome[] { new Chromosome(this),
 		    new Chromosome(other) };
 	}
@@ -80,7 +80,7 @@ public class Chromosome implements Comparable<Chromosome> {
 	// Választunk egy pontot, amin kettéosztjuk a génállományt (a ponton
 	// lévő elem a második részhez tartozik). A pont nem lehet a legelső
 	// elem, mert akkor csak szimpla génállománycsere történne az utódokban.
-	int swappingIndex = random.nextInt(this.geneMap.size() - 1) + 1;
+	int swappingIndex = RandomUtils.random.nextInt(this.geneMap.size() - 1) + 1;
 	int index = 1;
 	Character charAtIndex = null;
 	for (Iterator<Character> it = this.geneMap.navigableKeySet().iterator(); index <= swappingIndex

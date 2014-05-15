@@ -63,7 +63,8 @@ public class GAPanel extends JPanel {
 	JScrollPane scrollPane = new JScrollPane(populationPanel);
 	tabbedPane.addTab("Populáció", scrollPane);
 	scrollPane = new JScrollPane(statPanel);
-	tabbedPane.addTab("Statisztika", scrollPane);
+	tabbedPane.addTab("Rekord", scrollPane);
+	tabbedPane.setEnabledAt(1, false);
 
 	add(tabbedPane, BorderLayout.CENTER);
 	setEnabled(false);
@@ -91,6 +92,10 @@ public class GAPanel extends JPanel {
     @Override
     public void setEnabled(boolean enabled) {
 	super.setEnabled(enabled);
+
+	if (enabled) {
+	    this.tabbedPane.setEnabledAt(1, true);
+	}
 
 	this.generationLabel.setEnabled(enabled);
 	// for (Component c : getComponents()) {

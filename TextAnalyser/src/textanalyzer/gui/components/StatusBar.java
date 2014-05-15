@@ -1,4 +1,4 @@
-package textanalyzer.gui;
+package textanalyzer.gui.components;
 
 import java.awt.Dimension;
 import java.awt.Font;

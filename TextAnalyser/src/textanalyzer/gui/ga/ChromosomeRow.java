@@ -1,5 +1,6 @@
 package textanalyzer.gui.ga;
 
+import textanalyzer.gui.components.AdvancedFileChooser;
 import textanalyzer.logic.Engine;
 import textanalyzer.logic.algorithm.Chromosome;
 import textanalyzer.logic.algorithm.Gene;
@@ -63,36 +64,9 @@ public class ChromosomeRow extends JPanel implements ActionListener {
     private static final long serialVersionUID = 4804365096380267792L;
     private static final DecimalFormat DOUBLE_FORMAT;
     private static final Border DEFAULT_BORDER;
-    private static final JFileChooser fileChooser;
+    private static final AdvancedFileChooser fileChooser;
     static {
-	fileChooser = new JFileChooser() {
-	    private static final long serialVersionUID = 7917323903727153840L;
-
-	    @Override
-	    public void approveSelection() {
-		File file = getSelectedFile();
-		String name = file.getName();
-		if (!name.contains(".ser")
-			|| name.lastIndexOf(".ser") != name.length() - 4) {
-		    file = new File(file.getPath() + ".ser");
-		    setSelectedFile(file);
-		}
-		if (file.exists() && getDialogType() == SAVE_DIALOG) {
-		    int result = JOptionPane.showConfirmDialog(
-			    this,
-			    "Már létezik fájl ezen az elérési úton:\n\n"
-				    + file.getPath() + "\n\nFelülírja?",
-			    "Lérező fájl", JOptionPane.YES_NO_CANCEL_OPTION);
-		    switch (result) {
-		    case JOptionPane.YES_OPTION:
-			super.approveSelection();
-		    default:
-			return;
-		    }
-		}
-		super.approveSelection();
-	    }
-	};
+	fileChooser = new AdvancedFileChooser();
 	fileChooser.setMultiSelectionEnabled(false);
 	fileChooser.setAcceptAllFileFilterUsed(false);
 	FileNameExtensionFilter filter = new FileNameExtensionFilter(

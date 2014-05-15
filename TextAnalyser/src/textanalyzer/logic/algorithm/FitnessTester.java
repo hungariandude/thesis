@@ -3,7 +3,9 @@ package textanalyzer.logic.algorithm;
 import textanalyzer.logic.Parameters;
 import textanalyzer.util.MutableInteger;
 import textanalyzer.util.Pair;
+import textanalyzer.util.RandomUtils;
 
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -320,17 +322,30 @@ public class FitnessTester {
 	double x = 0.0, y = 0.0;
 
 	int runOutCount = 0;
-	for (int i = 0; i < sourceText.length(); ++i) {
+	int start = 0, end = sourceText.length();
+	if (end > 1000) {
+	    start = RandomUtils.random.nextInt(end - 999);
+	    end = start + 1000;
+	}
+	for (int i = start; i < end; ++i) {
 	    char ch = sourceText.charAt(i);
-	    Rectangle2D size = chrom.geneMap().get(ch).getBounds();
-	    x += size.getWidth();
-	    y += size.getHeight();
-	    if (Math.abs(x) > Parameters.drawingAreaSizeX / 2
-		    || Math.abs(y) > Parameters.drawingAreaSizeY / 2) {
-		// kifutottunk
-		runOutCount++;
-		// visszaugrunk középre
-		x = y = 0.0;
+	    Gene gene = chrom.geneMap().get(ch);
+	    // Rectangle2D size = gene.getBounds();
+	    // x += size.getWidth();
+	    // y += size.getHeight();
+	    for (Segment segment : gene.getSegments()) {
+		Point2D endingPoint = segment.getCurrentPoint();
+		x += endingPoint.getX();
+		y += endingPoint.getY();
+		if (Math.abs(x) > Parameters.drawingAreaSizeX / 2
+			|| Math.abs(y) > Parameters.drawingAreaSizeY / 2) {
+		    // kifutottunk
+		    runOutCount++;
+		    // visszaugrunk középre
+		    x = y = 0.0;
+		    // új karaktert kezdünk
+		    break;
+		}
 	    }
 	}
 

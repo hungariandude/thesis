@@ -1,7 +1,8 @@
 package textanalyzer.logic.algorithm;
 
+import textanalyzer.util.RandomUtils;
+
 import java.util.Iterator;
-import java.util.Random;
 import java.util.Set;
 
 /**
@@ -20,7 +21,6 @@ public class GeneticAlgorithm {
      * Hányadik generációnál tart az evolúció.
      */
     private long generationCounter = 0L;
-    private final Random random = new Random();
 
     public GeneticAlgorithm(String sourceText, int populationSize) {
 	if (populationSize < 2 || populationSize % 2 != 0) {
@@ -137,7 +137,7 @@ public class GeneticAlgorithm {
 	}
 
 	// 2. lépés: kiválasztunk egy pontot a skálán
-	double selectedPoint = totalFitness * random.nextDouble();
+	double selectedPoint = totalFitness * RandomUtils.random.nextDouble();
 
 	// 3. lépés: megkeressük, hogy melyik egyed fitnesz intervallumába
 	// találtunk bele

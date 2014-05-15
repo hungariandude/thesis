@@ -1,4 +1,4 @@
-package textanalyzer.gui;
+package textanalyzer.gui.components;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;

@@ -7,7 +7,6 @@ import textanalyzer.util.RandomUtils;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * A kromoszómák mutálásáért felelős osztály.
@@ -41,7 +40,6 @@ public class Mutator {
     private final Map<Form, Double> bendMutatationWeightMap;
 
     private float mutationRate;
-    private final Random random = new Random();
 
     public Mutator() {
 	this(DEFAULT_MUATION_RATE);
@@ -71,7 +69,7 @@ public class Mutator {
 	boolean wasMutation = false;
 	for (Gene gene : chrom.genes()) {
 	    // minél hosszabb a gén, annál valószínűbb, hogy mutálásra kerül
-	    if (random.nextFloat() <= mutationRate * gene.length()) {
+	    if (RandomUtils.random.nextFloat() <= mutationRate * gene.length()) {
 		mutate(gene);
 		wasMutation = true;
 	    }
@@ -91,7 +89,7 @@ public class Mutator {
 		.randomValue(mutationWeightMap, MutationType.REMOVE)
 		: RandomUtils.randomValue(mutationWeightMap);
 	// melyik pozíción
-	int index = random.nextInt(segments.size());
+	int index = RandomUtils.random.nextInt(segments.size());
 
 	switch (mutationType) {
 	case ADD:

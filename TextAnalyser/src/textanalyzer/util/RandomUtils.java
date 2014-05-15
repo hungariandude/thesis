@@ -14,7 +14,7 @@ import java.util.Random;
  * @author Istvánfi Zsolt
  */
 public final class RandomUtils {
-    private static final Random random = new Random();
+    public static final Random random = new Random();
 
     /**
      * Visszaad egy véletlenszerű értéket a paraméterként megkapott

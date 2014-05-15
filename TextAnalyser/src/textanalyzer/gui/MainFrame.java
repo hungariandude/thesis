@@ -1,5 +1,7 @@
 package textanalyzer.gui;
 
+import textanalyzer.gui.components.StatusBar;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
