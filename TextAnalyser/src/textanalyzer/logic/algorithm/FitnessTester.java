@@ -48,6 +48,25 @@ public class FitnessTester {
      */
     private Map<Character, Integer> recommendedLengthMap = new HashMap<>();
 
+    /**
+     * Egymáshoz hasonlító karakterek.
+     */
+    private static final String[] similarChars = new String[] { "aá", "eé",
+	    "ií", "oóöő", "uúüű" };
+    /**
+     * A karakterek és a hozzájuk hasonlító karakterek összerendelése.
+     */
+    private static Map<Character, char[]> similarityMap = new HashMap<>();
+    static {
+	for (String str : similarChars) {
+	    for (int i = 0; i < str.length(); ++i) {
+		char ch = str.charAt(i);
+		str = str.replace(String.valueOf(ch), "");
+		similarityMap.put(ch, str.toCharArray());
+	    }
+	}
+    }
+
     private static final Logger LOGGER = Logger.getLogger(FitnessTester.class
 	    .getName());
 
@@ -157,10 +176,10 @@ public class FitnessTester {
     /**
      * @return [0;1]
      */
-    private double scoreConnections(Character key, Map<Character, Gene> map) {
+    private double scoreConnections(Character key, Gene gene,
+	    Map<Character, Gene> map) {
 	Pair<Entry<Integer, List<Character>>, Entry<Integer, List<Character>>> entry = maxCountNeighborMap
 		.get(key);
-	Gene mainGene = map.get(key);
 	List<Character> leftList = entry.getLeft() == null ? null : entry
 		.getLeft().getValue();
 	List<Character> rightList = entry.getRight() == null ? null : entry
@@ -174,7 +193,7 @@ public class FitnessTester {
 	    if (leftSize > 0) {
 		for (Character ch : leftList) {
 		    leftPoints += scoreDrawingSize(Gene.concatenate(
-			    map.get(ch), mainGene));
+			    map.get(ch), gene));
 		}
 		leftPoints = leftPoints / leftSize / 2;
 	    } else {
@@ -188,7 +207,7 @@ public class FitnessTester {
 	    int rightSize = rightList.size();
 	    if (rightSize > 0) {
 		for (Character ch : rightList) {
-		    rightPoints += scoreDrawingSize(Gene.concatenate(mainGene,
+		    rightPoints += scoreDrawingSize(Gene.concatenate(gene,
 			    map.get(ch)));
 		}
 		rightPoints = rightPoints / rightSize / 2;
@@ -250,23 +269,28 @@ public class FitnessTester {
 	    Gene gene = geneEntry.getValue();
 
 	    // 1. lépés: értékeljük a gén hosszát
-	    double lengthScore = scoreGeneLength(ch, gene);
+	    double lengthScore = scoreLength(ch, gene);
 	    // 2. lépés: értékeljük a gén méretét
 	    double sizeScore = scoreDrawingSize(gene);
-	    // 3. lépés: értékeljük a gén kapcsolatát a többi génnel
-	    double connectionScore = scoreConnections(ch, chrom.getGeneMap());
+	    // 3. lépés: értékeljük a gén hasonlóságát a karakterek szerinti
+	    // hasonlóságokhoz (pl. u-ú-ü-ű)
+	    double similarityScore = scoreSimilarity(ch, gene,
+		    chrom.getGeneMap());
+	    // 4. lépés: értékeljük a gén kapcsolatát a többi génnel
+	    double connectionScore = scoreConnections(ch, gene,
+		    chrom.getGeneMap());
 
-	    fitnessScore += (lengthScore + sizeScore + connectionScore) / 3;
+	    fitnessScore += (lengthScore + sizeScore + similarityScore + connectionScore) / 4;
 	}
 	// a fentiek 1/10-ed arányban számítanak bele a fitnesz pontszámba
-	fitnessScore = fitnessScore / geneMap.size() * 20;
+	fitnessScore = fitnessScore / geneMap.size() * 25;
 
 	// végigíratjuk a bemeneti szövegünket a kromoszómával. Az értékelés
 	// szempontja az, hogy az írás során hányszor futunk le a rajzolási
 	// képernyőről
 	double writingTestScore = scoreWritingTest(chrom);
 	// ez pedig 9/10-ed arányban számítódik bele a fitness pontszámba
-	fitnessScore += writingTestScore * 80;
+	fitnessScore += writingTestScore * 75;
 
 	// a karakterek egyediségi értékének négyzetével szorozzuk a
 	// végeredményt, ezzel büntetve a megegyező géneket tartalmazó
@@ -275,19 +299,6 @@ public class FitnessTester {
 	fitnessScore *= uniquenessScore * uniquenessScore;
 
 	chrom.setFitnessScore(fitnessScore);
-    }
-
-    /**
-     * @return ]0;1]
-     */
-    private double scoreGeneLength(Character ch, Gene gene) {
-	// mennyire tér el a gén hossza a neki ajánlott hosszúságtól
-	int deviation = Math.abs(gene.length() - recommendedLengthMap.get(ch));
-
-	// másodfokú az értékcsökkentés (1, 0.5, 0.25, ...)
-	double lengthScore = 2.0 / Math.pow(2, deviation + 1);
-
-	return lengthScore;
     }
 
     /**
@@ -313,8 +324,53 @@ public class FitnessTester {
     }
 
     /**
-     * Végigmegy a forrásszövegen és megszámolja, hogy hányszor fut le az írás a
-     * rajzoló felületről és ezután ad értékelést.
+     * @return ]0;1]
+     */
+    private double scoreLength(Character ch, Gene gene) {
+	// mennyire tér el a gén hossza a neki ajánlott hosszúságtól
+	int deviation = Math.abs(gene.length() - recommendedLengthMap.get(ch));
+
+	// másodfokú az értékcsökkentés (1, 0.5, 0.25, ...)
+	double lengthScore = 2.0 / Math.pow(2, deviation + 1);
+
+	return lengthScore;
+    }
+
+    /**
+     * @return [0;1]
+     */
+    private double scoreSimilarity(Character ch, Gene gene,
+	    Map<Character, Gene> geneMap) {
+	char[] value = similarityMap.get(ch);
+	if (value == null || value.length == 0) {
+	    return 1.0;
+	} else {
+	    double totalScore = 0.0;
+	    for (char c : value) {
+		double score;
+		Gene similarGene = geneMap.get(c);
+		if (gene.length() != similarGene.length()) {
+		    score = 0.0;
+		} else {
+		    score = 0.0;
+		    for (int i = 0; i < gene.length(); ++i) {
+			Segment thisSegment = gene.getSegments().get(i);
+			Segment otherSegment = similarGene.getSegments().get(i);
+			if (thisSegment.getForm() == otherSegment.getForm()) {
+			    score += 1;
+			}
+		    }
+		    score /= gene.length();
+		}
+		totalScore += score;
+	    }
+	    return totalScore / value.length;
+	}
+    }
+
+    /**
+     * Végigmegy egy forrásszövegen és megszámolja, hogy hányszor fut le az írás
+     * a rajzoló felületről és ezután ad értékelést.
      * 
      * return [0;1]
      */
@@ -349,7 +405,7 @@ public class FitnessTester {
 	    }
 	}
 
-	return 1 - (double) runOutCount / sourceText.length();
+	return 1 - (double) runOutCount / 1000;
     }
 
     /**

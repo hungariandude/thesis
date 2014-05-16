@@ -40,17 +40,23 @@ public class AdvancedFileChooser extends JFileChooser {
 		}
 	    }
 	    if (file.exists()) {
-		int result = JOptionPane.showConfirmDialog(
-			this,
-			"Már létezik fájl ezen az elérési úton:\n\n"
-				+ file.getPath() + "\n\nFelülírja?",
-			"Lérező fájl", JOptionPane.YES_NO_CANCEL_OPTION);
+		int result = JOptionPane.showConfirmDialog(this, file.getPath()
+			+ "\n\nA fájl már létezik. Felülírja?", "Létező fájl",
+			JOptionPane.YES_NO_CANCEL_OPTION);
 		switch (result) {
 		case JOptionPane.YES_OPTION:
 		    super.approveSelection();
 		default:
 		    return;
 		}
+	    }
+	} else if (getDialogType() == OPEN_DIALOG) {
+	    File file = getSelectedFile();
+	    if (!file.exists()) {
+		JOptionPane.showMessageDialog(this, file.getPath()
+			+ "\n\nA fájl nem létezik!", "Fájl nem található",
+			JOptionPane.ERROR_MESSAGE);
+		return;
 	    }
 	}
 	super.approveSelection();
