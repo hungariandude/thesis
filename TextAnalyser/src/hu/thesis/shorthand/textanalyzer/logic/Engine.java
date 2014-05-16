@@ -1,5 +1,6 @@
 package hu.thesis.shorthand.textanalyzer.logic;
 
+import hu.thesis.shorthand.common.CharMappingSaveData;
 import hu.thesis.shorthand.textanalyzer.logic.algorithm.Chromosome;
 import hu.thesis.shorthand.textanalyzer.logic.algorithm.Gene;
 import hu.thesis.shorthand.textanalyzer.logic.algorithm.GeneticAlgorithm;

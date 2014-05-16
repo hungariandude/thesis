@@ -1,4 +1,4 @@
-package hu.thesis.shorthand.textanalyzer.logic;
+package hu.thesis.shorthand.common;
 
 import java.io.Serializable;
 
