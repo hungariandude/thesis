@@ -14,6 +14,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.border.Border;
@@ -77,7 +78,7 @@ public class GeneCanvas extends JPanel {
     }
 
     private Path2D path;
-    private ArrayList<Arrow> arrows;
+    private List<Arrow> arrows;
 
     public GeneCanvas() {
 	setPreferredSize(DEFAULT_SIZE);
@@ -106,12 +107,12 @@ public class GeneCanvas extends JPanel {
 	}
     }
 
-    public void setGene(Gene gene) {
+    public void setGene(final Gene gene) {
 	if (Parameters.debugMode) {
 	    setToolTipText(gene.toString());
 	}
 
-	ArrayList<Arrow> newArrows = new ArrayList<>();
+	List<Arrow> newArrows = new ArrayList<>();
 	Path2D newPath = new Path2D.Double();
 
 	for (Segment segment : gene.getSegments()) {
@@ -151,14 +152,14 @@ public class GeneCanvas extends JPanel {
 	    dy += -bounds.y;
 	}
 	at = new AffineTransform();
-	at.translate(dx, dy);
+	at.translate(dx, dy); // középre igazítjuk az alakzatot
 	newPath.transform(at);
 	for (Arrow arrow : newArrows) {
 	    arrow.transform(at);
 	}
 
-	this.path = newPath;
-	this.arrows = newArrows;
+	path = newPath;
+	arrows = newArrows;
 	repaint();
     }
 }
