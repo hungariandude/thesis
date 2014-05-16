@@ -1,16 +1,18 @@
 package hu.thesis.shorthand.textanalyzer;
 
-import hu.thesis.shorthand.textanalyzer.Program;
 import hu.thesis.shorthand.textanalyzer.logic.Parameters;
 import hu.thesis.shorthand.textanalyzer.util.ResourceUtils;
-
-import java.net.URL;
 
 public class ProgramTest {
 
     public static void main(String[] args) {
-	URL textFileURL = ResourceUtils.getResourceAsURL("alkotmany.txt");
-	Program.main(new String[] { textFileURL.getPath() });
+	String[] files = { "alkotmany.txt", "egri_csillagok.txt",
+		"ember_tragediaja.txt" };
+	String[] urls = new String[files.length];
+	for (int i = 0; i < files.length; ++i) {
+	    urls[i] = ResourceUtils.getResourceAsURL(files[i]).getPath();
+	}
+	Program.main(urls);
 	Parameters.debugMode = true;
     }
 
