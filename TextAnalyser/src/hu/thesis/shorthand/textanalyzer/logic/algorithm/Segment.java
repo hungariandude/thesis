@@ -1,43 +1,17 @@
 package hu.thesis.shorthand.textanalyzer.logic.algorithm;
 
+import hu.thesis.shorthand.common.DrawableObject;
 import hu.thesis.shorthand.textanalyzer.util.RandomUtils;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 
 /**
- * A gén szegmense, ami egy kirajzolható alakzat. Van alakja, orientációja,
- * iránya.
+ * A gén egy szegmense.
  * 
  * @author Istvánfi Zsolt
  */
-public class Segment extends Path2D.Double {
-
-    /** Forma. */
-    public enum Form {
-	/** Egyenes. */
-	LINE,
-	/** Süllyedt görbe. */
-	SAG_CURVE,
-	/** Emelkedett görbe. */
-	CREST_CURVE;
-    }
-
-    /** Elforgatás. */
-    public enum Rotation {
-	NONE(0), DEGREE_45(45), DEGREE_90(90), DEGREE_135(135), DEGREE_180(180), DEGREE_225(
-		225), DEGREE_270(270), DEGREE_315(315);
-
-	private final int degrees;
-
-	private Rotation(int degrees) {
-	    this.degrees = degrees;
-	}
-
-	public int getDegrees() {
-	    return degrees;
-	}
-    }
+public class Segment extends Path2D.Double implements DrawableObject {
 
     private static final long serialVersionUID = -8067923710886726795L;
 
@@ -96,10 +70,12 @@ public class Segment extends Path2D.Double {
 	return true;
     }
 
+    @Override
     public Form getForm() {
 	return form;
     }
 
+    @Override
     public Rotation getRotation() {
 	return rotation;
     }
@@ -138,16 +114,18 @@ public class Segment extends Path2D.Double {
 	    lineTo(x, y);
 	}
 
-	transform(AffineTransform.getRotateInstance(Math
-		.toRadians(rotation.degrees)));
+	transform(AffineTransform.getRotateInstance(Math.toRadians(rotation
+		.getDegrees())));
     }
 
+    @Override
     public void setForm(Form form) {
 	this.form = form;
 
 	recalculatePath();
     }
 
+    @Override
     public void setRotation(Rotation rotation) {
 	this.rotation = rotation;
 
@@ -159,9 +137,7 @@ public class Segment extends Path2D.Double {
 	StringBuilder sb = new StringBuilder("(Form: ");
 	sb.append(form);
 	sb.append("; Rotation: ");
-	sb.append(rotation.degrees);
-	// sb.append("; Vector: ");
-	// sb.append(getVector());
+	sb.append(rotation.getDegrees());
 	sb.append(')');
 
 	return sb.toString();

@@ -1,7 +1,7 @@
 package hu.thesis.shorthand.textanalyzer.logic.algorithm;
 
-import hu.thesis.shorthand.textanalyzer.logic.algorithm.Segment.Form;
-import hu.thesis.shorthand.textanalyzer.logic.algorithm.Segment.Rotation;
+import hu.thesis.shorthand.common.DrawableObject.Form;
+import hu.thesis.shorthand.common.DrawableObject.Rotation;
 import hu.thesis.shorthand.textanalyzer.util.RandomUtils;
 
 import java.util.HashMap;

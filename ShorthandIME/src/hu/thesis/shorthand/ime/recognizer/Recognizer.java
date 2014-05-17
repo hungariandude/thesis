@@ -1,8 +1,12 @@
 
 package hu.thesis.shorthand.ime.recognizer;
 
+import android.content.Context;
 import android.gesture.GesturePoint;
 import android.util.Log;
+
+import hu.thesis.shorthand.common.CharMappingSaveData;
+import hu.thesis.shorthand.ime.util.RecognizerUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,6 +24,17 @@ import java.util.List;
 public class Recognizer {
 
     private static final int PAUSE_BETWEEN_CHARS = 300;
+
+    private final Context mContext;
+
+    public Recognizer(Context context) {
+        mContext = context;
+    }
+
+    public void loadDefaultCharMapping() {
+        CharMappingSaveData[] saveData = RecognizerUtils.readCharMappingFromResource(mContext);
+
+    }
 
     /**
      * Felismeri a paraméterként megkapott <code>GesturePoint</code> tömb által

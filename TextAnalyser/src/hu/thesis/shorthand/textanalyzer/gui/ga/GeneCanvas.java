@@ -1,9 +1,9 @@
 package hu.thesis.shorthand.textanalyzer.gui.ga;
 
+import hu.thesis.shorthand.common.DrawableObject.Form;
 import hu.thesis.shorthand.textanalyzer.logic.Parameters;
 import hu.thesis.shorthand.textanalyzer.logic.algorithm.Gene;
 import hu.thesis.shorthand.textanalyzer.logic.algorithm.Segment;
-import hu.thesis.shorthand.textanalyzer.logic.algorithm.Segment.Form;
 
 import java.awt.Color;
 import java.awt.Dimension;

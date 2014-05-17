@@ -1,10 +1,17 @@
 
 package hu.thesis.shorthand.ime.util;
 
+import android.content.Context;
 import android.gesture.GesturePoint;
 import android.gesture.GestureStroke;
 import android.util.Log;
 
+import hu.thesis.shorthand.common.CharMappingSaveData;
+import hu.thesis.shorthand.ime.R;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.lang.reflect.Field;
 
 /**
@@ -36,15 +43,43 @@ public class RecognizerUtils {
         for (int i = 0; i < points.length; ++i) {
             int doubledIndex = i * 2;
             points[i] = new GesturePoint(stroke.points[doubledIndex],
-                    stroke.points[doubledIndex + 1],
-                    timestamps[i]);
+                    stroke.points[doubledIndex + 1], timestamps[i]);
         }
 
         return points;
     }
 
+    public static CharMappingSaveData[] readCharMappingFromResource(Context context) {
+        InputStream is = context.getResources().openRawResource(R.raw.albhabet);
+        CharMappingSaveData[] saveData = null;
+
+        ObjectInputStream ois = null;
+        try {
+            ois = new ObjectInputStream(is);
+            saveData = (CharMappingSaveData[]) ois.readObject();
+        } catch (IOException ex) {
+            Log.e(RecognizerUtils.class.getSimpleName(),
+                    "Failed to read char mapping from resource.", ex);
+        } catch (ClassNotFoundException ex) {
+            Log.e(RecognizerUtils.class.getSimpleName(),
+                    "Failed to read char mapping from resource.", ex);
+        } finally {
+            try {
+                is.close();
+            } catch (IOException ex) {
+            }
+            if (ois != null) {
+                try {
+                    ois.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+
+        return saveData;
+    }
+
     private RecognizerUtils() {
         // statikus osztály
     }
-
 }

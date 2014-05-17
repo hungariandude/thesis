@@ -1,6 +1,8 @@
 package hu.thesis.shorthand.textanalyzer.logic;
 
 import hu.thesis.shorthand.common.CharMappingSaveData;
+import hu.thesis.shorthand.common.DrawableObject.Form;
+import hu.thesis.shorthand.common.DrawableObject.Rotation;
 import hu.thesis.shorthand.textanalyzer.logic.algorithm.Chromosome;
 import hu.thesis.shorthand.textanalyzer.logic.algorithm.Gene;
 import hu.thesis.shorthand.textanalyzer.logic.algorithm.GeneticAlgorithm;
@@ -57,13 +59,13 @@ public final class Engine {
 	    Character ch = entry.getKey();
 	    Gene gene = entry.getValue();
 	    List<Segment> segments = gene.getSegments();
-	    String[] forms = new String[segments.size()];
-	    int[] rotations = new int[segments.size()];
-	    saveData[i] = new CharMappingSaveData(ch, forms, rotations);
+	    Form[] forms = new Form[segments.size()];
+	    Rotation[] rotations = new Rotation[segments.size()];
+	    saveData[i++] = new CharMappingSaveData(ch, forms, rotations);
 	    for (int j = 0; j < segments.size(); ++j) {
 		Segment segment = segments.get(j);
-		forms[j] = segment.getForm().toString();
-		rotations[j] = segment.getRotation().getDegrees();
+		forms[j] = segment.getForm();
+		rotations[j] = segment.getRotation();
 	    }
 	}
 

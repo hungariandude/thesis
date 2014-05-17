@@ -27,7 +27,7 @@ public class ShorthandIME extends InputMethodService implements OnGesturePerform
     private StenoCanvas mStenoCanvas;
     private int mLastDisplayWidth;
     private StringBuilder mComposingText = new StringBuilder();
-    private Recognizer mRecognizer = new Recognizer();
+    private Recognizer mRecognizer;
 
     /**
      * Itt inicializáljuk a beviteli eszközt.
@@ -35,6 +35,9 @@ public class ShorthandIME extends InputMethodService implements OnGesturePerform
     @Override
     public void onCreate() {
         super.onCreate();
+
+        mRecognizer = new Recognizer(getApplicationContext());
+        mRecognizer.loadDefaultCharMapping();
     }
 
     /**
