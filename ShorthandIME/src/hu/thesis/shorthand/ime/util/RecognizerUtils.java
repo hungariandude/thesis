@@ -19,7 +19,9 @@ import java.lang.reflect.Field;
  * 
  * @author Istvánfi Zsolt
  */
-public class RecognizerUtils {
+public final class RecognizerUtils {
+
+    private static final String TAG = RecognizerUtils.class.getSimpleName();
 
     /**
      * Kinyeri a <code>GesturePoint</code> objektumokat a paraméterként
@@ -34,8 +36,7 @@ public class RecognizerUtils {
             f.setAccessible(true);
             timestamps = (long[]) f.get(stroke);
         } catch (IllegalAccessException | NoSuchFieldException ex) {
-            Log.e(RecognizerUtils.class.getSimpleName(),
-                    "Failed to read timestamps field from GestureStroke.", ex);
+            Log.e(TAG, "Failed to read timestamps field from GestureStroke.", ex);
             return null;
         }
 
@@ -49,6 +50,24 @@ public class RecognizerUtils {
         return points;
     }
 
+    public static String gesturePointToString(GesturePoint point) {
+        return "(x:" + point.x + ";y:" + point.y + ";t:" + point.timestamp + ')';
+    }
+
+    public static void logGesturePoints(String label, GesturePoint[] points) {
+        StringBuilder sb = new StringBuilder();
+        if (label != null) {
+            sb.append(label);
+        }
+        sb.append('[');
+        for (GesturePoint point : points) {
+            sb.append(RecognizerUtils.gesturePointToString(point));
+            sb.append(", ");
+        }
+        sb.replace(sb.length() - 2, sb.length(), "]");
+        Log.d(TAG, sb.toString());
+    }
+
     public static CharMappingSaveData[] readCharMappingFromResource(Context context) {
         InputStream is = context.getResources().openRawResource(R.raw.albhabet);
         CharMappingSaveData[] saveData = null;
@@ -58,11 +77,9 @@ public class RecognizerUtils {
             ois = new ObjectInputStream(is);
             saveData = (CharMappingSaveData[]) ois.readObject();
         } catch (IOException ex) {
-            Log.e(RecognizerUtils.class.getSimpleName(),
-                    "Failed to read char mapping from resource.", ex);
+            Log.e(TAG, "Failed to read char mapping from resource.", ex);
         } catch (ClassNotFoundException ex) {
-            Log.e(RecognizerUtils.class.getSimpleName(),
-                    "Failed to read char mapping from resource.", ex);
+            Log.e(TAG, "Failed to read char mapping from resource.", ex);
         } finally {
             try {
                 is.close();

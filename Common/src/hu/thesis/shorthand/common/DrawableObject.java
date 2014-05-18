@@ -20,6 +20,10 @@ public interface DrawableObject {
         NONE(0), DEGREE_45(45), DEGREE_90(90), DEGREE_135(135), DEGREE_180(180), DEGREE_225(225), DEGREE_270(
                 270), DEGREE_315(315);
 
+        public static final int[] intValues = new int[] {
+                0, 45, 90, 135, 180, 225, 270, 315
+        };
+
         private final int degrees;
 
         private Rotation(int degrees) {

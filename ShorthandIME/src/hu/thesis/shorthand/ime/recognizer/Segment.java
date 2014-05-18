@@ -1,52 +1,21 @@
 
 package hu.thesis.shorthand.ime.recognizer;
 
+import hu.thesis.shorthand.common.DrawableObject;
+
 /**
- * Egy rajzolt alakzat jól meghatozható darabja. Van alakja, iránya,
- * orientációja.
+ * Egy kirajzolt nagyobb alakzat szegmense.
  * 
  * @author Istvánfi Zsolt
  */
-public class Segment {
-    /** Irány. */
-    public enum Direction {
-        /** Előre. */
-        FORWARD,
-        /** Hátra. */
-        REVERSE;
-    }
+public class Segment implements DrawableObject {
 
-    /** Orientáció. */
-    public enum Orientation {
-        /** Függőleges. */
-        VERTICAL,
-        /** Vízszintes. */
-        HORIZONTAL,
-        /** Jobbra dőlt. */
-        OBLIQUE_RIGHT,
-        /** Balra dőlt. */
-        OBLIQUE_LEFT;
-    }
+    private Form mForm;
+    private Rotation mRotation;
 
-    /** Alak. */
-    public enum Shape {
-        /** Egyenes. */
-        LINE,
-        /** Süllyedt görbe. */
-        SAG_CURVE,
-        /** Emelkedett görbe. */
-        CREST_CURVE;
-    }
-
-    private final Shape shape;
-    private final Orientation orientation;
-    private final Direction direction;
-
-    public Segment(Shape shape, Orientation orientation, Direction direction) {
-        super();
-        this.shape = shape;
-        this.orientation = orientation;
-        this.direction = direction;
+    public Segment(Form form, Rotation rotation) {
+        mForm = form;
+        mRotation = rotation;
     }
 
     @Override
@@ -61,38 +30,42 @@ public class Segment {
             return false;
         }
         Segment other = (Segment) obj;
-        if (direction != other.direction) {
+        if (mForm != other.mForm) {
             return false;
         }
-        if (orientation != other.orientation) {
-            return false;
-        }
-        if (shape != other.shape) {
+        if (mRotation != other.mRotation) {
             return false;
         }
         return true;
     }
 
-    public Direction getDirection() {
-        return direction;
+    @Override
+    public Form getForm() {
+        return mForm;
     }
 
-    public Orientation getOrientation() {
-        return orientation;
-    }
-
-    public Shape getShape() {
-        return shape;
+    @Override
+    public Rotation getRotation() {
+        return mRotation;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((direction == null) ? 0 : direction.hashCode());
-        result = prime * result + ((orientation == null) ? 0 : orientation.hashCode());
-        result = prime * result + ((shape == null) ? 0 : shape.hashCode());
+        result = prime * result + ((mForm == null) ? 0 : mForm.hashCode());
+        result = prime * result + ((mRotation == null) ? 0 : mRotation.hashCode());
         return result;
+    }
+
+    @Override
+    public void setForm(Form form) {
+        mForm = form;
+    }
+
+    @Override
+    public void setRotation(Rotation rotation) {
+        mRotation = rotation;
     }
 
 }

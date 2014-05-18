@@ -97,10 +97,12 @@ public class ShorthandIME extends InputMethodService implements OnGesturePerform
 
         for (GestureStroke stroke : gesture.getStrokes()) {
             GesturePoint[] points = RecognizerUtils.extractGesturePointsFromStroke(stroke);
-            if (DEBUG) {
-                ((StenoCanvas) overlay).setDebugPoints(points);
-            }
             String result = mRecognizer.recognize(points);
+            if (DEBUG) {
+                StenoCanvas canvas = (StenoCanvas) overlay;
+                canvas.setDebugPaths(mRecognizer.getDebugPaths());
+                canvas.setDebugPoints(points);
+            }
             if (result != null) {
                 mComposingText.append(result);
                 ic.commitText(result, 1);
