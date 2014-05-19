@@ -4,6 +4,7 @@ package hu.thesis.shorthand.ime.util;
 import android.content.Context;
 import android.gesture.GesturePoint;
 import android.gesture.GestureStroke;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
 import hu.thesis.shorthand.common.CharMappingSaveData;
@@ -19,9 +20,18 @@ import java.lang.reflect.Field;
  * 
  * @author Istvánfi Zsolt
  */
-public final class RecognizerUtils {
+public final class ShorthandUtils {
 
-    private static final String TAG = RecognizerUtils.class.getSimpleName();
+    private static final String TAG = ShorthandUtils.class.getSimpleName();
+
+    /**
+     * Dp értéket px értékre konvertál.
+     */
+    public static float dpToPx(Context context, float dp) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        float px = dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT);
+        return px;
+    }
 
     /**
      * Kinyeri a <code>GesturePoint</code> objektumokat a paraméterként
@@ -61,7 +71,7 @@ public final class RecognizerUtils {
         }
         sb.append('[');
         for (GesturePoint point : points) {
-            sb.append(RecognizerUtils.gesturePointToString(point));
+            sb.append(ShorthandUtils.gesturePointToString(point));
             sb.append(", ");
         }
         sb.replace(sb.length() - 2, sb.length(), "]");
@@ -96,7 +106,7 @@ public final class RecognizerUtils {
         return saveData;
     }
 
-    private RecognizerUtils() {
+    private ShorthandUtils() {
         // statikus osztály
     }
 }

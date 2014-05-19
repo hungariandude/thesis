@@ -1,6 +1,7 @@
 
 package hu.thesis.shorthand.ime;
 
+import android.content.Context;
 import android.gesture.Gesture;
 import android.gesture.GestureOverlayView;
 import android.gesture.GestureOverlayView.OnGesturePerformedListener;
@@ -12,7 +13,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 
 import hu.thesis.shorthand.ime.recognizer.Recognizer;
-import hu.thesis.shorthand.ime.util.RecognizerUtils;
+import hu.thesis.shorthand.ime.util.ShorthandUtils;
 
 /**
  * A gyorsíró beviteli eszköz implementációja.
@@ -28,6 +29,7 @@ public class ShorthandIME extends InputMethodService implements OnGesturePerform
     private int mLastDisplayWidth;
     private StringBuilder mComposingText = new StringBuilder();
     private Recognizer mRecognizer;
+    private Context mContext;
 
     /**
      * Itt inicializáljuk a beviteli eszközt.
@@ -35,8 +37,10 @@ public class ShorthandIME extends InputMethodService implements OnGesturePerform
     @Override
     public void onCreate() {
         super.onCreate();
+        mContext = getApplicationContext();
 
-        mRecognizer = new Recognizer(getApplicationContext());
+        float drawingAreaHeight = ShorthandUtils.dpToPx(mContext, 250.0f);
+        mRecognizer = new Recognizer(mContext, drawingAreaHeight / 3);
         mRecognizer.loadDefaultCharMapping();
     }
 
@@ -96,7 +100,7 @@ public class ShorthandIME extends InputMethodService implements OnGesturePerform
         InputConnection ic = getCurrentInputConnection();
 
         for (GestureStroke stroke : gesture.getStrokes()) {
-            GesturePoint[] points = RecognizerUtils.extractGesturePointsFromStroke(stroke);
+            GesturePoint[] points = ShorthandUtils.extractGesturePointsFromStroke(stroke);
             String result = mRecognizer.recognize(points);
             if (DEBUG) {
                 StenoCanvas canvas = (StenoCanvas) overlay;
