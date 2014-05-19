@@ -68,4 +68,10 @@ public class Segment implements DrawableObject {
         mRotation = rotation;
     }
 
+    @Override
+    public String toString() {
+        String str = '(' + mForm.toString() + ';' + mRotation.getDegrees() + ')';
+        return str;
+    }
+
 }

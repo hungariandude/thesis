@@ -29,7 +29,11 @@ import java.util.List;
 public class Recognizer {
 
     private static final int PAUSE_BETWEEN_CHARS = 300;
-    private static final float THRESHOLD = 0.2f;
+    // private static final float THRESHOLD = 0.3f;
+    /**
+     * Vonal tűréshatár, fokokban.
+     */
+    private static final int THRESHOLD = 10;
 
     private static final String TAG = Recognizer.class.getSimpleName();
 
@@ -41,7 +45,7 @@ public class Recognizer {
         mContext = context;
     }
 
-    private double calculateAtan(GesturePoint p1, GesturePoint p2) {
+    private double calculateDegreesBetween(GesturePoint p1, GesturePoint p2) {
         // az Android sajátos koordináta-rendszere miatt a pontjaink y
         // koordinátájának ellentettjét kell venni
         float lineX1 = p1.x;
@@ -51,10 +55,37 @@ public class Recognizer {
 
         float dx = lineX2 - lineX1;
         float dy = lineY2 - lineY1;
+
+        int quarter;
+        if (dx >= 0) {
+            if (dy >= 0) {
+                quarter = 1;
+            } else {
+                quarter = 4;
+            }
+        } else {
+            if (dy >= 0) {
+                quarter = 2;
+            } else {
+                quarter = 3;
+            }
+        }
+
         float quotient = dx / dy;
         double atan = Math.atan(quotient);
+        double degrees = Math.toDegrees(atan);
 
-        return atan;
+        switch (quarter) {
+            case 1:
+            case 2:
+                return 90 - degrees;
+            case 3:
+                return 270 - degrees;
+            case 4:
+                return -degrees - 90;
+        }
+
+        return degrees;
     }
 
     private void createMapFromSaveData(CharMappingSaveData[] saveData) {
@@ -142,7 +173,7 @@ public class Recognizer {
         ComplexShape cs = splitCharComponentIntoSegments(component);
         if (cs != null && !cs.isEmpty()) {
             if (ShorthandIME.DEBUG) {
-                Log.d(TAG, "Found segments: " + cs.size());
+                Log.d(TAG, "Found segments: " + cs.size() + ' ' + cs.toString());
             }
             Character ch = mCharMap.get(cs);
             if (ch != null) {
@@ -157,16 +188,21 @@ public class Recognizer {
         ComplexShape cs = null;
         Form form = Form.LINE;
         // float rotValue = 0.0f;
-        int startingIndex = 0;
+        // int startingIndex = 0;
         GesturePoint startingPoint = component[0];
         GesturePoint currentPoint = component[1];
         // float lastDx = 0.0f, lastDy = 0.0f;
         // float lastTg = 0.0f;
-        double atan = calculateAtan(startingPoint, currentPoint);
+        // double atan = calculateAtan(startingPoint, currentPoint);
+        double degrees = calculateDegreesBetween(startingPoint, currentPoint);
+
         // float avgTg = tg;
-        double lastAtan = atan;
+        // double lastAtan = atan;
+        double lastDegrees = degrees;
 
         if (ShorthandIME.DEBUG) {
+            // Log.d(TAG, "atan of 0-1: " + atan);
+            Log.d(TAG, "degrees of 0-1: " + degrees);
             Path path = new Path();
             path.moveTo(startingPoint.x, startingPoint.y);
             path.lineTo(currentPoint.x, currentPoint.y);
@@ -174,9 +210,10 @@ public class Recognizer {
         }
 
         if (component.length == 2) {
-            double rot = Math.toDegrees(Math.atan(atan));
+            // double rot = Math.toDegrees(atan);
             cs = new ComplexShape();
-            Rotation rotation = getRotationFromFloatValue(rot);
+            // Rotation rotation = getRotationFromFloatValue(rot);
+            Rotation rotation = getRotationFromFloatValue(degrees);
             cs.add(new Segment(form, rotation));
         }
 
@@ -186,22 +223,40 @@ public class Recognizer {
             GesturePoint lastPoint = component[i - 1];
 
             // tg = calculateTangent(startingPoint, currentPoint);
-            atan = calculateAtan(lastPoint, currentPoint);
+            // atan = calculateAtan(lastPoint, currentPoint);
+            degrees = calculateDegreesBetween(lastPoint, currentPoint);
             // if (Math.abs(avgTg - tg) > THRESHOLD) {
-            double diff = Math.abs(lastAtan - atan);
+            // double diff = Math.abs(lastAtan - atan);
+            double diff = Math.abs(lastDegrees - degrees);
             if (ShorthandIME.DEBUG) {
-                Log.d(TAG, "atan diff of " + (i - 2) + "-" + (i - 1) + " and " + (i - 1) + "-" + i
-                        + ": " + diff);
+                // Log.d(TAG, "atan of " + (i - 1) + "-" + i + ": " + atan);
+                // Log.d(TAG, "atan diff of " + (i - 2) + "-" + (i - 1) +
+                // " and " + (i - 1) + "-" + i
+                // + ": " + diff);
+                Log.d(TAG, "degrees of " + (i - 1) + "-" + i + ": " + degrees);
+                Log.d(TAG, "degrees diff of " + (i - 2) + "-" + (i - 1) + " and " + (i - 1) + "-"
+                        + i + ": " + diff);
             }
             if (diff > THRESHOLD) {
-                double finalAtan = calculateAtan(startingPoint, lastPoint);
+                // double finalAtan = calculateAtan(startingPoint, lastPoint);
+                double finalDegrees = calculateDegreesBetween(startingPoint, lastPoint);
                 // double rot = Math.toDegrees(Math.atan(lastTg));
-                double rot = Math.toDegrees(finalAtan);
+                // double rot = Math.toDegrees(finalAtan);
                 if (cs == null) {
                     cs = new ComplexShape();
                 }
-                Rotation rotation = getRotationFromFloatValue(rot);
+                // Rotation rotation = getRotationFromFloatValue(rot);
+                Rotation rotation = getRotationFromFloatValue(finalDegrees);
+                // if (!cs.isEmpty()) {
+                // Segment lastSegment = cs.get(cs.size() - 1);
+                // if (lastSegment.getForm() != Form.LINE ||
+                // lastSegment.getRotation() != rotation) {
+                // // nem adunk hozzá ugyanolyan irányú vonalat
+                // cs.add(new Segment(form, rotation));
+                // }
+                // } else {
                 cs.add(new Segment(form, rotation));
+                // }
 
                 // if (ShorthandIME.DEBUG) {
                 // RecognizerUtils.logGesturePoints(cs.size() +
@@ -209,10 +264,17 @@ public class Recognizer {
                 // Arrays.copyOfRange(component, startingIndex, i));
                 // }
 
-                startingIndex = i - 1;
-                startingPoint = lastPoint;
+                // startingIndex = i - 1;
                 // avgTg = calculateTangent(startingPoint, currentPoint);
-                lastAtan = calculateAtan(startingPoint, currentPoint);
+                // lastAtan = calculateAtan(startingPoint, currentPoint);
+                startingPoint = lastPoint;
+                lastDegrees = degrees;
+
+                if (i == component.length - 1) {
+                    finalDegrees = calculateDegreesBetween(startingPoint, currentPoint);
+                    rotation = getRotationFromFloatValue(finalDegrees);
+                    cs.add(new Segment(form, rotation));
+                }
 
                 if (ShorthandIME.DEBUG) {
                     Path path = new Path();
@@ -222,11 +284,15 @@ public class Recognizer {
                 }
             } else {
                 if (i == component.length - 1) {
-                    double rot = Math.toDegrees(Math.atan(atan));
+                    // double finalAtan = calculateAtan(startingPoint,
+                    // currentPoint);
+                    double finalDegrees = calculateDegreesBetween(startingPoint, currentPoint);
+                    // double rot = Math.toDegrees(finalAtan);
                     if (cs == null) {
                         cs = new ComplexShape();
                     }
-                    Rotation rotation = getRotationFromFloatValue(rot);
+                    // Rotation rotation = getRotationFromFloatValue(rot);
+                    Rotation rotation = getRotationFromFloatValue(finalDegrees);
                     cs.add(new Segment(form, rotation));
 
                     // if (ShorthandIME.DEBUG) {
@@ -237,7 +303,8 @@ public class Recognizer {
                 } else {
                     // int count = i - startingIndex;
                     // avgTg = (avgTg * count + tg) / (count + 1);
-                    lastAtan = atan;
+                    // lastAtan = atan;
+                    lastDegrees = degrees;
                 }
 
                 if (ShorthandIME.DEBUG) {
@@ -259,10 +326,11 @@ public class Recognizer {
                         gesture.length);
                 components.add(component);
 
-                if (ShorthandIME.DEBUG) {
-                    RecognizerUtils
-                            .logGesturePoints(components.size() + ". component: ", component);
-                }
+                // if (ShorthandIME.DEBUG) {
+                // RecognizerUtils
+                // .logGesturePoints(components.size() + ". component: ",
+                // component);
+                // }
             } else {
                 GesturePoint actualPoint = gesture[i];
                 if (actualPoint.timestamp - lastTimeStamp >= PAUSE_BETWEEN_CHARS) {
@@ -271,10 +339,11 @@ public class Recognizer {
                                 i);
                         components.add(component);
 
-                        if (ShorthandIME.DEBUG) {
-                            RecognizerUtils.logGesturePoints(components.size() + ". component: ",
-                                    component);
-                        }
+                        // if (ShorthandIME.DEBUG) {
+                        // RecognizerUtils.logGesturePoints(components.size() +
+                        // ". component: ",
+                        // component);
+                        // }
 
                         componentStartIndex = i - 1;
                     }
