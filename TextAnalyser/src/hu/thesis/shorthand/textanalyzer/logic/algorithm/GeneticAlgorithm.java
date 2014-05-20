@@ -29,11 +29,10 @@ public class GeneticAlgorithm {
 	}
 
 	this.populationSize = populationSize;
-	population = new Population(populationSize, generationCounter);
+	population = new Population(generationCounter);
 	fitnessTester = new FitnessTester(sourceText);
 
 	generateRandomPopulation();
-	calculateFitnessScores();
 
 	// if(Parameters.debugMode) {
 	// LOGGER.info("Initial population:\n" + population.toString());
@@ -44,23 +43,15 @@ public class GeneticAlgorithm {
     // .getLogger(GeneticAlgorithm.class.getName());
 
     /**
-     * Kezdeti fitnesz érték számítás.
-     */
-    private void calculateFitnessScores() {
-	for (Chromosome chrom : population) {
-	    fitnessTester.scoreFitness(chrom);
-	}
-    }
-
-    /**
      * Az evolúció egy lépése. Új populációt hoz létre.
      */
     public Population evolvePopulation() {
 	// új generáció születik
 	++generationCounter;
+	// az eddigi legjobb kromoszóma
+	Chromosome top = population.first();
 	// az új generáció populációja
-	Population newGeneration = new Population(populationSize,
-		generationCounter);
+	Population newGeneration = new Population(generationCounter);
 
 	for (int i = 0; i < populationSize; i += 2) {
 	    // 1. lépés: két szülő kromószóma kiválasztása
@@ -83,6 +74,15 @@ public class GeneticAlgorithm {
 	    // 5. lépés: gyerekek hozzádása az új populációhoz
 	    newGeneration.add(child1);
 	    newGeneration.add(child2);
+	}
+
+	// Ha nem keletkezett jobb fitnesz értékű kromoszóma az eddigi
+	// legnagyobbnál, akkor visszarakjuk a korábbit és eltávolítjuk az új
+	// generáció legrosszabb elemét.
+	Chromosome newTop = newGeneration.first();
+	if (top.compareTo(newTop) > 0) {
+	    newGeneration.remove(newGeneration.last());
+	    newGeneration.add(top);
 	}
 
 	// frissítjük a populációnkat
@@ -110,7 +110,9 @@ public class GeneticAlgorithm {
 	}
 
 	for (int i = 0; i < populationSize; ++i) {
-	    population.add(new Chromosome(characterSet, maximumGeneLength));
+	    Chromosome chrom = new Chromosome(characterSet, maximumGeneLength);
+	    fitnessTester.scoreFitness(chrom);
+	    population.add(chrom);
 	}
     }
 

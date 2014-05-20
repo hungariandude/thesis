@@ -5,8 +5,6 @@ import hu.thesis.shorthand.textanalyzer.util.ResourceUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Collections;
-
 public class GeneticAlgorithmTest {
 
     private String text;
@@ -22,7 +20,6 @@ public class GeneticAlgorithmTest {
     public void test() {
 	for (int i = 1; i <= 1000; ++i) {
 	    Population pop = ga.evolvePopulation();
-	    Collections.sort(pop, Collections.reverseOrder());
 
 	    StringBuilder sb = new StringBuilder();
 	    for (Chromosome chrom : pop) {

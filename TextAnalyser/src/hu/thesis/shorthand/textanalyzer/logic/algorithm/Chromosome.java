@@ -56,7 +56,12 @@ public class Chromosome implements Comparable<Chromosome> {
 
     @Override
     public int compareTo(Chromosome o) {
-	return Double.compare(this.fitnessScore, o.fitnessScore);
+	int result = Double.compare(this.fitnessScore, o.fitnessScore);
+	if (result == 0) {
+	    return Integer.compare(this.hashCode(), o.hashCode());
+	} else {
+	    return result;
+	}
     }
 
     /**

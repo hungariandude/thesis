@@ -111,26 +111,30 @@ public class GAPanel extends JPanel {
 
 	if (rows.isEmpty()) {
 	    if (!population.isEmpty()) {
-		ChromosomeRow maxRow = new ChromosomeRow(population.get(0),
+		ChromosomeRow maxRow = new ChromosomeRow(population.first(),
 			"Generáció: " + population.getGenerationNumber());
 		statPanel.setMaxRow(maxRow);
 	    }
-	    for (int i = 0; i < population.size(); ++i) {
-		ChromosomeRow row = new ChromosomeRow(population.get(i), i + 1);
+	    int i = 0;
+	    int sizeMinus1 = population.size() - 1;
+	    for (Chromosome chrom : population) {
+		ChromosomeRow row = new ChromosomeRow(chrom, i + 1);
 		rows.add(row);
 		populationPanel.add(row);
 
-		if (i != population.size() - 1) {
+		if (i != sizeMinus1) {
 		    populationPanel.add(new JSeparator());
 		}
+		++i;
 	    }
 	} else {
 	    if (!population.isEmpty()) {
-		Chromosome chrom = population.get(0);
+		Chromosome chrom = population.first();
 		statPanel.checkMaxRow(chrom, population.getGenerationNumber());
 	    }
-	    for (int i = 0; i < population.size(); ++i) {
-		rows.get(i).setChromosome(population.get(i));
+	    int i = 0;
+	    for (Chromosome chrom : population) {
+		rows.get(i++).setChromosome(chrom);
 	    }
 	}
     }

@@ -1,13 +1,15 @@
 package hu.thesis.shorthand.textanalyzer.logic.algorithm;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.TreeSet;
 
 /**
- * A genetikus algoritmusban szereplő populáció.
+ * A genetikus algoritmusban szereplő populáció. A kromoszómák a fitnesz értékük
+ * szerinti csökkenő sorrendben szerepelnek benne.
  * 
  * @author Istvánfi Zsolt
  */
-public class Population extends ArrayList<Chromosome> implements
+public class Population extends TreeSet<Chromosome> implements
 	Comparable<Population> {
 
     private static final long serialVersionUID = 5968120913954570795L;
@@ -17,8 +19,8 @@ public class Population extends ArrayList<Chromosome> implements
      */
     private final long generationNumber;
 
-    public Population(int size, long generationNumber) {
-	super(size);
+    public Population(long generationNumber) {
+	super(Collections.<Chromosome> reverseOrder());
 	this.generationNumber = generationNumber;
     }
 

@@ -18,7 +18,6 @@ import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -111,9 +110,8 @@ public final class Engine {
 	}
 
 	ga = new GeneticAlgorithm(sb.toString(), Parameters.populationSize);
-	Population sortedPopulation = new Population(ga.getPopulation());
-	Collections.sort(sortedPopulation, Collections.reverseOrder());
-	return sortedPopulation;
+	Population clonePopulation = new Population(ga.getPopulation());
+	return clonePopulation;
     }
 
     public static boolean isPaused() {
@@ -168,10 +166,8 @@ public final class Engine {
 		break;
 	    }
 	    Population population = ga.evolvePopulation();
-
-	    Population sortedPopulation = new Population(population);
-	    Collections.sort(sortedPopulation, Collections.reverseOrder());
-	    listener.valueChange(sortedPopulation);
+	    Population clonePopulation = new Population(population);
+	    listener.valueChange(clonePopulation);
 
 	    ++stepsDone;
 

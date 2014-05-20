@@ -60,7 +60,7 @@ public class EngineTest {
 		"egri_csillagok.txt", "UTF-8");
 	GeneticAlgorithm ga = new GeneticAlgorithm(text, 2);
 	Population pop = ga.getPopulation();
-	this.chrom = pop.get(0);
+	this.chrom = pop.first();
 	this.file = new File("test.ser");
     }
 }
