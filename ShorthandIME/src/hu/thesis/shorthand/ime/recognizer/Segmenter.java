@@ -26,6 +26,10 @@ public class Segmenter {
      * Vonal tűréshatár, fokokban.
      */
     private static final int THRESHOLD = 10;
+    /**
+     * Két pont közötti minimum távolság.
+     */
+    private static final int MINIMUM_DISTANCE = 5;
 
     private ComplexShape complexShape;
     private final List<Path> mDebugPaths = new ArrayList<>();
@@ -33,11 +37,11 @@ public class Segmenter {
     /**
      * Egy szegmens átlagos hossza.
      */
-    private final float mUnit;
+    // private final float mUnit;
     private final float mMinimumLength, mMaximumLength;
 
     public Segmenter(float unit) {
-        mUnit = unit;
+        // mUnit = unit;
         mMinimumLength = unit / 2;
         mMaximumLength = unit * 1.5f;
     }
@@ -121,11 +125,11 @@ public class Segmenter {
         }
 
         if (xCount > yCount) {
-            return Form.SAG_CURVE;
+            return Form.CREST_CURVE;
         }
 
         if (yCount > xCount) {
-            return Form.CREST_CURVE;
+            return Form.SAG_CURVE;
         }
 
         return Form.LINE;
@@ -266,6 +270,9 @@ public class Segmenter {
             }
             if (diff > THRESHOLD) {
                 double distance = calculateDistanceBetween(startingPoint, lastPoint);
+                if (distance < MINIMUM_DISTANCE) {
+                    continue;
+                }
                 if (distance < mMinimumLength) {
                     if (!isCurve) {
                         isCurve = true;
@@ -273,23 +280,24 @@ public class Segmenter {
                     }
                     curvePoints.add(lastPoint);
                 } else {
-                    // if (isCurve) {
-                    // if (distance >= mUnit) {
-                    // appendCurve(curvePoints);
-                    // isCurve = false;
-                    // curvePoints.clear();
-                    // startingPoint = lastPoint;
-                    // } else {
-                    // curvePoints.add(lastPoint);
-                    // }
-                    // } else {
-                    if (distance > mMaximumLength) {
-                        appendLongLine(startingPoint, lastPoint);
+                    if (isCurve) {
+                        if (distance > mMaximumLength) {
+                            curvePoints.add(lastPoint);
+                            appendCurve(curvePoints);
+                            isCurve = false;
+                            curvePoints.clear();
+                            startingPoint = lastPoint;
+                        } else {
+                            curvePoints.add(lastPoint);
+                        }
                     } else {
-                        appendLine(startingPoint, lastPoint);
+                        if (distance > mMaximumLength) {
+                            appendLongLine(startingPoint, lastPoint);
+                        } else {
+                            appendLine(startingPoint, lastPoint);
+                        }
+                        startingPoint = lastPoint;
                     }
-                    startingPoint = lastPoint;
-                    // }
                 }
 
                 lastDegrees = degrees;
@@ -303,11 +311,19 @@ public class Segmenter {
             } else {
                 if (i == points.length - 1) {
                     double distance = calculateDistanceBetween(startingPoint, currentPoint);
-                    if (distance > mMinimumLength) {
-                        if (distance > mMaximumLength) {
-                            appendLongLine(startingPoint, currentPoint);
+                    if (distance >= mMinimumLength) {
+                        if (isCurve) {
+                            if (distance > mMaximumLength) {
+                                curvePoints.add(lastPoint);
+                                appendCurve(curvePoints);
+                                curvePoints.clear();
+                            }
                         } else {
-                            appendLine(startingPoint, currentPoint);
+                            if (distance > mMaximumLength) {
+                                appendLongLine(startingPoint, lastPoint);
+                            } else {
+                                appendLine(startingPoint, lastPoint);
+                            }
                         }
                     }
                 } else {
