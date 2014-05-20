@@ -46,9 +46,10 @@ public class StatPanel extends JPanel {
 	add(maxPanel, BorderLayout.NORTH);
     }
 
-    public void checkMaxRow(Chromosome chrom) {
+    public void checkMaxRow(Chromosome chrom, long generationNumber) {
 	if (maxRow.getChromosome().getFitnessScore() < chrom.getFitnessScore()) {
 	    maxRow.setChromosome(chrom);
+	    maxRow.setTitle("Generáció: " + generationNumber);
 	}
     }
 

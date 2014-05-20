@@ -76,7 +76,7 @@ public class ChromosomeRow extends JPanel implements ActionListener {
 
     private Chromosome chromosome;
 
-    private final JLabel fitnessLabel;
+    private final JLabel fitnessLabel, titleLabel;
     private final HashMap<Character, GeneCanvas> canvasMap = new HashMap<>();
     private final JButton exportButton;
 
@@ -101,7 +101,7 @@ public class ChromosomeRow extends JPanel implements ActionListener {
 	setLayout(new BorderLayout());
 	setBorder(DEFAULT_BORDER);
 
-	JLabel titleLabel = new JLabel(title);
+	titleLabel = new JLabel(title);
 	fitnessLabel = new JLabel();
 	updateFitness();
 
@@ -214,6 +214,10 @@ public class ChromosomeRow extends JPanel implements ActionListener {
 		canvas.setGene(entry.getValue());
 	    }
 	}
+    }
+
+    public void setTitle(String title) {
+	titleLabel.setText(title);
     }
 
     private void updateFitness() {

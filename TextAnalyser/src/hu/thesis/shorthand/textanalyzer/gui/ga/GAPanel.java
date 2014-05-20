@@ -127,7 +127,7 @@ public class GAPanel extends JPanel {
 	} else {
 	    if (!population.isEmpty()) {
 		Chromosome chrom = population.get(0);
-		statPanel.checkMaxRow(chrom);
+		statPanel.checkMaxRow(chrom, population.getGenerationNumber());
 	    }
 	    for (int i = 0; i < population.size(); ++i) {
 		rows.get(i).setChromosome(population.get(i));
