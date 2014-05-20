@@ -54,7 +54,7 @@ public class Segmenter {
         Form form = calculateCurveForm(points, rotation);
         complexShape.add(new Segment(form, rotation));
 
-        if (ShorthandIME.DEBUG) {
+        if (ShorthandIME.isDebugEnabled()) {
             Path path = new Path();
             path.moveTo(startingPoint.x, startingPoint.y);
             for (int i = 1; i < points.size(); ++i) {
@@ -70,7 +70,7 @@ public class Segmenter {
         Rotation rotation = getRotationFromFloatValue(degrees);
         complexShape.add(new Segment(Form.LINE, rotation));
 
-        if (ShorthandIME.DEBUG) {
+        if (ShorthandIME.isDebugEnabled()) {
             Path path = new Path();
             path.moveTo(startingPoint.x, startingPoint.y);
             path.lineTo(endingPoint.x, endingPoint.y);
@@ -95,7 +95,7 @@ public class Segmenter {
             complexShape.add(new Segment(Form.LINE, rotation));
         }
 
-        if (ShorthandIME.DEBUG) {
+        if (ShorthandIME.isDebugEnabled()) {
             Path path = new Path();
             path.moveTo(startingPoint.x, startingPoint.y);
             path.lineTo(endingPoint.x, endingPoint.y);
@@ -198,7 +198,7 @@ public class Segmenter {
     public void clear() {
         complexShape = null;
 
-        if (ShorthandIME.DEBUG) {
+        if (ShorthandIME.isDebugEnabled()) {
             mDebugPaths.clear();
         }
     }
@@ -253,7 +253,7 @@ public class Segmenter {
         double degrees = calculateDegreesBetween(startingPoint, currentPoint);
         double lastDegrees = degrees;
 
-        if (ShorthandIME.DEBUG) {
+        if (ShorthandIME.isDebugEnabled()) {
             Log.d(TAG, "degrees of 0-1: " + degrees);
         }
 
@@ -263,7 +263,7 @@ public class Segmenter {
 
             degrees = calculateDegreesBetween(lastPoint, currentPoint);
             double diff = Math.abs(lastDegrees - degrees);
-            if (ShorthandIME.DEBUG) {
+            if (ShorthandIME.isDebugEnabled()) {
                 Log.d(TAG, "degrees of " + (i - 1) + "-" + i + ": " + degrees);
                 Log.d(TAG, "degrees diff of " + (i - 2) + "-" + (i - 1) + " and " + (i - 1) + "-"
                         + i + ": " + diff);

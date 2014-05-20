@@ -6,7 +6,39 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:title="@string/settings_name" >
-    
-    
+
+    <PreferenceCategory 
+        android:title="@string/general_category"
+        android:key="general_category">
+        
+        <ListPreference 
+            android:key="pause_between_chars"
+            android:title="@string/pause_between_chars"
+            android:summary="@string/pause_between_chars_summary"
+            android:defaultValue="300" 
+            android:entries="@array/pauseInterval"
+            android:entryValues="@array/pauseIntervalValues"
+        />
+        
+        <CheckBoxPreference 
+            android:key="show_popups"
+            android:summary="@string/show_popups_summary"
+            android:title="@string/show_popups" 
+            android:defaultValue="false"
+        />
+    </PreferenceCategory>
+
+    <PreferenceCategory 
+        android:title="@string/advanced_category"
+        android:key="advanced_category">
+
+        <CheckBoxPreference 
+            android:key="debug_mode"
+            android:summary="@string/debug_mode_summary"
+            android:title="@string/debug_mode" 
+            android:defaultValue="true"
+        />
+
+    </PreferenceCategory>
     
 </PreferenceScreen>

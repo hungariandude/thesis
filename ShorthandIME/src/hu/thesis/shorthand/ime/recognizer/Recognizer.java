@@ -28,7 +28,6 @@ import java.util.List;
  */
 public class Recognizer {
 
-    private static final int PAUSE_BETWEEN_CHARS = 300;
     private static final String TAG = Recognizer.class.getSimpleName();
 
     private final Context mContext;
@@ -78,7 +77,7 @@ public class Recognizer {
         mSegmenter.clear();
 
         List<GesturePoint[]> charComponents = splitGestureIntoCharComponents(gesture);
-        if (ShorthandIME.DEBUG) {
+        if (ShorthandIME.isDebugEnabled()) {
             Log.d(TAG, "Number of found char components: " + charComponents.size());
         }
 
@@ -100,7 +99,7 @@ public class Recognizer {
     private char recognizeCharComponent(GesturePoint[] component) {
         ComplexShape cs = mSegmenter.segment(component);
         if (cs != null && !cs.isEmpty()) {
-            if (ShorthandIME.DEBUG) {
+            if (ShorthandIME.isDebugEnabled()) {
                 Log.d(TAG, "Found segments: " + cs.size() + ' ' + cs.toString());
             }
             Character ch = mCharMap.get(cs);
@@ -129,7 +128,7 @@ public class Recognizer {
                 // }
             } else {
                 GesturePoint actualPoint = gesture[i];
-                if (actualPoint.timestamp - lastTimeStamp >= PAUSE_BETWEEN_CHARS) {
+                if (actualPoint.timestamp - lastTimeStamp >= ShorthandIME.getPauseBetweenChars()) {
                     if (i > 0 && i - componentStartIndex > 1) {
                         GesturePoint[] component = Arrays.copyOfRange(gesture, componentStartIndex,
                                 i);

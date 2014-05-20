@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pauseInterval">
+        <item name="100">@string/ms_100</item>
+        <item name="200">@string/ms_200</item>
+        <item name="300">@string/ms_300</item>
+        <item name="400">@string/ms_400</item>
+        <item name="500">@string/ms_500</item>
+        <item name="600">@string/ms_600</item>
+        <item name="700">@string/ms_700</item>
+        <item name="800">@string/ms_800</item>
+        <item name="900">@string/ms_900</item>
+        <item name="1000">@string/ms_1000</item>
+    </string-array>
+    
+    <string-array name="pauseIntervalValues">
+        <item name="100">100</item>
+        <item name="200">200</item>
+        <item name="300">300</item>
+        <item name="400">400</item>
+        <item name="500">500</item>
+        <item name="600">600</item>
+        <item name="700">700</item>
+        <item name="800">800</item>
+        <item name="900">900</item>
+        <item name="1000">1000</item>
+    </string-array>
+</resources>

@@ -2,15 +2,21 @@
 package hu.thesis.shorthand.ime;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.gesture.Gesture;
 import android.gesture.GestureOverlayView;
 import android.gesture.GestureOverlayView.OnGesturePerformedListener;
 import android.gesture.GesturePoint;
 import android.gesture.GestureStroke;
 import android.inputmethodservice.InputMethodService;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
+import android.widget.Toast;
 
 import hu.thesis.shorthand.ime.recognizer.Recognizer;
 import hu.thesis.shorthand.ime.util.ShorthandUtils;
@@ -20,16 +26,41 @@ import hu.thesis.shorthand.ime.util.ShorthandUtils;
  * 
  * @author Istvánfi Zsolt
  */
-public class ShorthandIME extends InputMethodService implements OnGesturePerformedListener {
+public class ShorthandIME extends InputMethodService implements OnGesturePerformedListener,
+        OnSharedPreferenceChangeListener, OnClickListener {
 
-    public static final boolean DEBUG = true;
+    public static int getPauseBetweenChars() {
+        return pauseBetweenChars;
+    }
+
+    public static boolean isDebugEnabled() {
+        return debugEnabled;
+    }
+
+    public static boolean isPopupsEnabled() {
+        return popupsEnabled;
+    }
 
     private View mContainerView;
     private StenoCanvas mStenoCanvas;
-    private int mLastDisplayWidth;
-    private StringBuilder mComposingText = new StringBuilder();
+
+    // private StringBuilder mComposingText = new StringBuilder();
     private Recognizer mRecognizer;
     private Context mContext;
+
+    private static boolean debugEnabled = true;
+    private static boolean popupsEnabled = false;
+    private static int pauseBetweenChars = 300;
+
+    private static final String TAG = ShorthandIME.class.getSimpleName();
+
+    @Override
+    public void onClick(View view) {
+        InputConnection ic = getCurrentInputConnection();
+        if (ic != null) {
+            ic.deleteSurroundingText(1, 0);
+        }
+    }
 
     /**
      * Itt inicializáljuk a beviteli eszközt.
@@ -42,6 +73,9 @@ public class ShorthandIME extends InputMethodService implements OnGesturePerform
         float drawingAreaHeight = ShorthandUtils.dpToPx(mContext, 250.0f);
         mRecognizer = new Recognizer(mContext, drawingAreaHeight / 3);
         mRecognizer.loadDefaultCharMapping();
+
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPrefs.registerOnSharedPreferenceChangeListener(this);
     }
 
     /**
@@ -68,6 +102,7 @@ public class ShorthandIME extends InputMethodService implements OnGesturePerform
         mStenoCanvas = (StenoCanvas) mContainerView.findViewById(R.id.canvas);
 
         mStenoCanvas.addOnGesturePerformedListener(this);
+        mStenoCanvas.addOnClickListener(this);
 
         return mContainerView;
     }
@@ -94,22 +129,23 @@ public class ShorthandIME extends InputMethodService implements OnGesturePerform
 
     @Override
     public void onGesturePerformed(GestureOverlayView overlay, Gesture gesture) {
-        // Log.d(ShorthandIME.class.getSimpleName(), "Strokes size: " +
-        // gesture.getStrokesCount());
+        // Log.d(TAG, "Strokes size: " + gesture.getStrokesCount());
 
         InputConnection ic = getCurrentInputConnection();
 
         for (GestureStroke stroke : gesture.getStrokes()) {
             GesturePoint[] points = ShorthandUtils.extractGesturePointsFromStroke(stroke);
             String result = mRecognizer.recognize(points);
-            if (DEBUG) {
+            if (debugEnabled) {
                 StenoCanvas canvas = (StenoCanvas) overlay;
                 canvas.setDebugPaths(mRecognizer.getDebugPaths());
                 canvas.setDebugPoints(points);
             }
-            if (result != null) {
-                mComposingText.append(result);
+            if (result != null && !result.isEmpty()) {
+                // mComposingText.append(result);
                 ic.commitText(result, 1);
+            } else if (popupsEnabled) {
+                Toast.makeText(mContext, R.string.not_found, Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -121,14 +157,27 @@ public class ShorthandIME extends InputMethodService implements OnGesturePerform
     @Override
     public void onInitializeInterface() {
         super.onInitializeInterface();
+    }
 
-        // Megnézzük, hogy változott-e a rendelkezésünkre álló szélesség. Ha
-        // igen, akkor ahhoz képest kell újraméreteznünk a rajzolófelületünket.
-        int displayWidth = getMaxWidth();
-        if (displayWidth == mLastDisplayWidth) {
-            return;
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        switch (key) {
+            case "pause_between_chars": {
+                pauseBetweenChars = sharedPreferences.getInt(key, 300);
+                break;
+            }
+            case "show_popups": {
+                popupsEnabled = sharedPreferences.getBoolean(key, false);
+                break;
+            }
+            case "debug_mode": {
+                debugEnabled = sharedPreferences.getBoolean(key, true);
+                break;
+            }
         }
-        mLastDisplayWidth = displayWidth;
+        if (debugEnabled) {
+            Log.d(TAG, "onSharedPreferenceChanged() called, changed preference: " + key);
+        }
     }
 
     /**
@@ -174,14 +223,14 @@ public class ShorthandIME extends InputMethodService implements OnGesturePerform
 
         // Ha az aktuális kijelölés változik a szöveges mezőben, akkor törölnünk
         // kell az ajánlást
-        if (mComposingText.length() > 0
-                && (newSelStart != candidatesEnd || newSelEnd != candidatesEnd)) {
-            mComposingText.setLength(0);
-            InputConnection ic = getCurrentInputConnection();
-            if (ic != null) {
-                ic.finishComposingText();
-            }
-        }
+        // if (mComposingText.length() > 0
+        // && (newSelStart != candidatesEnd || newSelEnd != candidatesEnd)) {
+        // mComposingText.setLength(0);
+        // InputConnection ic = getCurrentInputConnection();
+        // if (ic != null) {
+        // ic.finishComposingText();
+        // }
+        // }
     }
 
     /**
@@ -189,7 +238,7 @@ public class ShorthandIME extends InputMethodService implements OnGesturePerform
      */
     private void resetState() {
         // Töröljük az éppen képzett szöveget.
-        mComposingText.setLength(0);
+        // mComposingText.setLength(0);
 
         if (mStenoCanvas != null) {
             // Visszaállítjuk alaphelyzetbe a rajzoló felületet.

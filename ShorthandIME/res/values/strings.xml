@@ -4,5 +4,24 @@
     <string name="app_name">Gyorsíró</string>
     <string name="label_subtype_generic">%s</string>
     <string name="settings_name">Gyorsíró beállításai</string>
+    <string name="not_found">Nincs találat!</string>
+    <string name="general_category">Általános</string>
+    <string name="advanced_category">Haladó</string>
+    <string name="debug_mode_summary">Hibakereső mód engedélyezése vagy letiltása</string>
+    <string name="debug_mode">Hibakereső mód</string>
+    <string name="show_popups">Előugró ablakok</string>
+    <string name="show_popups_summary">Előugró ablakok engedélyezése vagy letiltása</string>
+    <string name="pause_between_chars_summary">Karakterrajzolások közötti szünet változtatása</string>
+    <string name="pause_between_chars">Karakterrajzolások közötti szünet</string>
+    <string name="ms_100">100 emp.</string>
+    <string name="ms_200">200 emp.</string>
+    <string name="ms_300">300 emp.</string>
+    <string name="ms_400">400 emp.</string>
+    <string name="ms_500">500 emp.</string>
+    <string name="ms_600">600 emp.</string>
+    <string name="ms_700">700 emp.</string>
+    <string name="ms_800">800 emp.</string>
+    <string name="ms_900">900 emp.</string>
+    <string name="ms_1000">1 mp.</string>
 
 </resources>
