@@ -58,26 +58,32 @@ public class GeneCanvas extends JPanel {
     private static final long serialVersionUID = 1683037721853854499L;
     private static final Dimension DEFAULT_SIZE = new Dimension(128, 128);
     private static final Border DEFAULT_BORDER = new LineBorder(Color.BLACK, 1);
+    private static final Arrow DEFAULT_ARROW_CENTER;
     private static final Arrow DEFAULT_ARROW_ABOVE;
     private static final Arrow DEFAULT_ARROW_BELOW;
     static {
 	Path2D line = new Path2D.Double();
-	line.moveTo(0.4, 0.1);
-	line.lineTo(0.55, 0.1);
+	line.moveTo(0.4, 0.0);
+	line.lineTo(0.55, 0.0);
 	Path2D head = new Path2D.Double();
-	head.moveTo(0.55, 0.15);
-	head.lineTo(0.6, 0.1);
-	head.lineTo(0.55, 0.05);
+	head.moveTo(0.55, 0.05);
+	head.lineTo(0.6, 0.0);
+	head.lineTo(0.55, -0.05);
 	head.closePath();
 
-	DEFAULT_ARROW_ABOVE = new Arrow(line, head);
-	DEFAULT_ARROW_BELOW = new Arrow(DEFAULT_ARROW_ABOVE);
+	DEFAULT_ARROW_CENTER = new Arrow(line, head);
+	DEFAULT_ARROW_ABOVE = new Arrow(DEFAULT_ARROW_CENTER);
 	AffineTransform at = new AffineTransform();
-	at.translate(0.0, -0.2);
+	at.translate(0.0, 0.1);
+	DEFAULT_ARROW_ABOVE.transform(at);
+	DEFAULT_ARROW_BELOW = new Arrow(DEFAULT_ARROW_CENTER);
+	at = new AffineTransform();
+	at.translate(0.0, -0.1);
 	DEFAULT_ARROW_BELOW.transform(at);
     }
 
     private Path2D path;
+    private Point2D pathStartingPoint;
     private List<Arrow> arrows;
 
     public GeneCanvas() {
@@ -98,6 +104,8 @@ public class GeneCanvas extends JPanel {
 
 	if (path != null) {
 	    g2d.setColor(Color.BLACK);
+	    g2d.fillOval((int) pathStartingPoint.getX() - 2,
+		    (int) pathStartingPoint.getY() - 2, 4, 4);
 	    g2d.draw(path);
 	}
 	if (arrows != null) {
@@ -119,8 +127,11 @@ public class GeneCanvas extends JPanel {
 	    // másoljuk
 	    Path2D pathPart = new Path2D.Double(segment);
 	    Point2D lastPoint = newPath.getCurrentPoint();
-	    Arrow arrow = segment.getForm() == Form.SAG_CURVE ? new Arrow(
-		    DEFAULT_ARROW_BELOW) : new Arrow(DEFAULT_ARROW_ABOVE);
+	    Arrow arrow = segment.getForm() == Form.LINE ? new Arrow(
+		    DEFAULT_ARROW_CENTER)
+		    : (segment.getForm() == Form.SAG_CURVE ? new Arrow(
+			    DEFAULT_ARROW_BELOW) : new Arrow(
+			    DEFAULT_ARROW_ABOVE));
 	    // elforgatjuk a nyilacskát is
 	    AffineTransform at = new AffineTransform();
 	    at.rotate(Math.toRadians(segment.getRotation().getDegrees()));
@@ -158,6 +169,7 @@ public class GeneCanvas extends JPanel {
 	    arrow.transform(at);
 	}
 
+	pathStartingPoint = new Point2D.Double(dx, dy);
 	path = newPath;
 	arrows = newArrows;
 	repaint();

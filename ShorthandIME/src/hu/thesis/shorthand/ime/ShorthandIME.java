@@ -84,10 +84,7 @@ public class ShorthandIME extends InputMethodService implements OnGesturePerform
      */
     @Override
     public View onCreateCandidatesView() {
-        super.onCreateCandidatesView();
-
-        // TODO nincs implementálva
-        return null;
+        return super.onCreateCandidatesView();
     }
 
     /**

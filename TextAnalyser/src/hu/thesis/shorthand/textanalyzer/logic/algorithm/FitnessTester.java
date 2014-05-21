@@ -282,21 +282,20 @@ public class FitnessTester {
 
 	    fitnessScore += (lengthScore + sizeScore + similarityScore + connectionScore) / 4;
 	}
-	// a fentiek 1/10-ed arányban számítanak bele a fitnesz pontszámba
+	// a fentiek 1/4-ed arányban számítódnak bele a végső pontszámba
 	fitnessScore = fitnessScore / geneMap.size() * 25;
 
 	// végigíratjuk a bemeneti szövegünket a kromoszómával. Az értékelés
 	// szempontja az, hogy az írás során hányszor futunk le a rajzolási
 	// képernyőről
 	double writingTestScore = scoreWritingTest(chrom);
-	// ez pedig 9/10-ed arányban számítódik bele a fitness pontszámba
+	// ez pedig 3/4-ed arányban számítódik bele a fitness pontszámba
 	fitnessScore += writingTestScore * 75;
 
-	// a karakterek egyediségi értékének négyzetével szorozzuk a
-	// végeredményt, ezzel büntetve a megegyező géneket tartalmazó
-	// kromoszómákat
+	// a karakterek egyediségi értékével hatványozzuk a végeredményt, ezzel
+	// büntetve a megegyező géneket tartalmazó kromoszómákat
 	double uniquenessScore = scoreGeneUniqueness(chrom.genes());
-	fitnessScore *= uniquenessScore * uniquenessScore;
+	fitnessScore = Math.pow(fitnessScore, uniquenessScore);
 
 	chrom.setFitnessScore(fitnessScore);
     }
@@ -405,7 +404,7 @@ public class FitnessTester {
 	    }
 	}
 
-	return 1 - (double) runOutCount / 1000;
+	return 1 - runOutCount / 1000.0;
     }
 
     /**

@@ -53,15 +53,10 @@ public class StatPanel extends JPanel {
 	}
     }
 
-    public void reset() {
-
-    }
-
     public void setMaxRow(ChromosomeRow maxRow) {
-	if (this.maxRow != null) {
-	    maxPanel.remove(this.maxRow);
+	if (this.maxRow == null) {
+	    this.maxRow = maxRow;
+	    maxPanel.add(this.maxRow);
 	}
-	this.maxRow = maxRow;
-	maxPanel.add(this.maxRow);
     }
 }

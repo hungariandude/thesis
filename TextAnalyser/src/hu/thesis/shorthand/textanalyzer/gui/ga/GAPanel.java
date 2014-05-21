@@ -86,7 +86,6 @@ public class GAPanel extends JPanel {
 	generationLabel.setGenerationNumber(0);
 	populationPanel.removeAll();
 	rows.clear();
-	statPanel.reset();
     }
 
     @Override
