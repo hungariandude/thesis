@@ -56,6 +56,7 @@ public class GeneCanvas extends JPanel {
     }
 
     private static final long serialVersionUID = 1683037721853854499L;
+
     private static final Dimension DEFAULT_SIZE = new Dimension(128, 128);
     private static final Border DEFAULT_BORDER = new LineBorder(Color.BLACK, 1);
     private static final Arrow DEFAULT_ARROW_CENTER;
@@ -74,11 +75,11 @@ public class GeneCanvas extends JPanel {
 	DEFAULT_ARROW_CENTER = new Arrow(line, head);
 	DEFAULT_ARROW_ABOVE = new Arrow(DEFAULT_ARROW_CENTER);
 	AffineTransform at = new AffineTransform();
-	at.translate(0.0, 0.1);
+	at.translate(0.0, 0.2);
 	DEFAULT_ARROW_ABOVE.transform(at);
 	DEFAULT_ARROW_BELOW = new Arrow(DEFAULT_ARROW_CENTER);
 	at = new AffineTransform();
-	at.translate(0.0, -0.1);
+	at.translate(0.0, -0.2);
 	DEFAULT_ARROW_BELOW.transform(at);
     }
 

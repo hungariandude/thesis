@@ -58,7 +58,8 @@ public class Chromosome implements Comparable<Chromosome> {
     public int compareTo(Chromosome o) {
 	int result = Double.compare(this.fitnessScore, o.fitnessScore);
 	if (result == 0) {
-	    return Integer.compare(this.hashCode(), o.hashCode());
+	    return Integer.compare(System.identityHashCode(this),
+		    System.identityHashCode(o));
 	} else {
 	    return result;
 	}

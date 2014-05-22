@@ -48,8 +48,8 @@ public class ShorthandIME extends InputMethodService implements OnGesturePerform
     private Recognizer mRecognizer;
     private Context mContext;
 
-    private static boolean debugEnabled = true;
-    private static boolean popupsEnabled = false;
+    private static boolean debugEnabled = false;
+    private static boolean popupsEnabled = true;
     private static int pauseBetweenChars = 300;
 
     private static final String TAG = ShorthandIME.class.getSimpleName();
@@ -164,11 +164,11 @@ public class ShorthandIME extends InputMethodService implements OnGesturePerform
                 break;
             }
             case "show_popups": {
-                popupsEnabled = sharedPreferences.getBoolean(key, false);
+                popupsEnabled = sharedPreferences.getBoolean(key, true);
                 break;
             }
             case "debug_mode": {
-                debugEnabled = sharedPreferences.getBoolean(key, true);
+                debugEnabled = sharedPreferences.getBoolean(key, false);
                 break;
             }
         }
