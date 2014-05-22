@@ -80,13 +80,15 @@ public class SettingsDialog {
 	    int populationSize = ((Number) populationSizeTF.getValue())
 		    .intValue();
 	    long sleepTime = ((Number) sleepTimeTF.getValue()).longValue();
-	    if (populationSize < 2) {
-		populationSize = 2;
-	    } else if (populationSize % 2 != 0) {
-		populationSize--;
+	    if (populationSize < 2 || populationSize % 2 != 0) {
 		JOptionPane.showMessageDialog(null,
 			"A populáció mérete csak pozitív páros szám lehet!",
 			"Figyelmeztetés", JOptionPane.WARNING_MESSAGE);
+		if (populationSize < 2) {
+		    populationSize = 2;
+		} else {
+		    populationSize--;
+		}
 	    }
 	    if (sleepTime < 0) {
 		sleepTime = 0;

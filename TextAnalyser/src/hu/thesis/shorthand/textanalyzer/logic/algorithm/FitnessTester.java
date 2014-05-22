@@ -345,9 +345,14 @@ public class FitnessTester {
 	    return 1.0;
 	} else {
 	    double totalScore = 0.0;
+	    int found = 0;
 	    for (char c : value) {
 		double score;
 		Gene similarGene = geneMap.get(c);
+		if (similarGene == null) {
+		    continue;
+		}
+		found++;
 		if (gene.length() != similarGene.length()) {
 		    score = 0.0;
 		} else {
@@ -363,7 +368,10 @@ public class FitnessTester {
 		}
 		totalScore += score;
 	    }
-	    return totalScore / value.length;
+	    if (found == 0) {
+		return 1.0;
+	    }
+	    return totalScore / found;
 	}
     }
 

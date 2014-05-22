@@ -50,7 +50,8 @@ public final class Engine {
      * Exportálja a kromószámban található karekter-alakzat párosításokat egy
      * fájlba.
      */
-    public static boolean exportChromosome(Chromosome chrom, File target) {
+    public static void exportChromosome(Chromosome chrom, File target)
+	    throws IOException {
 	Map<Character, Gene> geneMap = chrom.getGeneMap();
 	CharMappingSaveData[] saveData = new CharMappingSaveData[geneMap.size()];
 	int i = 0;
@@ -71,15 +72,8 @@ public final class Engine {
 	try (FileOutputStream fos = new FileOutputStream(target)) {
 	    try (ObjectOutputStream oos = new ObjectOutputStream(fos)) {
 		oos.writeObject(saveData);
-	    } catch (IOException e) {
-		throw e;
 	    }
-	} catch (IOException e) {
-	    e.printStackTrace();
-	    return false;
 	}
-
-	return true;
     }
 
     public static List<File> fileList() {

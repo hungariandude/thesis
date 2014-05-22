@@ -17,6 +17,7 @@ import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingWorker;
 import javax.swing.border.EtchedBorder;
@@ -49,6 +50,15 @@ public class ControlToolBar extends JToolBar {
 
 	@Override
 	protected void done() {
+	    try {
+		get();
+	    } catch (InterruptedException | ExecutionException e) {
+		e.printStackTrace();
+		JOptionPane.showMessageDialog(mainFrame,
+			"A genetikus algoritmus futása váratlanul befejeződött!\n\nA hiba oka: "
+				+ e.getMessage(), "Hiba",
+			JOptionPane.ERROR_MESSAGE);
+	    }
 	    if (!stopped) {
 		pauseButton.setEnabled(false);
 		startButton.setEnabled(true);
@@ -117,19 +127,34 @@ public class ControlToolBar extends JToolBar {
 
 		@Override
 		protected void done() {
-		    startButton.setEnabled(true);
-		    stepSelector.setEnabled(true);
-		    fullStopButton.setEnabled(true);
-		    stopped = false;
-		    mainFrame.getContentPanel().getGaPanel().setEnabled(true);
 		    try {
 			mainFrame.getContentPanel().getGaPanel()
 				.setPopulation(get());
+			startButton.setEnabled(true);
+			stepSelector.setEnabled(true);
+			fullStopButton.setEnabled(true);
+			stopped = false;
+			mainFrame.getContentPanel().getGaPanel()
+				.setEnabled(true);
+			mainFrame
+				.getStatusBar()
+				.setText(
+					"A genetikus algoritmus inicializálása elkészült.");
 		    } catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
+			JOptionPane.showMessageDialog(mainFrame,
+				"A genetikus algoritmus inicializálása nem sikerült!\n\nA hiba oka: "
+					+ e.getMessage(), "Hiba",
+				JOptionPane.ERROR_MESSAGE);
+			openButton.setEnabled(true);
+			resetButton.setEnabled(true);
+			ControlToolBar.this.mainFrame.getContentPanel()
+				.enableFileListEdit();
+			mainFrame
+				.getStatusBar()
+				.setText(
+					"A genetikus algoritmus inicializálása nem sikerült.");
 		    }
-		    mainFrame.getStatusBar().setText(
-			    "A genetikus algoritmus inicializálása elkészült.");
 		}
 	    };
 	    worker.execute();

@@ -136,28 +136,26 @@ public class ChromosomeRow extends JPanel implements ActionListener {
 	if (returnInt == JFileChooser.APPROVE_OPTION) {
 	    final File file = fileChooser.getSelectedFile();
 
-	    SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
+	    SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 		@Override
-		protected Boolean doInBackground() throws Exception {
-		    return Engine.exportChromosome(chromosome, file);
+		protected Void doInBackground() throws Exception {
+		    Engine.exportChromosome(chromosome, file);
+		    return null;
 		}
 
 		@Override
 		protected void done() {
-		    boolean success = false;
 		    try {
-			success = get();
-		    } catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
-		    }
-		    if (success) {
+			get();
 			JOptionPane.showMessageDialog(null,
 				"Az exportálás sikeresen befejeződött!",
 				"Sikeres művelet",
 				JOptionPane.INFORMATION_MESSAGE);
-		    } else {
+		    } catch (InterruptedException | ExecutionException e) {
+			e.printStackTrace();
 			JOptionPane.showMessageDialog(null,
-				"Az exportálás nem sikerült!", "Hiba",
+				"Az exportálás nem sikerült!\n\nA hiba oka: "
+					+ e.getMessage(), "Hiba",
 				JOptionPane.ERROR_MESSAGE);
 		    }
 		}

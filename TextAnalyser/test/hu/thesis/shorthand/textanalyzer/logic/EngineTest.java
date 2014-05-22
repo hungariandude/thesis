@@ -30,22 +30,24 @@ public class EngineTest {
 
     @Test
     public void exportChromosomeTest() {
-	Engine.exportChromosome(chrom, file);
+	try {
+	    Engine.exportChromosome(chrom, file);
 
-	try (FileInputStream fis = new FileInputStream(file)) {
-	    try (ObjectInputStream is = new ObjectInputStream(fis)) {
-		try {
-		    CharMappingSaveData[] saveData = (CharMappingSaveData[]) is
-			    .readObject();
+	    try (FileInputStream fis = new FileInputStream(file)) {
+		try (ObjectInputStream is = new ObjectInputStream(fis)) {
+		    try {
+			CharMappingSaveData[] saveData = (CharMappingSaveData[]) is
+				.readObject();
 
-		    Assert.assertEquals(saveData.length, 99);
+			Assert.assertEquals(saveData.length, 99);
 
-		    for (CharMappingSaveData data : saveData) {
-			Assert.assertNotEquals(data, null);
+			for (CharMappingSaveData data : saveData) {
+			    Assert.assertNotEquals(data, null);
+			}
+
+		    } catch (ClassNotFoundException e) {
+			e.printStackTrace();
 		    }
-
-		} catch (ClassNotFoundException e) {
-		    e.printStackTrace();
 		}
 	    }
 	} catch (IOException ex) {
