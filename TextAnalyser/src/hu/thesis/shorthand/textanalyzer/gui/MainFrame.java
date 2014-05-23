@@ -90,12 +90,33 @@ public class MainFrame extends JFrame {
 
 	JMenu aboutMenu = new JMenu("Súgó");
 	menuBar.add(aboutMenu);
+	aboutMenu.add(new JMenuItem(new AbstractAction("Használat") {
+	    private static final long serialVersionUID = -3219128113154876190L;
+
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		String body = "A program használata:\n\n"
+			+ "A program szöveges fájlokból dolgozik. A fájlok az eszköztáron\n"
+			+ "található, első gomb segítségével nyithatóak meg.\n"
+			+ "Miután a fájlok megnyitásra kerültek, a második gombbal\n"
+			+ "inicializálhatjuk a genetikus algoritmust. Az algoritmus\n"
+			+ "inicializálása után a vezérlőgombokkal indíthatjuk/folytathatjuk,\n"
+			+ "szüneteltethetjük, leállíthatjuk az algoritmus futását.\n"
+			+ "A fehér X-et tartalmazó piros gomb az algoritmust véglegesen leállítja,\n"
+			+ "ami után már nem folytathatjuk, új algoritmust kell inicializálnunk.\n"
+			+ "Amíg az algoritmus nem fut, az elkészült ábécék exportálhatók az\n"
+			+ "\"Exportálás\" gombbal.\n\n"
+			+ "További információért kérem tekintse át a felhasználói dokumentációt!";
+		JOptionPane.showMessageDialog(MainFrame.this, body,
+			"Használat", JOptionPane.INFORMATION_MESSAGE);
+	    }
+	}));
 	aboutMenu.add(new JMenuItem(new AbstractAction("Névjegy") {
 	    private static final long serialVersionUID = -3219128113154876190L;
 
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		String body = "Készítette: Istvánfi Zsolt\n\nELTE, 2014";
+		String body = "Készítette: Istvánfi Zsolt\nE-mail: iszraai@gmail.com\n\nELTE, 2014";
 		JOptionPane.showMessageDialog(MainFrame.this, body, "Névjegy",
 			JOptionPane.INFORMATION_MESSAGE);
 	    }
