@@ -117,6 +117,9 @@ public class ContentPanel extends JPanel {
 	return gaPanel;
     }
 
+    /**
+     * Beállítja a paraméterként megkapott fájlnévlistát.
+     */
     public void setFileNames(String[] fileNames) {
 	fileNamesModel.clear();
 	for (String fileName : fileNames) {
