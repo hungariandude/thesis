@@ -30,7 +30,6 @@ public class ShorthandIME extends InputMethodService implements OnGesturePerform
     private View mContainerView;
     private StenoCanvas mStenoCanvas;
 
-    // private StringBuilder mComposingText = new StringBuilder();
     private Recognizer mRecognizer;
     private Context mContext;
     private Parameters mParameters;
@@ -124,7 +123,6 @@ public class ShorthandIME extends InputMethodService implements OnGesturePerform
                 canvas.setDebugPoints(points);
             }
             if (result != null && !result.isEmpty()) {
-                // mComposingText.append(result);
                 ic.commitText(result, 1);
             } else if (mParameters.isPopupsEnabled()) {
                 Toast.makeText(mContext, R.string.not_found, Toast.LENGTH_SHORT).show();
@@ -181,26 +179,12 @@ public class ShorthandIME extends InputMethodService implements OnGesturePerform
             int candidatesStart, int candidatesEnd) {
         super.onUpdateSelection(oldSelStart, oldSelEnd, newSelStart, newSelEnd, candidatesStart,
                 candidatesEnd);
-
-        // Ha az aktuális kijelölés változik a szöveges mezőben, akkor törölnünk
-        // kell az ajánlást
-        // if (mComposingText.length() > 0
-        // && (newSelStart != candidatesEnd || newSelEnd != candidatesEnd)) {
-        // mComposingText.setLength(0);
-        // InputConnection ic = getCurrentInputConnection();
-        // if (ic != null) {
-        // ic.finishComposingText();
-        // }
-        // }
     }
 
     /**
      * Alaphelyzetbe hozza a beviteli eszközt.
      */
     private void resetState() {
-        // Töröljük az éppen képzett szöveget.
-        // mComposingText.setLength(0);
-
         if (mStenoCanvas != null) {
             // Visszaállítjuk alaphelyzetbe a rajzoló felületet.
             mStenoCanvas.reset();
