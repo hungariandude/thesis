@@ -51,7 +51,7 @@ public class StenoCanvas extends GestureOverlayView {
     }
 
     private void init(Context context) {
-        if (ShorthandIME.isDebugEnabled()) {
+        if (Parameters.getInstance().isDebugEnabled()) {
             mDebugPointPaint = new Paint();
             mDebugPointPaint.setColor(Color.RED);
             mDebugPointPaint.setAntiAlias(true);
@@ -90,7 +90,7 @@ public class StenoCanvas extends GestureOverlayView {
             return;
         }
 
-        if (ShorthandIME.isDebugEnabled()) {
+        if (Parameters.getInstance().isDebugEnabled()) {
             if (this.mDebugPaths != null) {
                 for (int i = 0; i < mDebugPaths.size(); ++i) {
                     Path path = mDebugPaths.get(i);

@@ -3,7 +3,6 @@ package hu.thesis.shorthand.ime;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.gesture.Gesture;
 import android.gesture.GestureOverlayView;
 import android.gesture.GestureOverlayView.OnGesturePerformedListener;
@@ -11,7 +10,6 @@ import android.gesture.GesturePoint;
 import android.gesture.GestureStroke;
 import android.inputmethodservice.InputMethodService;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
@@ -27,19 +25,7 @@ import hu.thesis.shorthand.ime.util.ShorthandUtils;
  * @author Istvánfi Zsolt
  */
 public class ShorthandIME extends InputMethodService implements OnGesturePerformedListener,
-        OnSharedPreferenceChangeListener, OnClickListener {
-
-    public static int getPauseBetweenChars() {
-        return pauseBetweenChars;
-    }
-
-    public static boolean isDebugEnabled() {
-        return debugEnabled;
-    }
-
-    public static boolean isPopupsEnabled() {
-        return popupsEnabled;
-    }
+        OnClickListener {
 
     private View mContainerView;
     private StenoCanvas mStenoCanvas;
@@ -47,12 +33,9 @@ public class ShorthandIME extends InputMethodService implements OnGesturePerform
     // private StringBuilder mComposingText = new StringBuilder();
     private Recognizer mRecognizer;
     private Context mContext;
+    private Parameters mParameters;
 
-    private static boolean debugEnabled = false;
-    private static boolean popupsEnabled = true;
-    private static int pauseBetweenChars = 300;
-
-    private static final String TAG = ShorthandIME.class.getSimpleName();
+    // private static final String TAG = ShorthandIME.class.getSimpleName();
 
     @Override
     public void onClick(View view) {
@@ -75,7 +58,9 @@ public class ShorthandIME extends InputMethodService implements OnGesturePerform
         mRecognizer.loadDefaultCharMapping();
 
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        sharedPrefs.registerOnSharedPreferenceChangeListener(this);
+        Parameters.initInstance(sharedPrefs);
+        mParameters = Parameters.getInstance();
+        sharedPrefs.registerOnSharedPreferenceChangeListener(mParameters);
     }
 
     /**
@@ -133,7 +118,7 @@ public class ShorthandIME extends InputMethodService implements OnGesturePerform
         for (GestureStroke stroke : gesture.getStrokes()) {
             GesturePoint[] points = ShorthandUtils.extractGesturePointsFromStroke(stroke);
             String result = mRecognizer.recognize(points);
-            if (debugEnabled) {
+            if (mParameters.isDebugEnabled()) {
                 StenoCanvas canvas = (StenoCanvas) overlay;
                 canvas.setDebugPaths(mRecognizer.getDebugPaths());
                 canvas.setDebugPoints(points);
@@ -141,7 +126,7 @@ public class ShorthandIME extends InputMethodService implements OnGesturePerform
             if (result != null && !result.isEmpty()) {
                 // mComposingText.append(result);
                 ic.commitText(result, 1);
-            } else if (popupsEnabled) {
+            } else if (mParameters.isPopupsEnabled()) {
                 Toast.makeText(mContext, R.string.not_found, Toast.LENGTH_SHORT).show();
             }
         }
@@ -154,27 +139,6 @@ public class ShorthandIME extends InputMethodService implements OnGesturePerform
     @Override
     public void onInitializeInterface() {
         super.onInitializeInterface();
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        switch (key) {
-            case "pause_between_chars": {
-                pauseBetweenChars = sharedPreferences.getInt(key, 300);
-                break;
-            }
-            case "show_popups": {
-                popupsEnabled = sharedPreferences.getBoolean(key, true);
-                break;
-            }
-            case "debug_mode": {
-                debugEnabled = sharedPreferences.getBoolean(key, false);
-                break;
-            }
-        }
-        if (debugEnabled) {
-            Log.d(TAG, "onSharedPreferenceChanged() called, changed preference: " + key);
-        }
     }
 
     /**

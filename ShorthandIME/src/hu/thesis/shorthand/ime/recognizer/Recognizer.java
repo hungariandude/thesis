@@ -9,7 +9,7 @@ import android.util.Log;
 import hu.thesis.shorthand.common.CharMappingSaveData;
 import hu.thesis.shorthand.common.DrawableObject.Form;
 import hu.thesis.shorthand.common.DrawableObject.Rotation;
-import hu.thesis.shorthand.ime.ShorthandIME;
+import hu.thesis.shorthand.ime.Parameters;
 import hu.thesis.shorthand.ime.util.ShorthandUtils;
 
 import java.util.ArrayList;
@@ -77,7 +77,7 @@ public class Recognizer {
         mSegmenter.clear();
 
         List<GesturePoint[]> charComponents = splitGestureIntoCharComponents(gesture);
-        if (ShorthandIME.isDebugEnabled()) {
+        if (Parameters.getInstance().isDebugEnabled()) {
             Log.d(TAG, "Number of found char components: " + charComponents.size());
         }
 
@@ -99,7 +99,7 @@ public class Recognizer {
     private char recognizeCharComponent(GesturePoint[] component) {
         ComplexShape cs = mSegmenter.segment(component);
         if (cs != null && !cs.isEmpty()) {
-            if (ShorthandIME.isDebugEnabled()) {
+            if (Parameters.getInstance().isDebugEnabled()) {
                 Log.d(TAG, "Found segments: " + cs.size() + ' ' + cs.toString());
             }
             Character ch = mCharMap.get(cs);
@@ -111,6 +111,11 @@ public class Recognizer {
         return 0;
     }
 
+    /**
+     * Feldarabolja a ponttömböt a karakterek mentén.
+     * 
+     * @return A karakterek listája, ahol a karakter pontok tömbje.
+     */
     private List<GesturePoint[]> splitGestureIntoCharComponents(GesturePoint[] gesture) {
         List<GesturePoint[]> components = new ArrayList<>();
         int componentStartIndex = 0;
@@ -120,26 +125,14 @@ public class Recognizer {
                 GesturePoint[] component = Arrays.copyOfRange(gesture, componentStartIndex,
                         gesture.length);
                 components.add(component);
-
-                // if (ShorthandIME.DEBUG) {
-                // RecognizerUtils
-                // .logGesturePoints(components.size() + ". component: ",
-                // component);
-                // }
             } else {
                 GesturePoint actualPoint = gesture[i];
-                if (actualPoint.timestamp - lastTimeStamp >= ShorthandIME.getPauseBetweenChars()) {
+                if (actualPoint.timestamp - lastTimeStamp >= Parameters.getInstance()
+                        .getPauseBetweenChars()) {
                     if (i > 0 && i - componentStartIndex > 1) {
                         GesturePoint[] component = Arrays.copyOfRange(gesture, componentStartIndex,
                                 i);
                         components.add(component);
-
-                        // if (ShorthandIME.DEBUG) {
-                        // RecognizerUtils.logGesturePoints(components.size() +
-                        // ". component: ",
-                        // component);
-                        // }
-
                         componentStartIndex = i - 1;
                     }
                 }
