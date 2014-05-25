@@ -2,7 +2,6 @@ package hu.thesis.shorthand.textanalyzer.logic.algorithm;
 
 import hu.thesis.shorthand.textanalyzer.logic.Parameters;
 import hu.thesis.shorthand.textanalyzer.util.MutableInteger;
-import hu.thesis.shorthand.textanalyzer.util.Pair;
 import hu.thesis.shorthand.textanalyzer.util.RandomUtils;
 
 import java.awt.geom.Point2D;
@@ -33,15 +32,6 @@ public class FitnessTester {
      * Az egyes karakterek száma a szövegben.
      */
     private Map<Character, MutableInteger> charCountMap = new HashMap<>();
-    /**
-     * Az egyes karakterek bal- és jobbszomszédainak előfordulási számát követi.
-     */
-    private Map<Character, Pair<Map<Character, MutableInteger>, Map<Character, MutableInteger>>> charNeighborCountMap = new HashMap<>();
-    /**
-     * Az egyes karakterekhez tartozó bal- és jobbszomszédok, amelyeknek az
-     * előfordulási száma a maximummal egyenlő.
-     */
-    private Map<Character, Pair<Entry<Integer, List<Character>>, Entry<Integer, List<Character>>>> maxCountNeighborMap = new HashMap<>();
     /**
      * Az egyes karakterekhez rendelt kirajzolható objektumok ajánlott
      * elemszáma.
@@ -95,42 +85,6 @@ public class FitnessTester {
 		charCountMap.put(currentChar, value = new MutableInteger());
 	    }
 	    value.add(1);
-
-	    Pair<Map<Character, MutableInteger>, Map<Character, MutableInteger>> pairValue = charNeighborCountMap
-		    .get(currentChar);
-	    Map<Character, MutableInteger> left, right;
-	    if (pairValue == null) {
-		charNeighborCountMap.put(currentChar, pairValue = new Pair<>(
-			left = new HashMap<>(), right = new HashMap<>()));
-	    } else {
-		if (pairValue.getLeft() == null) {
-		    left = new HashMap<>();
-		} else {
-		    left = pairValue.getLeft();
-		}
-		if (pairValue.getRight() == null) {
-		    right = new HashMap<>();
-		} else {
-		    right = pairValue.getRight();
-		}
-
-		if (index > 1) {
-		    char previousChar = sourceText.charAt(index - 1);
-		    value = left.get(previousChar);
-		    if (value == null) {
-			left.put(previousChar, value = new MutableInteger());
-		    }
-		    value.add(1);
-		}
-		if (index < sourceText.length() - 1) {
-		    char nextChar = sourceText.charAt(index + 1);
-		    value = right.get(nextChar);
-		    if (value == null) {
-			right.put(nextChar, value = new MutableInteger());
-		    }
-		    value.add(1);
-		}
-	    }
 	}
 
 	if (Parameters.debugMode) {
@@ -156,67 +110,6 @@ public class FitnessTester {
 		recommendedLengthMap.put(ch, actualGeneLength);
 	    }
 	}
-
-	// 3. lépés: megkeressük a legnagyobb előfordulási számú bal- és
-	// jobbszomszédokat az egyes karakterekhez
-	for (Entry<Character, Pair<Map<Character, MutableInteger>, Map<Character, MutableInteger>>> entry : charNeighborCountMap
-		.entrySet()) {
-	    Character key = entry.getKey();
-	    Pair<Map<Character, MutableInteger>, Map<Character, MutableInteger>> value = entry
-		    .getValue();
-	    TreeMap<Integer, List<Character>> leftTreeMap = sortMutableIntegerValueMap(value
-		    .getLeft());
-	    TreeMap<Integer, List<Character>> rightTreeMap = sortMutableIntegerValueMap(value
-		    .getRight());
-	    maxCountNeighborMap.put(key, new Pair<>(leftTreeMap.lastEntry(),
-		    rightTreeMap.lastEntry()));
-	}
-    }
-
-    /**
-     * @return [0;1]
-     */
-    private double scoreConnections(Character key, Gene gene,
-	    Map<Character, Gene> map) {
-	Pair<Entry<Integer, List<Character>>, Entry<Integer, List<Character>>> entry = maxCountNeighborMap
-		.get(key);
-	List<Character> leftList = entry.getLeft() == null ? null : entry
-		.getLeft().getValue();
-	List<Character> rightList = entry.getRight() == null ? null : entry
-		.getRight().getValue();
-	double leftPoints = 0.0, rightPoints = 0.0;
-
-	if (leftList == null) {
-	    leftPoints = 0.5;
-	} else {
-	    int leftSize = leftList.size();
-	    if (leftSize > 0) {
-		for (Character ch : leftList) {
-		    leftPoints += scoreDrawingSize(Gene.concatenate(
-			    map.get(ch), gene));
-		}
-		leftPoints = leftPoints / leftSize / 2;
-	    } else {
-		leftPoints = 0.5;
-	    }
-	}
-
-	if (rightList == null) {
-	    rightPoints = 0.5;
-	} else {
-	    int rightSize = rightList.size();
-	    if (rightSize > 0) {
-		for (Character ch : rightList) {
-		    rightPoints += scoreDrawingSize(Gene.concatenate(gene,
-			    map.get(ch)));
-		}
-		rightPoints = rightPoints / rightSize / 2;
-	    } else {
-		rightPoints = 0.5;
-	    }
-	}
-
-	return leftPoints + rightPoints;
     }
 
     /**
@@ -276,21 +169,18 @@ public class FitnessTester {
 	    // hasonlóságokhoz (pl. u-ú-ü-ű)
 	    double similarityScore = scoreSimilarity(ch, gene,
 		    chrom.getGeneMap());
-	    // 4. lépés: értékeljük a gén kapcsolatát a többi génnel
-	    double connectionScore = scoreConnections(ch, gene,
-		    chrom.getGeneMap());
 
-	    fitnessScore += (lengthScore + sizeScore + similarityScore + connectionScore) / 4;
+	    fitnessScore += (lengthScore + sizeScore + similarityScore) / 3;
 	}
-	// a fentiek 1/4-ed arányban számítódnak bele a végső pontszámba
-	fitnessScore = fitnessScore / geneMap.size() * 25;
+	// a fentiek 3/10-ed arányban számítódnak bele a végső pontszámba
+	fitnessScore = fitnessScore / geneMap.size() * 30;
 
 	// végigíratjuk a bemeneti szövegünket a kromoszómával. Az értékelés
 	// szempontja az, hogy az írás során hányszor futunk le a rajzolási
 	// képernyőről
 	double writingTestScore = scoreWritingTest(chrom);
-	// ez pedig 3/4-ed arányban számítódik bele a fitness pontszámba
-	fitnessScore += writingTestScore * 75;
+	// ez pedig 7/10-ed arányban számítódik bele a fitness pontszámba
+	fitnessScore += writingTestScore * 70;
 
 	// a karakterek egyediségi értékével hatványozzuk a végeredményt, ezzel
 	// büntetve a megegyező géneket tartalmazó kromoszómákat

@@ -64,19 +64,19 @@ public class Parameters implements OnSharedPreferenceChangeListener {
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
         switch (key) {
             case PAUSE_BETWEEN_CHARS: {
-                mPauseBetweenChars = Integer.parseInt(sharedPreferences.getString(
+                mPauseBetweenChars = Integer.parseInt(prefs.getString(
                         PAUSE_BETWEEN_CHARS, "300"));
                 break;
             }
             case SHOW_POPUPS: {
-                mPopupsEnabled = sharedPreferences.getBoolean(key, true);
+                mPopupsEnabled = prefs.getBoolean(key, true);
                 break;
             }
             case DEBUG_MODE: {
-                mDebugEnabled = sharedPreferences.getBoolean(key, false);
+                mDebugEnabled = prefs.getBoolean(key, false);
                 break;
             }
         }
