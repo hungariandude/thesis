@@ -63,12 +63,14 @@ public class Parameters implements OnSharedPreferenceChangeListener {
         return mPopupsEnabled;
     }
 
+    /**
+     * Itt figyelünk a megváltozott beállításokra.
+     */
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
         switch (key) {
             case PAUSE_BETWEEN_CHARS: {
-                mPauseBetweenChars = Integer.parseInt(prefs.getString(
-                        PAUSE_BETWEEN_CHARS, "300"));
+                mPauseBetweenChars = Integer.parseInt(prefs.getString(PAUSE_BETWEEN_CHARS, "300"));
                 break;
             }
             case SHOW_POPUPS: {

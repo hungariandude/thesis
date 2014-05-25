@@ -40,6 +40,9 @@ public class Recognizer {
         mSegmenter = new Segmenter(unit);
     }
 
+    /**
+     * A deszerializált CharMappingSaveData tömböt betölti a saját HashMap-jébe.
+     */
     private void createMapFromSaveData(CharMappingSaveData[] saveData) {
         mCharMap.clear();
 
@@ -62,6 +65,9 @@ public class Recognizer {
         return mSegmenter.getDebugPaths();
     }
 
+    /**
+     * Betölti az alkalmazás csomagfájlában eltárolt ábécét.
+     */
     public void loadDefaultCharMapping() {
         CharMappingSaveData[] saveData = ShorthandUtils.readCharMappingFromResource(mContext);
         createMapFromSaveData(saveData);

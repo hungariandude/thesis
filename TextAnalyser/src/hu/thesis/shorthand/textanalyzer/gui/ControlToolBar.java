@@ -72,6 +72,9 @@ public class ControlToolBar extends JToolBar {
 
 	@Override
 	protected void process(List<Population> chunks) {
+	    // A genetikus algoritmus futása nagyon gyors is lehet, ezért a
+	    // chunks lista több elemből állhat. Nekünk csak a legutóbbi kell
+	    // és azt adjuk tovább a felületnek.
 	    Population max = Collections.max(chunks);
 	    mainFrame.getContentPanel().getGaPanel().setPopulation(max);
 	}
