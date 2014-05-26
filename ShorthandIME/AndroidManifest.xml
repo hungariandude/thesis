@@ -4,9 +4,9 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
-    <!-- Minimum Android 4.0 (ICS) -->
+    <!-- Minimum Android 2.2 (Froyo) -->
     <uses-sdk
-        android:minSdkVersion="14"
+        android:minSdkVersion="8"
         android:targetSdkVersion="19" />
 
     <application

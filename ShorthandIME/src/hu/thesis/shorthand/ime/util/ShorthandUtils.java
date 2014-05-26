@@ -13,6 +13,7 @@ import hu.thesis.shorthand.ime.R;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 
 /**
@@ -23,6 +24,26 @@ import java.lang.reflect.Field;
 public final class ShorthandUtils {
 
     private static final String TAG = ShorthandUtils.class.getSimpleName();
+
+    /**
+     * Az <code>original</code> tömbből átmásolja az elemeket egy új tömbbe a
+     * kezdőindextől (inkluzívan) a záróindexig (exkluzívan).
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T[] copyOfRange(T[] original, int start, int end) {
+        int originalLength = original.length;
+        if (start > end) {
+            throw new IllegalArgumentException();
+        }
+        if (start < 0 || start > originalLength) {
+            throw new ArrayIndexOutOfBoundsException();
+        }
+        int resultLength = end - start;
+        int copyLength = Math.min(resultLength, originalLength - start);
+        T[] result = (T[]) Array.newInstance(original.getClass().getComponentType(), resultLength);
+        System.arraycopy(original, start, result, 0, copyLength);
+        return result;
+    }
 
     /**
      * Dp értéket px értékre konvertál.

@@ -122,7 +122,7 @@ public class ShorthandIME extends InputMethodService implements OnGesturePerform
                 canvas.setDebugPaths(mRecognizer.getDebugPaths());
                 canvas.setDebugPoints(points);
             }
-            if (result != null && !result.isEmpty()) {
+            if (result != null && result.length() > 0) {
                 ic.commitText(result, 1);
             } else if (mParameters.isPopupsEnabled()) {
                 Toast.makeText(mContext, R.string.not_found, Toast.LENGTH_SHORT).show();

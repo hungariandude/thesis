@@ -9,19 +9,19 @@
     <string name="advanced_category">Haladó</string>
     <string name="debug_mode_summary">Hibakereső mód engedélyezése vagy letiltása</string>
     <string name="debug_mode">Hibakereső mód</string>
-    <string name="show_popups">Előugró ablakok</string>
-    <string name="show_popups_summary">Előugró ablakok engedélyezése vagy letiltása</string>
+    <string name="show_popups">Előugró szövegek</string>
+    <string name="show_popups_summary">Előugró szövegek engedélyezése vagy letiltása</string>
     <string name="pause_between_chars_summary">Karakterrajzolások közötti szünet változtatása</string>
     <string name="pause_between_chars">Karakterrajzolások közötti szünet</string>
-    <string name="ms_100">100 emp.</string>
-    <string name="ms_200">200 emp.</string>
-    <string name="ms_300">300 emp.</string>
-    <string name="ms_400">400 emp.</string>
-    <string name="ms_500">500 emp.</string>
-    <string name="ms_600">600 emp.</string>
-    <string name="ms_700">700 emp.</string>
-    <string name="ms_800">800 emp.</string>
-    <string name="ms_900">900 emp.</string>
+    <string name="ms_100">0,1 mp.</string>
+    <string name="ms_200">0,2 mp.</string>
+    <string name="ms_300">0,3 mp.</string>
+    <string name="ms_400">0,4 mp.</string>
+    <string name="ms_500">0,5 mp.</string>
+    <string name="ms_600">0,6 mp.</string>
+    <string name="ms_700">0,7 mp.</string>
+    <string name="ms_800">0,8 mp.</string>
+    <string name="ms_900">0,9 mp.</string>
     <string name="ms_1000">1 mp.</string>
 
 </resources>

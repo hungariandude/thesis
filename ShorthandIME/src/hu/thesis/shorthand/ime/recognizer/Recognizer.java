@@ -13,7 +13,6 @@ import hu.thesis.shorthand.ime.Parameters;
 import hu.thesis.shorthand.ime.util.ShorthandUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -128,7 +127,7 @@ public class Recognizer {
         long lastTimeStamp = 0;
         for (int i = 0; i < gesture.length; ++i) {
             if (i == gesture.length - 1) {
-                GesturePoint[] component = Arrays.copyOfRange(gesture, componentStartIndex,
+                GesturePoint[] component = ShorthandUtils.copyOfRange(gesture, componentStartIndex,
                         gesture.length);
                 components.add(component);
             } else {
@@ -136,8 +135,8 @@ public class Recognizer {
                 if (actualPoint.timestamp - lastTimeStamp >= Parameters.getInstance()
                         .getPauseBetweenChars()) {
                     if (i > 0 && i - componentStartIndex > 1) {
-                        GesturePoint[] component = Arrays.copyOfRange(gesture, componentStartIndex,
-                                i);
+                        GesturePoint[] component = ShorthandUtils.copyOfRange(gesture,
+                                componentStartIndex, i);
                         components.add(component);
                         componentStartIndex = i - 1;
                     }
