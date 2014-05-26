@@ -54,10 +54,11 @@ public class ControlToolBar extends JToolBar {
 		get();
 	    } catch (InterruptedException | ExecutionException e) {
 		e.printStackTrace();
+		String cause = e.getCause().getMessage() != null ? e.getCause()
+			.getMessage() : e.getMessage();
 		JOptionPane.showMessageDialog(mainFrame,
 			"A genetikus algoritmus futása váratlanul befejeződött!\n\nA hiba oka: "
-				+ e.getMessage(), "Hiba",
-			JOptionPane.ERROR_MESSAGE);
+				+ cause, "Hiba", JOptionPane.ERROR_MESSAGE);
 	    }
 	    if (!stopped) {
 		pauseButton.setEnabled(false);
@@ -145,9 +146,11 @@ public class ControlToolBar extends JToolBar {
 					"A genetikus algoritmus inicializálása elkészült.");
 		    } catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
+			String cause = e.getCause().getMessage() != null ? e
+				.getCause().getMessage() : e.getMessage();
 			JOptionPane.showMessageDialog(mainFrame,
 				"A genetikus algoritmus inicializálása nem sikerült!\n\nA hiba oka: "
-					+ e.getMessage(), "Hiba",
+					+ cause, "Hiba",
 				JOptionPane.ERROR_MESSAGE);
 			openButton.setEnabled(true);
 			resetButton.setEnabled(true);

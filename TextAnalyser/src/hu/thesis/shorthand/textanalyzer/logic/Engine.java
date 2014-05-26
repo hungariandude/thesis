@@ -103,6 +103,10 @@ public final class Engine {
 	    }
 	}
 
+	if (sb.length() == 0) {
+	    throw new IllegalArgumentException("A megnyitott fájlok üresek.");
+	}
+
 	ga = new GeneticAlgorithm(sb.toString(), Parameters.populationSize);
 	Population clonePopulation = new Population(ga.getPopulation());
 	return clonePopulation;

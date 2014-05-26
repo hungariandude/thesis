@@ -153,9 +153,11 @@ public class ChromosomeRow extends JPanel implements ActionListener {
 				JOptionPane.INFORMATION_MESSAGE);
 		    } catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
+			String cause = e.getCause().getMessage() != null ? e
+				.getCause().getMessage() : e.getMessage();
 			JOptionPane.showMessageDialog(null,
 				"Az exportálás nem sikerült!\n\nA hiba oka: "
-					+ e.getMessage(), "Hiba",
+					+ cause, "Hiba",
 				JOptionPane.ERROR_MESSAGE);
 		    }
 		}
