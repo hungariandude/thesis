@@ -2,6 +2,7 @@ package hu.thesis.shorthand.textanalyzer.gui;
 
 import hu.thesis.shorthand.textanalyzer.gui.ga.GAPanel;
 import hu.thesis.shorthand.textanalyzer.logic.Engine;
+import hu.thesis.shorthand.textanalyzer.util.ArrayUtils;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -72,6 +73,7 @@ public class ContentPanel extends JPanel {
 		if (e.getKeyCode() == KeyEvent.VK_DELETE) {
 		    int[] indices = fileNamesList.getSelectedIndices();
 		    if (indices.length > 0) {
+			ArrayUtils.reverse(indices);
 			for (int index : indices) {
 			    fileNamesModel.remove(index);
 			}

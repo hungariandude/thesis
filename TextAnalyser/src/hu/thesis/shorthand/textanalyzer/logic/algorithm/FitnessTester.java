@@ -27,26 +27,26 @@ public class FitnessTester {
     /**
      * A forrás szöveg.
      */
-    private String sourceText;
+    protected String sourceText;
     /**
      * Az egyes karakterek száma a szövegben.
      */
-    private Map<Character, MutableInteger> charCountMap = new HashMap<>();
+    protected Map<Character, MutableInteger> charCountMap = new HashMap<>();
     /**
      * Az egyes karakterekhez rendelt kirajzolható objektumok ajánlott
      * elemszáma.
      */
-    private Map<Character, Integer> recommendedLengthMap = new HashMap<>();
+    protected Map<Character, Integer> recommendedLengthMap = new HashMap<>();
 
     /**
      * Egymáshoz hasonlító karakterek.
      */
-    private static final String[] similarChars = new String[] { "aá", "eé",
+    protected static final String[] similarChars = new String[] { "aá", "eé",
 	    "ií", "oóöő", "uúüű" };
     /**
      * A karakterek és a hozzájuk hasonlító karakterek összerendelése.
      */
-    private static Map<Character, char[]> similarityMap = new HashMap<>();
+    protected static Map<Character, char[]> similarityMap = new HashMap<>();
     static {
 	for (String str : similarChars) {
 	    for (int i = 0; i < str.length(); ++i) {
@@ -75,7 +75,7 @@ public class FitnessTester {
     /**
      * Megszámolja az egyes karakterek előfordulását a szövegben.
      */
-    private void countCharOccurrences() {
+    protected void countCharOccurrences() {
 	// 1. lépés: megszámoljuk a karaktereket
 	for (int index = 0; index < sourceText.length(); ++index) {
 	    char currentChar = sourceText.charAt(index);
@@ -118,7 +118,7 @@ public class FitnessTester {
      * 
      * @return [0;1]
      */
-    private double scoreDrawingSize(Gene gene) {
+    protected double scoreDrawingSize(Gene gene) {
 	Rectangle2D bounds = gene.getBounds();
 
 	if (bounds.getWidth() > Parameters.drawingAreaSizeX
@@ -193,7 +193,7 @@ public class FitnessTester {
     /**
      * @return [0;1]
      */
-    private double scoreGeneUniqueness(Collection<Gene> genes) {
+    protected double scoreGeneUniqueness(Collection<Gene> genes) {
 	if (genes.isEmpty()) {
 	    // üres halmaz elemei teljesen "egyediek"
 	    return 1.0;
@@ -215,7 +215,7 @@ public class FitnessTester {
     /**
      * @return ]0;1]
      */
-    private double scoreLength(Character ch, Gene gene) {
+    protected double scoreLength(Character ch, Gene gene) {
 	// mennyire tér el a gén hossza a neki ajánlott hosszúságtól
 	int deviation = Math.abs(gene.length() - recommendedLengthMap.get(ch));
 
@@ -228,7 +228,7 @@ public class FitnessTester {
     /**
      * @return [0;1]
      */
-    private double scoreSimilarity(Character ch, Gene gene,
+    protected double scoreSimilarity(Character ch, Gene gene,
 	    Map<Character, Gene> geneMap) {
 	char[] value = similarityMap.get(ch);
 	if (value == null || value.length == 0) {
@@ -269,9 +269,9 @@ public class FitnessTester {
      * Végigmegy egy forrásszövegen és megszámolja, hogy hányszor fut le az írás
      * a rajzoló felületről és ezután ad értékelést.
      * 
-     * return [0;1]
+     * @return [0;1]
      */
-    private double scoreWritingTest(Chromosome chrom) {
+    protected double scoreWritingTest(Chromosome chrom) {
 	double x = 0.0, y = 0.0;
 
 	int runOutCount = 0;
@@ -308,7 +308,7 @@ public class FitnessTester {
     /**
      * Egy <T, MutableInteger> Map-ből egy <Integer, List<T>> TreeMap-et készít.
      */
-    private <T> TreeMap<Integer, List<T>> sortMutableIntegerValueMap(
+    protected <T> TreeMap<Integer, List<T>> sortMutableIntegerValueMap(
 	    Map<T, MutableInteger> inputMap) {
 	TreeMap<Integer, List<T>> treeMap = new TreeMap<>();
 	for (Entry<T, MutableInteger> entry : inputMap.entrySet()) {

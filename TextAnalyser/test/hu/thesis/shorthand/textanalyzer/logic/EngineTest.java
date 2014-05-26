@@ -1,9 +1,13 @@
 package hu.thesis.shorthand.textanalyzer.logic;
 
 import hu.thesis.shorthand.common.CharMappingSaveData;
+import hu.thesis.shorthand.common.DrawableObject.Form;
+import hu.thesis.shorthand.common.DrawableObject.Rotation;
 import hu.thesis.shorthand.textanalyzer.logic.algorithm.Chromosome;
+import hu.thesis.shorthand.textanalyzer.logic.algorithm.Gene;
 import hu.thesis.shorthand.textanalyzer.logic.algorithm.GeneticAlgorithm;
 import hu.thesis.shorthand.textanalyzer.logic.algorithm.Population;
+import hu.thesis.shorthand.textanalyzer.logic.algorithm.Segment;
 import hu.thesis.shorthand.textanalyzer.util.ResourceUtils;
 
 import org.junit.After;
@@ -13,13 +17,19 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class EngineTest {
 
-    private Chromosome chrom;
-    private File file;
+    Chromosome chrom;
+    File file;
 
     @After
     public void clean() {
@@ -31,20 +41,40 @@ public class EngineTest {
     @Test
     public void exportChromosomeTest() {
 	try {
-	    Engine.exportChromosome(chrom, file);
+	    Map<Character, Gene> geneMap = chrom.getGeneMap();
+	    CharMappingSaveData[] exportSaveData = new CharMappingSaveData[geneMap
+		    .size()];
+	    int i = 0;
+	    for (Entry<Character, Gene> entry : geneMap.entrySet()) {
+		Character ch = entry.getKey();
+		Gene gene = entry.getValue();
+		List<Segment> segments = gene.getSegments();
+		Form[] forms = new Form[segments.size()];
+		Rotation[] rotations = new Rotation[segments.size()];
+		exportSaveData[i++] = new CharMappingSaveData(ch, forms,
+			rotations);
+		for (int j = 0; j < segments.size(); ++j) {
+		    Segment segment = segments.get(j);
+		    forms[j] = segment.getForm();
+		    rotations[j] = segment.getRotation();
+		}
+	    }
+
+	    try (FileOutputStream fos = new FileOutputStream(file)) {
+		try (ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+		    oos.writeObject(exportSaveData);
+		}
+	    }
 
 	    try (FileInputStream fis = new FileInputStream(file)) {
 		try (ObjectInputStream is = new ObjectInputStream(fis)) {
 		    try {
-			CharMappingSaveData[] saveData = (CharMappingSaveData[]) is
+			CharMappingSaveData[] inputSaveData = (CharMappingSaveData[]) is
 				.readObject();
 
-			Assert.assertEquals(saveData.length, 99);
-
-			for (CharMappingSaveData data : saveData) {
-			    Assert.assertNotEquals(data, null);
-			}
-
+			Assert.assertEquals(
+				Arrays.equals(exportSaveData, inputSaveData),
+				true);
 		    } catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		    }
@@ -52,8 +82,8 @@ public class EngineTest {
 	    }
 	} catch (IOException ex) {
 	    ex.printStackTrace();
-	}
 
+	}
     }
 
     @Before

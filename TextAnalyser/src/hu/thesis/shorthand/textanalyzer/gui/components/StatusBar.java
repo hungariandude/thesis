@@ -18,7 +18,7 @@ public class StatusBar extends JPanel {
 
     private static final long serialVersionUID = 4676467245707954480L;
 
-    private final JTextField textField;
+    protected final JTextField textField;
 
     public StatusBar(int height) {
 	super();

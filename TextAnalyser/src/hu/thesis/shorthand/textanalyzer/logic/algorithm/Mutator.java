@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class Mutator {
 
-    private enum MutationType {
+    protected enum MutationType {
 	/**
 	 * Új objektum hozzáadása véletlenszerű pozíción.
 	 */
@@ -34,12 +34,12 @@ public class Mutator {
 	ROTATE;
     }
 
-    private static final float DEFAULT_MUATION_RATE = 0.01f;
+    public static final float DEFAULT_MUATION_RATE = 0.01f;
 
-    private final Map<MutationType, Double> mutationWeightMap;
-    private final Map<Form, Double> bendMutatationWeightMap;
+    protected final Map<MutationType, Double> mutationWeightMap;
+    protected final Map<Form, Double> bendMutatationWeightMap;
 
-    private float mutationRate;
+    protected float mutationRate;
 
     public Mutator() {
 	this(DEFAULT_MUATION_RATE);
@@ -80,7 +80,7 @@ public class Mutator {
     /**
      * Egy gén mutálása.
      */
-    private void mutate(Gene gene) {
+    protected void mutate(Gene gene) {
 	List<Segment> segments = gene.getSegments();
 
 	// a mutáció típusa

@@ -13,7 +13,7 @@ import javax.swing.JRadioButton;
 public class RadioPanel extends JPanel {
     private static final long serialVersionUID = 7960107096632067124L;
 
-    private final JRadioButton[] buttons;
+    protected final JRadioButton[] buttons;
 
     public RadioPanel(String[] values, boolean horizontalAlignment) {
 	if (values.length == 0) {

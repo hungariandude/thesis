@@ -93,7 +93,7 @@ public class Segment extends Path2D.Double implements DrawableObject {
     /**
      * Kiszámítja az alakzat útját.
      */
-    private void recalculatePath() {
+    protected void recalculatePath() {
 	reset();
 	moveTo(0, 0);
 	double x = 1.0;

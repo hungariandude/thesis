@@ -12,15 +12,15 @@ import java.util.Set;
  */
 public class GeneticAlgorithm {
 
-    private Population population;
-    private final int populationSize;
+    protected Population population;
+    protected final int populationSize;
 
-    private Mutator mutator = new Mutator();
-    private FitnessTester fitnessTester;
+    protected Mutator mutator = new Mutator();
+    protected FitnessTester fitnessTester;
     /**
      * Hányadik generációnál tart az evolúció.
      */
-    private long generationCounter = 0L;
+    protected long generationCounter = 0L;
 
     public GeneticAlgorithm(String sourceText, int populationSize) {
 	if (populationSize < 2 || populationSize % 2 != 0) {
@@ -96,7 +96,7 @@ public class GeneticAlgorithm {
     /**
      * Létrehoz véletlenszerű kromoszómákat a szövegben megtalált karaktereknek.
      */
-    private void generateRandomPopulation() {
+    protected void generateRandomPopulation() {
 	// lekérjük a fitneszkiértékelőtől a megtalált karaktereket
 	Set<Character> characterSet = fitnessTester.characterSet();
 	int numberOfFoundCharacters = characterSet.size();
@@ -127,7 +127,7 @@ public class GeneticAlgorithm {
      * @param remove
      *            A kromoszóma törlése a kiválasztás után.
      */
-    private Chromosome selectMember(boolean remove) {
+    protected Chromosome selectMember(boolean remove) {
 	//
 	// RULETTKERÉK ALGORITMUS
 	//

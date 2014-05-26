@@ -27,7 +27,7 @@ import javax.swing.border.LineBorder;
  */
 public class GeneCanvas extends JPanel {
 
-    private static class Arrow {
+    static class Arrow {
 	Path2D linePart;
 	Path2D headPart;
 

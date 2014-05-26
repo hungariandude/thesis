@@ -18,10 +18,10 @@ import java.util.TreeMap;
  * @author Istvánfi Zsolt
  */
 public class Chromosome implements Comparable<Chromosome> {
-    private static final float CROSSOVER_RATE = 0.7f;
+    public static final float CROSSOVER_RATE = 0.7f;
 
-    private final TreeMap<Character, Gene> geneMap;
-    private double fitnessScore;
+    protected final TreeMap<Character, Gene> geneMap;
+    protected double fitnessScore;
 
     /**
      * Deep copy constructor.

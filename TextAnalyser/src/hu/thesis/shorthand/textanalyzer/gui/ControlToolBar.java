@@ -34,7 +34,7 @@ public class ControlToolBar extends JToolBar {
      * 
      * @author Istvánfi Zsolt
      */
-    private class GAWorker extends SwingWorker<Void, Population> implements
+    class GAWorker extends SwingWorker<Void, Population> implements
 	    ValueChangeListener<Population> {
 	private final int stepsToDo;
 

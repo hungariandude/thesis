@@ -40,7 +40,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 public class ChromosomeRow extends JPanel implements ActionListener {
 
-    private class CharacterLabel extends JTextField {
+    class CharacterLabel extends JTextField {
 	private static final long serialVersionUID = 5165720073338826413L;
 
 	CharacterLabel(char ch) {
