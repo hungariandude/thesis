@@ -94,8 +94,10 @@ public class StenoCanvas extends GestureOverlayView {
             if (this.mDebugPaths != null) {
                 for (int i = 0; i < mDebugPaths.size(); ++i) {
                     Path path = mDebugPaths.get(i);
-                    Paint paint = i % 2 == 0 ? mDebugPathPaint0 : mDebugPathPaint1;
-                    canvas.drawPath(path, paint);
+                    if (path != null) {
+                        Paint paint = i % 2 == 0 ? mDebugPathPaint0 : mDebugPathPaint1;
+                        canvas.drawPath(path, paint);
+                    }
                 }
             }
             if (this.mDebugPoints != null) {

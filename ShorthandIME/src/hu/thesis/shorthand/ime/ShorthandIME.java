@@ -42,6 +42,7 @@ public class ShorthandIME extends InputMethodService implements OnGesturePerform
         if (ic != null) {
             ic.deleteSurroundingText(1, 0);
         }
+        resetState();
     }
 
     /**

@@ -2,6 +2,7 @@
 package hu.thesis.shorthand.ime.recognizer;
 
 import android.gesture.GesturePoint;
+import android.graphics.Matrix;
 import android.graphics.Path;
 import android.util.Log;
 
@@ -51,7 +52,7 @@ public class Segmenter {
         GesturePoint endingPoint = points.get(points.size() - 1);
         double degrees = calculateDegreesBetween(startingPoint, endingPoint);
         Rotation rotation = getRotationFromFloatValue(degrees);
-        Form form = calculateCurveForm(points, rotation);
+        Form form = calculateCurveForm(points, (float) degrees);
         complexShape.add(new Segment(form, rotation));
 
         if (Parameters.getInstance().isDebugEnabled()) {
@@ -106,29 +107,42 @@ public class Segmenter {
     /**
      * Meghatározza a paraméterek alapján, hogy egy görbe emelkedő vagy lejtő-e.
      */
-    private Form calculateCurveForm(List<GesturePoint> curvePoints, Rotation rotation) {
+    private Form calculateCurveForm(List<GesturePoint> curvePoints, float rotation) {
+        Matrix matrix = new Matrix();
         GesturePoint startingPoint = curvePoints.get(0);
-        // GesturePoint endingPoint = curvePoints.get(curvePoints.size() - 1);
-        int xCount = 0, yCount = 0;
-
+        matrix.setTranslate(-startingPoint.x, startingPoint.y);
+        int length = (curvePoints.size() - 2) * 2;
+        float[] points = new float[length];
         for (int i = 1; i < curvePoints.size() - 1; ++i) {
             GesturePoint point = curvePoints.get(i);
+            points[(i - 1) * 2] = point.x;
+            points[(i - 1) * 2 + 1] = -point.y;
+        }
+        matrix.mapPoints(points);
+        matrix.reset();
+        matrix.setRotate(-rotation);
 
-            float dx = point.x - startingPoint.x;
-            float dy = point.y - startingPoint.y;
+        int plus = 0, minus = 0;
 
-            if (dx > dy) {
-                xCount++;
-            } else if (dy > dx) {
-                yCount++;
+        for (int i = 0; i < length; i += 2) {
+            float x = points[i];
+            float y = points[i + 1];
+
+            float[] point = new float[2];
+            point[0] = x;
+            point[1] = y;
+            matrix.mapPoints(point);
+
+            if (point[1] < 0) {
+                minus++;
+            } else if (point[1] > 0) {
+                plus++;
             }
         }
 
-        if (xCount > yCount) {
+        if (plus > minus) {
             return Form.CREST_CURVE;
-        }
-
-        if (yCount > xCount) {
+        } else if (minus > plus) {
             return Form.SAG_CURVE;
         }
 
@@ -305,7 +319,12 @@ public class Segmenter {
                 if (i == points.length - 1) {
                     distance = calculateDistanceBetween(startingPoint, currentPoint);
                     if (distance > mMinimumLength) {
-                        appendLine(startingPoint, currentPoint);
+                        if (isCurve) {
+                            curvePoints.add(currentPoint);
+                            appendCurve(curvePoints);
+                        } else {
+                            appendLine(startingPoint, currentPoint);
+                        }
                     }
                 }
             } else {
